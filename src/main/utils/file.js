@@ -57,9 +57,11 @@ const yamlSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {
 
 const rootYamlSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {
   var loadPath = file;
+
   if (isRelative) {
     loadPath = path.resolve(rootPath, file)
   }
+
   var yamlText = fs.readFileSync(loadPath, encoding)
     , yamlData = yaml.safeLoad(yamlText);
   return yamlData
@@ -76,11 +78,15 @@ const jsonSafeLoad = (file) => {
 }
 
 const packageJSON = () => {
-  return require(`${currentPath}/package.json`);
+  return require(`${rootPath}/package.json`);
 }
 
 const absolutePath = (file) => {
   return path.resolve(currentPath, file);
+}
+
+const rootAbsolutePath = (file) => {
+  return path.resolve(rootPath, file);
 }
 
 const writeSyncCSV = (file, data, check = false) => {
@@ -106,6 +112,13 @@ const csvSafeLoad = (file) => {
   return csvSync(data)
 }
 
+const appendFile = (file, data) => {
+  const fullPath = absolutePath(file);
+  fs.appendFile(fullPath, data, (err) => {
+    if (err) throw err;
+  });
+}
+
 module.exports = {
   isExistFile,
   writeSyncFile,
@@ -116,6 +129,8 @@ module.exports = {
   jsonSafeLoad,
   packageJSON,
   absolutePath,
+  rootAbsolutePath,
   writeSyncCSV,
-  csvSafeLoad
+  csvSafeLoad,
+  appendFile
 }
