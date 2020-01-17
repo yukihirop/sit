@@ -1,0 +1,21 @@
+---
+version: "1.0.0"
+sheet:
+  gss:
+    url: <your/GoogleSpreadSheet/url>
+    auth:
+      credPath: ./creds.json
+    openAPIV3Schema:
+      type: object
+      properties:
+        ja:
+          type: string
+          description: 日本語
+        en:
+          type: string
+          description: 英語
+        key:
+          type: string
+          description: キー
+local:
+  distDirPath: ./dist/locales
