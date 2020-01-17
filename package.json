@@ -1,0 +1,11 @@
+{
+  "name": "sit",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:yukihirop/sit.git",
+  "author": "yukihirop <te108186@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "google-spreadsheet": "^2.0.8"
+  }
+}
