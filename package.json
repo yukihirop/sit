@@ -2,6 +2,9 @@
   "name": "sit",
   "version": "1.0.0",
   "main": "index.js",
+  "bin": {
+    "sit": "index.js"
+  },
   "repository": "git@github.com:yukihirop/sit.git",
   "author": "yukihirop <te108186@gmail.com>",
   "license": "MIT",

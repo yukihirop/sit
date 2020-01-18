@@ -1,5 +1,5 @@
 const { Command } = require('../src/main/monkey_patches/commander');
-const { yamlSafeLoad, yamlDumpWriteSyncFile, isExistFile } = require('../src/main/utils/file');
+const { rootYamlSafeLoad, yamlDumpWriteSyncFile, isExistFile } = require('../src/main/utils/file');
 
 const fs = require('fs')
   , currentPath = fs.realpathSync('./');
@@ -11,7 +11,7 @@ function InitCmd() {
     .name('init')
     .description('create setting file (.sitconfig)')
     .action(() => {
-      var yamlData = yamlSafeLoad('./src/main/template/sitconfig.yaml');
+      var yamlData = rootYamlSafeLoad('./src/main/template/sitconfig.yaml');
       var settingPath = `${currentPath}/.sitconfig`;
 
       if (isExistFile(settingPath)) {
