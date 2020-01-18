@@ -7,6 +7,7 @@ const fs = require('fs')
   , csvSync = require('csv-parse/lib/sync');
 
 const currentPath = fs.realpathSync('./');
+const rootPath = path.resolve(__dirname, '../../../');
 
 const isExistFile = (file) => {
   try {
@@ -49,6 +50,16 @@ const yamlSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {
     loadPath = path.resolve(currentPath, file)
   }
 
+  var yamlText = fs.readFileSync(loadPath, encoding)
+    , yamlData = yaml.safeLoad(yamlText);
+  return yamlData
+}
+
+const rootYamlSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {
+  var loadPath = file;
+  if (isRelative) {
+    loadPath = path.resolve(rootPath, file)
+  }
   var yamlText = fs.readFileSync(loadPath, encoding)
     , yamlData = yaml.safeLoad(yamlText);
   return yamlData
@@ -100,6 +111,7 @@ module.exports = {
   writeSyncFile,
   mkdirSyncRecursive,
   yamlSafeLoad,
+  rootYamlSafeLoad,
   yamlDumpWriteSyncFile,
   jsonSafeLoad,
   packageJSON,
