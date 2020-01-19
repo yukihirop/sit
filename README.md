@@ -37,6 +37,7 @@ Commands:
   fetch [options] <branch>  fetch rows from Sheet
   push [options] <branch>   push locales to Sheet
   init                      create setting file (.sitconfig)
+  clasp                     clasp cli
 ```
 
 ## ❤️ Support Sheets
@@ -56,11 +57,13 @@ The default settings are as follows:
 
 ```yaml
 ---
----
 version: "1.0.0"
+repo:
+  local: ./.sit
+  remote: *sheet_url
 sheet:
   gss:
-    url: <your/GoogleSpreadSheet/url>
+    url: &sheet_url <your/GoogleSpreadSheet/url>
     auth:
       credPath: ./creds.json
     openAPIV3Schema:
@@ -75,6 +78,6 @@ sheet:
         key:
           type: string
           description: キー
-local:          
+local:
   distDirPath: ./dist/locales
 ```

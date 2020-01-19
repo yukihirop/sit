@@ -1,8 +1,11 @@
 ---
 version: "1.0.0"
+repo:
+  local: ./.sit
+  remote: *sheet_url
 sheet:
   gss:
-    url: <your/GoogleSpreadSheet/url>
+    url: &sheet_url <your/GoogleSpreadSheet/url>
     auth:
       credPath: ./creds.json
     openAPIV3Schema:
