@@ -9,6 +9,7 @@ const { Command } = require('./src/main/monkey_patches/commander')
   , program = new Command()
   , initCmd = require('./cmd/init')()
   , claspCmd = require('./cmd/clasp')()
+  , repoCmd = require('./cmd/repo')()
 
 program
   .version(pkg.version)
@@ -55,6 +56,7 @@ program
 program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
+  .useSubcommand(repoCmd)
 
 if (process.argv.length <= 2) {
   program.help();

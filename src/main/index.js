@@ -2,8 +2,9 @@
 
 const AppSheet = require('./Sheet');
 const AppLocal = require('./Local');
+const AppRepo = require('./Repo');
 
-module.exports = function transtory(opts) {
+function sit(opts) {
   const defaultOpts = {
     type: 'GoogleSpreadSheet',
     baseURL: 'https://docs.google.com/spreadsheets/d/',
@@ -13,8 +14,10 @@ module.exports = function transtory(opts) {
 
   const options = Object.assign({}, defaultOpts, opts);
   var Sheet = {}
+    , Repo = {}
     , sheet = AppSheet(options)
     , local = AppLocal(options)
+    , repo = AppRepo(options)
 
   Sheet.fetch = (worksheetName) => {
     return new Promise((resolve, reject) => {
@@ -35,7 +38,14 @@ module.exports = function transtory(opts) {
     })
   }
 
+  Repo.init = () => {
+    return repo.init();
+  }
+
   return {
-    Sheet
+    Sheet,
+    Repo
   }
 }
+
+module.exports = sit;
