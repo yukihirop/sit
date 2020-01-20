@@ -1,5 +1,6 @@
 'use strict';
 
+const Validator = require('./Validator');
 const AppSheet = require('./Sheet');
 const AppLocal = require('./Local');
 const AppRepo = require('./Repo');
@@ -12,30 +13,39 @@ function sit(opts) {
     settingPath: `./.sitconfig`
   };
 
-  const options = Object.assign({}, defaultOpts, opts);
+  opts = Object.assign({}, defaultOpts, opts);
+
+  const validator = new Validator(opts)
   var Sheet = {}
-    , Repo = {}
-    , sheet = AppSheet(options)
-    , local = AppLocal(options)
-    , repo = AppRepo(options)
+    , Repo = {};
 
-  Sheet.fetch = (worksheetName) => {
-    return new Promise((resolve, reject) => {
-      sheet.getRows(worksheetName, rows => {
-        var result = sheet.rows2CSV(rows);
-        local.updateData(worksheetName, result).then(file => {
-          resolve(file);
-        })
-      });
-    })
-  }
+  const repo = AppRepo(opts);
 
-  Sheet.push = (worksheetName = 'master') => {
-    return new Promise((resolve, reject) => {
-      sheet.pushRows(worksheetName, (data) => {
-        resolve(data);
-      });
-    })
+  if (validator.isValid()) {
+
+    const sheet = AppSheet(opts)
+      , local = AppLocal(opts)
+
+    Sheet.fetch = (worksheetName) => {
+      return new Promise((resolve, reject) => {
+        sheet.getRows(worksheetName, rows => {
+          var result = sheet.rows2CSV(rows);
+          local.updateData(worksheetName, result).then(file => {
+            resolve(file);
+          })
+        });
+      })
+    }
+
+    Sheet.push = (worksheetName = 'master') => {
+      return new Promise((resolve, reject) => {
+        sheet.pushRows(worksheetName, (data) => {
+          resolve(data);
+        });
+      })
+    }
+  } else {
+    console.log(...validator.getErrors());
   }
 
   Repo.init = () => {

@@ -1,8 +1,5 @@
 ---
 version: "1.0.0"
-repo:
-  local: ./.sit
-  remote: *sheet_url
 sheet:
   gss:
     url: &sheet_url <your/GoogleSpreadSheet/url>
@@ -20,5 +17,8 @@ sheet:
         key:
           type: string
           description: キー
+repo:
+  local: ./.sit
+  remote: *sheet_url
 local:
   distDirPath: ./dist/locales
