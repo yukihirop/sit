@@ -2,8 +2,6 @@
 
 const uuidv4 = require('uuid/v4');
 
-const GSSValidator = require('../validators/GSSValidator');
-const ConfigValidator = require('../validators/ConfigValidator');
 const Client = require('./GSSClient');
 const { yamlSafeLoad } = require('../utils/file');
 const Worksheet = require('./Worksheet');
@@ -17,18 +15,12 @@ const _mergedDefaultOptions = (opts) => {
 }
 
 function GSS(opts) {
-  const { baseURL, settingPath } = opts;
+  const { settingPath } = opts;
 
   var settingData = yamlSafeLoad(settingPath)
     , url = settingData["sheet"]["gss"]["url"]
     , sheetSchema = settingData["sheet"]["gss"]["openAPIV3Schema"]["properties"]
     , headerData = Object.keys(sheetSchema);
-
-  const gssValidator = GSSValidator(url, baseURL);
-  const configValidator = ConfigValidator(settingPath);
-
-  gssValidator.isSpreadSheetURL();
-  configValidator.isVersion();
 
   opts = _mergedDefaultOptions(opts);
 

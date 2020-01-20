@@ -1,9 +1,11 @@
 'use strict';
 
+const Validator = require('./Validator');
 const AppSheet = require('./Sheet');
 const AppLocal = require('./Local');
+const AppRepo = require('./Repo');
 
-module.exports = function transtory(opts) {
+function sit(opts) {
   const defaultOpts = {
     type: 'GoogleSpreadSheet',
     baseURL: 'https://docs.google.com/spreadsheets/d/',
@@ -11,31 +13,49 @@ module.exports = function transtory(opts) {
     settingPath: `./.sitconfig`
   };
 
-  const options = Object.assign({}, defaultOpts, opts);
-  var Sheet = {}
-    , sheet = AppSheet(options)
-    , local = AppLocal(options)
+  opts = Object.assign({}, defaultOpts, opts);
 
-  Sheet.fetch = (worksheetName) => {
-    return new Promise((resolve, reject) => {
-      sheet.getRows(worksheetName, rows => {
-        var result = sheet.rows2CSV(rows);
-        local.updateData(worksheetName, result).then(file => {
-          resolve(file);
-        })
-      });
-    })
+  const validator = new Validator(opts)
+  var Sheet = {}
+    , Repo = {};
+
+  const repo = AppRepo(opts);
+
+  if (validator.isValid()) {
+
+    const sheet = AppSheet(opts)
+      , local = AppLocal(opts)
+
+    Sheet.fetch = (worksheetName) => {
+      return new Promise((resolve, reject) => {
+        sheet.getRows(worksheetName, rows => {
+          var result = sheet.rows2CSV(rows);
+          local.updateData(worksheetName, result).then(file => {
+            resolve(file);
+          })
+        });
+      })
+    }
+
+    Sheet.push = (worksheetName = 'master') => {
+      return new Promise((resolve, reject) => {
+        sheet.pushRows(worksheetName, (data) => {
+          resolve(data);
+        });
+      })
+    }
+  } else {
+    console.log(...validator.getErrors());
   }
 
-  Sheet.push = (worksheetName = 'master') => {
-    return new Promise((resolve, reject) => {
-      sheet.pushRows(worksheetName, (data) => {
-        resolve(data);
-      });
-    })
+  Repo.init = () => {
+    return repo.init();
   }
 
   return {
-    Sheet
+    Sheet,
+    Repo
   }
 }
+
+module.exports = sit;
