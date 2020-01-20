@@ -54,6 +54,25 @@ program
   });
 
 program
+  .command('cat-file <hash>')
+  .description('cat sit objects')
+  .option(
+    '-t, --type',
+    'show object type'
+  )
+  .option(
+    '-s, --size',
+    'show object size'
+  )
+  .option(
+    '-p, --pretty-print',
+    "pretty-print object's content"
+  )
+  .action((hash, options) => {
+    sit().Repo.catFile(hash, options);
+  })
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)

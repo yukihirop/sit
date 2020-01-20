@@ -2,17 +2,15 @@
 
 const {
   isExistFile,
-  yamlSafeLoad,
   mkdirSyncRecursive,
   writeSyncFile
 } = require('./utils/file');
 
-function Repo(opts) {
-  const { settingPath } = opts;
-  const yamlData = yamlSafeLoad(settingPath)
-    , localRepo = yamlData["repo"]["local"];
+const SitBaseRepo = require('./repos/SitBaseRepo');
 
-  const init = () => {
+class SitRepo extends SitBaseRepo {
+  init() {
+    const localRepo = this.localRepo;
 
     if (isExistFile(localRepo)) {
       console.log(`already exist local repo: ${localRepo}`);
@@ -30,9 +28,27 @@ function Repo(opts) {
     }
   }
 
-  return {
-    init
+  catFile(obj, opts) {
+    const { type, size, prettyPrint } = opts
+
+    this._objectFind(obj).then(sha => {
+      this._objectRead(sha).then(obj => {
+        if (type) {
+          console.log(obj.fmt);
+        }
+
+        if (size) {
+          console.log(obj.size);
+        }
+
+        if (prettyPrint) {
+          console.log(obj.serialize().toString());
+        }
+      }).catch(err => {
+        console.log(err);
+      })
+    })
   }
 }
 
-module.exports = Repo;
+module.exports = SitRepo;

@@ -19,25 +19,29 @@ sit init
 sit fetch master
 # Update sheet
 sit push master
+# cat-file
+sit cat-file
 ```
 
 ## 📖 Usage
 
 ```bash
 $ sit -h
-Usage: sit [options] [command]
+Usage: index [options] [command]
 
 sit cli
 
 Options:
-  -V, --version             output the version number
-  -h, --help                output usage information
+  -V, --version              output the version number
+  -h, --help                 output usage information
 
 Commands:
-  fetch [options] <branch>  fetch rows from Sheet
-  push [options] <branch>   push locales to Sheet
-  init                      create setting file (.sitconfig)
-  clasp                     clasp cli
+  fetch [options] <branch>   fetch rows from Sheet
+  push [options] <branch>    push locales to Sheet
+  cat-file [options] <hash>  cat sit objects
+  init                       create setting file (.sitconfig)
+  clasp                      clasp cli
+  repo                       repo cli
 ```
 
 ## ❤️ Support Sheets
@@ -58,9 +62,6 @@ The default settings are as follows:
 ```yaml
 ---
 version: "1.0.0"
-repo:
-  local: ./.sit
-  remote: *sheet_url
 sheet:
   gss:
     url: &sheet_url <your/GoogleSpreadSheet/url>
@@ -78,6 +79,9 @@ sheet:
         key:
           type: string
           description: キー
+repo:
+  local: ./.sit
+  remote: *sheet_url
 local:
   distDirPath: ./dist/locales
 ```

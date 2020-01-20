@@ -4,7 +4,8 @@ const fs = require('fs')
   , path = require('path')
   , yaml = require('js-yaml')
   , csv = require('csv')
-  , csvSync = require('csv-parse/lib/sync');
+  , csvSync = require('csv-parse/lib/sync')
+  , zlib = require('zlib');
 
 const currentPath = fs.realpathSync('./');
 const rootPath = path.resolve(__dirname, '../../../');
@@ -13,6 +14,15 @@ const isExistFile = (file) => {
   try {
     fs.statSync(file);
     return true
+  } catch (err) {
+    if (err.code === 'ENOENT') return false
+  }
+}
+
+const isDir = (file) => {
+  try {
+    const stats = fs.statSync(file)
+    return stats.isDirectory()
   } catch (err) {
     if (err.code === 'ENOENT') return false
   }
@@ -119,8 +129,37 @@ const appendFile = (file, data) => {
   });
 }
 
+const fileSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {
+  var loadPath = file;
+
+  if (isRelative) {
+    loadPath = path.resolve(currentPath, file);
+  }
+
+  return fs.readFileSync(loadPath, encoding);
+}
+
+const fileUnzip = (file, isRelative = true, callback) => {
+  let loadPath = file;
+
+  if (isRelative) {
+    loadPath = path.resolve(currentPath, file)
+  }
+
+  const content = fs.readFileSync(loadPath);
+
+  zlib.unzip(content, (err, binary) => {
+    callback(err, binary);
+  });
+}
+
+const fileBasename = (file) => {
+  return path.basename(file);
+}
+
 module.exports = {
   isExistFile,
+  isDir,
   writeSyncFile,
   mkdirSyncRecursive,
   yamlSafeLoad,
@@ -132,5 +171,8 @@ module.exports = {
   rootAbsolutePath,
   writeSyncCSV,
   csvSafeLoad,
-  appendFile
+  appendFile,
+  fileSafeLoad,
+  fileUnzip,
+  fileBasename
 }
