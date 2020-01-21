@@ -1,4 +1,0 @@
-**/**
-*.js
-!appsscript.json
-!src/clasp/*.js
