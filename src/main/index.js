@@ -3,7 +3,7 @@
 const Validator = require('./Validator');
 const AppSheet = require('./Sheet');
 const AppLocal = require('./Local');
-const AppRepo = require('./Repo');
+const AppRepo = require('./SitRepo');
 
 function sit(opts) {
   const defaultOpts = {
@@ -19,12 +19,12 @@ function sit(opts) {
   var Sheet = {}
     , Repo = {};
 
-  const repo = AppRepo(opts);
+  const repo = new AppRepo(opts);
 
   if (validator.isValid()) {
 
-    const sheet = AppSheet(opts)
-      , local = AppLocal(opts)
+    const sheet = new AppSheet(opts)
+      , local = new AppLocal(opts)
 
     Sheet.fetch = (worksheetName) => {
       return new Promise((resolve, reject) => {
@@ -50,6 +50,14 @@ function sit(opts) {
 
   Repo.init = () => {
     return repo.init();
+  }
+
+  Repo.objectRead = (sha) => {
+    return repo.objectRead(sha)
+  }
+
+  Repo.catFile = (obj, opts) => {
+    return repo.catFile(obj, opts);
   }
 
   return {

@@ -11,3 +11,7 @@ client.Sheet.fetch('master').then(result => {
 client.Sheet.push('master').then(result => {
   console.log(result);
 });
+
+client.Repo.catFile('fcd37b4', { isType: true });
+client.Repo.catFile('fcd37b4', { isSize: true });
+client.Repo.catFile('fcd37b4', { isPrettyPrint: true });
