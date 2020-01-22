@@ -153,6 +153,12 @@ const fileUnzip = (file, isRelative = true, callback) => {
   });
 }
 
+const fileDeflate = (data, callback) => {
+  zlib.deflate(data, (err, buffer) => {
+    callback(err, buffer);
+  });
+}
+
 const fileBasename = (file) => {
   return path.basename(file);
 }
@@ -174,5 +180,6 @@ module.exports = {
   appendFile,
   fileSafeLoad,
   fileUnzip,
+  fileDeflate,
   fileBasename
 }

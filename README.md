@@ -21,6 +21,8 @@ sit fetch master
 sit push master
 # cat-file
 sit cat-file
+# compute sit object
+sit hash-object
 ```
 
 ## 📖 Usage
@@ -32,27 +34,28 @@ Usage: index [options] [command]
 sit cli
 
 Options:
-  -V, --version              output the version number
-  -h, --help                 output usage information
+  -V, --version                 output the version number
+  -h, --help                    output usage information
 
 Commands:
-  fetch [options] <branch>   fetch rows from Sheet
-  push [options] <branch>    push locales to Sheet
-  cat-file [options] <hash>  cat sit objects
-  init                       create setting file (.sitconfig)
-  clasp                      clasp cli
-  repo                       repo cli
+  fetch [options] <branch>      fetch rows from Sheet
+  push [options] <branch>       push locales to Sheet
+  cat-file [options] <hash>     cat sit objects
+  hash-object [options] <path>  compute hash sit object
+  init                          create setting file (.sitconfig)
+  clasp                         clasp cli
+  repo                          repo cli
 ```
 
 ## ❤️ Support Sheets
 
 - GoogleSpreadSheet
 
-## ⚙ .transtory
+## ⚙ .sitconfig
 
 The configuration file called `.sitconfig` is a file that contains all settings.
 
-- Schema information of the translation file managed by GoogleSpreadSheet.
+- Schema information file managed by GoogleSpreadSheet.
 - Authentication information for using GoogleSpreadSheetAPI.
 - Information such as output destination of deliverables.
 
