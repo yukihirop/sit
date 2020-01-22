@@ -16,14 +16,15 @@ const _mergedDefaultOptions = (opts) => {
 function Local(opts) {
   opts = _mergedDefaultOptions(opts);
 
-  var { settingPath } = opts;
-  var yamlData = yamlSafeLoad(settingPath)
-    , distDirPath = yamlData["local"]["distDirPath"];
+  const { settingPath } = opts;
+  const yamlData = yamlSafeLoad(settingPath)
+    , distDirPath = yamlData["local"]["dist"]["path"]
+    , distSheetName = yamlData["local"]["dist"]["sheetName"];
 
   mkdirSyncRecursive(distDirPath);
 
-  const updateData = (worksheetName, result) => {
-    const csvFile = `${distDirPath}/${worksheetName}.csv`;
+  const updateData = (result) => {
+    const csvFile = `${distDirPath}/${distSheetName}`;
 
     return new Promise((resolve, reject) => {
       try {
@@ -35,11 +36,11 @@ function Local(opts) {
     });
   }
 
-  const getData = (worksheetName) => {
+  const getData = () => {
     return new Promise((resolve, reject) => {
       try {
         var fullDistPath = absolutePath(distDirPath)
-          , fullPath = `${fullDistPath}/${worksheetName}.csv`
+          , fullPath = `${fullDistPath}/${distSheetName}`
 
         resolve(csvSafeLoad(fullPath))
       } catch (err) {
