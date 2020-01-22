@@ -21,4 +21,6 @@ repo:
   local: ./.sit
   remote: *sheet_url
 local:
-  distDirPath: ./dist/locales
+  dist:
+    path: ./dist
+    sheetName: "master_data.csv"

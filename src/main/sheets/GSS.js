@@ -17,7 +17,7 @@ const _mergedDefaultOptions = (opts) => {
 function GSS(opts) {
   const { settingPath } = opts;
 
-  var settingData = yamlSafeLoad(settingPath)
+  const settingData = yamlSafeLoad(settingPath)
     , url = settingData["sheet"]["gss"]["url"]
     , sheetSchema = settingData["sheet"]["gss"]["openAPIV3Schema"]["properties"]
     , headerData = Object.keys(sheetSchema);
@@ -28,12 +28,12 @@ function GSS(opts) {
   const local = new Local(opts);
   const worksheet = new Worksheet(headerData);
 
-  const getInfo = (worksheetName, callback) => {
+  const getInfo = (branch, callback) => {
     return client.then(doc => {
       new Promise((resolve, reject) => {
         doc.getInfo((err, info) => {
           if (err) reject(err);
-          var wh = info.worksheets.filter(sheet => sheet.title == worksheetName)[0]
+          var wh = info.worksheets.filter(sheet => sheet.title == branch)[0]
           resolve(wh);
         });
       }).then(sheet => {
@@ -44,8 +44,8 @@ function GSS(opts) {
     });
   };
 
-  const getRows = (worksheetName, callback) => {
-    return getInfo(worksheetName, sheet => {
+  const getRows = (branch, callback) => {
+    return getInfo(branch, sheet => {
       new Promise((resolve, reject) => {
         sheet.getRows((err, rows) => {
           if (err) reject(err);
@@ -59,17 +59,17 @@ function GSS(opts) {
     });
   };
 
-  const pushRows = (worksheetName, callback) => {
+  const pushRows = (branch, callback) => {
     return client.then(doc => {
       new Promise((resolve, reject) => {
         doc.addWorksheet({
-          title: uuidv4()
+          title: branch
         }, (err, sheet) => {
           if (err) reject(err);
           resolve(sheet);
         });
       }).then(sheet => {
-        local.getData(worksheetName).then(result => {
+        local.getData().then(result => {
           _bulkPushRow(sheet, worksheet.csvData(result));
           if (callback) callback(result);
         });

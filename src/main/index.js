@@ -26,20 +26,20 @@ function sit(opts) {
     const sheet = new AppSheet(opts)
       , local = new AppLocal(opts)
 
-    Sheet.fetch = (worksheetName) => {
+    Sheet.fetch = (branch) => {
       return new Promise((resolve, reject) => {
-        sheet.getRows(worksheetName, rows => {
+        sheet.getRows(branch, rows => {
           var result = sheet.rows2CSV(rows);
-          local.updateData(worksheetName, result).then(file => {
+          local.updateData(result).then(file => {
             resolve(file);
           })
         });
       })
     }
 
-    Sheet.push = (worksheetName = 'master') => {
+    Sheet.push = (branch = 'master') => {
       return new Promise((resolve, reject) => {
-        sheet.pushRows(worksheetName, (data) => {
+        sheet.pushRows(branch, (data) => {
           resolve(data);
         });
       })
