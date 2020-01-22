@@ -3,6 +3,7 @@
 const {
   isExistFile,
   mkdirSyncRecursive,
+  fileSafeLoad,
   writeSyncFile
 } = require('./utils/file');
 
@@ -48,6 +49,12 @@ class SitRepo extends SitBaseRepo {
         console.log(err);
       })
     })
+  }
+
+  hashObject(path, opts) {
+    const { type, write } = opts;
+    const data = fileSafeLoad(path);
+    return this._objectHash(data, type, write);
   }
 }
 

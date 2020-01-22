@@ -73,6 +73,23 @@ program
   })
 
 program
+  .command('hash-object <path>')
+  .description('compute hash sit object')
+  .option(
+    '-t, --type <type>',
+    'object type',
+    'blob'
+  )
+  .option(
+    '-w, --write',
+    'write the object into the object database'
+  )
+  .action((path, options) => {
+    const hash = sit().Repo.hashObject(path, options);
+    console.log(hash);
+  })
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)

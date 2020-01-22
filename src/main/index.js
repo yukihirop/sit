@@ -60,6 +60,10 @@ function sit(opts) {
     return repo.catFile(obj, opts);
   }
 
+  Repo.hashObject = (path, opts) => {
+    return repo.hashObject(path, opts);
+  }
+
   return {
     Sheet,
     Repo

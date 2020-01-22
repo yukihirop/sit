@@ -4,13 +4,17 @@ const {
   isExistFile,
   isDir,
   yamlSafeLoad,
+  writeSyncFile,
   mkdirSyncRecursive,
   fileSafeLoad,
   fileUnzip,
+  fileDeflate,
   fileBasename
 } = require('../utils/file');
 
-const recursive = require('recursive-readdir');
+const recursive = require('recursive-readdir')
+  , crypto = require('crypto')
+  , shasum = crypto.createHash('sha1');
 
 const SitBlob = require('./SitBlob');
 const SitTree = require('./SitTree');
@@ -22,11 +26,51 @@ class SitBaseRepo {
   }
 
   /*
+    Choose constructor depending on
+    object type found in header.
+  */
+  _objectHash(data, fmt, write) {
+    let obj;
+
+    switch (fmt) {
+      case 'tree':
+        obj = new SitTree(this, data);
+        break;
+      case 'blob':
+        obj = new SitBlob(this, data);
+        break;
+      default:
+        throw new Error(`Unknown type ${fmt}!`)
+    }
+
+    return this._objectWrite(obj, write);
+  }
+
+  _objectWrite(obj, write) {
+    const data = obj.serialize();
+    const header = `${obj.fmt} ${data.length}\0`;
+    const store = header + data;
+
+    shasum.update(store);
+    const sha = shasum.digest('hex');
+
+    if (write) {
+      const fullPath = this._repoFile(write, "objects", sha.slice(0, 2), sha.slice(2));
+      fileDeflate(store, (err, buffer) => {
+        if (err) throw err;
+        writeSyncFile(fullPath, buffer);
+      });
+    }
+
+    return sha;
+  }
+
+  /*
     Read object object_id from Git repository repo.
     Return a SitObject whose exact type depends.
   */
   _objectRead(sha) {
-    let path = this._readFile(false, "objects", sha.slice(0, 2), sha.slice(2));
+    let path = this._repoFile(false, "objects", sha.slice(0, 2), sha.slice(2));
 
     return new Promise((resolve, reject) => {
       fileUnzip(path, false, (err, binary) => {
@@ -148,7 +192,7 @@ class SitBaseRepo {
   }
 
   _refResolve(ref) {
-    let data = fileSafeLoad(this._readFile(false, ref));
+    let data = fileSafeLoad(this._repoFile(false, ref));
     data = data.trim();
 
     if (data.startsWith("ref: ")) {
@@ -159,10 +203,10 @@ class SitBaseRepo {
   }
 
   /*
-    For example, _readFile(true, "refs", "remotes", "origin", "HEAD") will create
+    For example, _repoFile(true, "refs", "remotes", "origin", "HEAD") will create
     .sit/refs/remotes/origin.
   */
-  _readFile(mkdir = false, ...path) {
+  _repoFile(mkdir = false, ...path) {
     if (this._findOrCreateDir(mkdir, ...path.slice(0, -1))) {
       return this._getPath(...path)
     }

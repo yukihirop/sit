@@ -15,3 +15,6 @@ client.Sheet.push('master').then(result => {
 client.Repo.catFile('fcd37b4', { isType: true });
 client.Repo.catFile('fcd37b4', { isSize: true });
 client.Repo.catFile('fcd37b4', { isPrettyPrint: true });
+
+let hash = client.Repo.hashObject('src/main/SitRepo.js', { type: 'blob', write: false });
+console.log(hash);
