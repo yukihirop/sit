@@ -18,18 +18,17 @@ function GSS(opts) {
   const { settingPath } = opts;
 
   const settingData = yamlSafeLoad(settingPath)
-    , url = settingData["sheet"]["gss"]["url"]
+    , remotes = settingData["repo"]["remote"]
     , sheetSchema = settingData["sheet"]["gss"]["openAPIV3Schema"]["properties"]
     , headerData = Object.keys(sheetSchema);
 
   opts = _mergedDefaultOptions(opts);
 
-  const client = Client(url, opts);
   const local = new Local(opts);
   const worksheet = new Worksheet(headerData);
 
-  const getInfo = (branch, callback) => {
-    return client.then(doc => {
+  const getInfo = (origin, branch, callback) => {
+    return Client(remotes[origin], opts).then(doc => {
       new Promise((resolve, reject) => {
         doc.getInfo((err, info) => {
           if (err) reject(err);
@@ -44,8 +43,8 @@ function GSS(opts) {
     });
   };
 
-  const getRows = (branch, callback) => {
-    return getInfo(branch, sheet => {
+  const getRows = (origin, branch, callback) => {
+    return getInfo(origin, branch, sheet => {
       new Promise((resolve, reject) => {
         sheet.getRows((err, rows) => {
           if (err) reject(err);
@@ -59,8 +58,8 @@ function GSS(opts) {
     });
   };
 
-  const pushRows = (branch, callback) => {
-    return client.then(doc => {
+  const pushRows = (origin, branch, callback) => {
+    return Client(remotes[origin], opts).then(doc => {
       new Promise((resolve, reject) => {
         doc.addWorksheet({
           title: branch
