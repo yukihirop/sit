@@ -18,8 +18,8 @@ function Local(opts) {
 
   const { settingPath } = opts;
   const yamlData = yamlSafeLoad(settingPath)
-    , distDirPath = yamlData["local"]["dist"]["path"]
-    , distSheetName = yamlData["local"]["dist"]["sheetName"];
+    , distDirPath = yamlData["dist"]["path"]
+    , distSheetName = yamlData["dist"]["sheetName"];
 
   mkdirSyncRecursive(distDirPath);
 

@@ -20,7 +20,7 @@ repo:
   local: ./.sit
   remote:
     origin: <your/GoogleSpreadSheet/url>
-local:
-  dist:
-    path: ./dist
-    sheetName: "master_data.csv"
+dist:
+  path: ./dist
+  sheetName: "master_data.csv"
+
