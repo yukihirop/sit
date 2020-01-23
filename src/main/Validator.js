@@ -38,12 +38,15 @@ function Validator(opts) {
 
     switch (type) {
       case 'GoogleSpreadSheet':
-        const url = yamlData['sheet']['gss']['url'];
-        const validator = new GSSValidator(url, baseURL);
-        result = validator.isSpreadSheetURL();
-        if (!result) {
-          setErrors(...validator.getErrors())
-        }
+        const remotes = yamlData['repo']['remote'];
+        Object.keys(remotes).forEach((name) => {
+          let url = remotes[name];
+          let validator = new GSSValidator(url, baseURL);
+          result = validator.isSpreadSheetURL();
+          if (!result) {
+            setErrors(...validator.getErrors())
+          }
+        })
         break;
     }
 

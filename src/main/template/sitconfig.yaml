@@ -2,7 +2,6 @@
 version: "1.0.0"
 sheet:
   gss:
-    url: &sheet_url <your/GoogleSpreadSheet/url>
     auth:
       credPath: ./creds.json
     openAPIV3Schema:
@@ -19,7 +18,8 @@ sheet:
           description: キー
 repo:
   local: ./.sit
-  remote: *sheet_url
+  remote:
+    origin: <your/GoogleSpreadSheet/url>
 local:
   dist:
     path: ./dist

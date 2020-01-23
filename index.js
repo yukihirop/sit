@@ -18,31 +18,31 @@ program
   .description('sit cli')
 
 program
-  .command('fetch <branch>')
+  .command('fetch <origin> <branch>')
   .description('fetch rows from Sheet')
   .option(
     '-t, --type <type>',
     'sheet type',
     'GoogleSpreadSheet'
   )
-  .action((branch, options) => {
+  .action((origin, branch, options) => {
     const { type } = options;
     sit({
       type: type
-    }).Sheet.fetch(branch).then(result => {
+    }).Sheet.fetch(origin, branch).then(result => {
       console.log(`updated file: ${result}`);
     });
   });
 
 program
-  .command('push <branch>')
+  .command('push <origin> <branch>')
   .description('push locales to Sheet')
   .option(
     '-t, --type <type>',
     'sheet type',
     'GoogleSpreadSheet'
   )
-  .action((branch, options) => {
+  .action((origin, branch, options) => {
     const { type } = options;
     sit({
       type: type

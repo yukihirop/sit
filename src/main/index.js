@@ -26,9 +26,9 @@ function sit(opts) {
     const sheet = new AppSheet(opts)
       , local = new AppLocal(opts)
 
-    Sheet.fetch = (branch) => {
+    Sheet.fetch = (origin, branch) => {
       return new Promise((resolve, reject) => {
-        sheet.getRows(branch, rows => {
+        sheet.getRows(origin, branch, rows => {
           var result = sheet.rows2CSV(rows);
           local.updateData(result).then(file => {
             resolve(file);
@@ -37,9 +37,9 @@ function sit(opts) {
       })
     }
 
-    Sheet.push = (branch = 'master') => {
+    Sheet.push = (origin, branch = 'master') => {
       return new Promise((resolve, reject) => {
-        sheet.pushRows(branch, (data) => {
+        sheet.pushRows(origin, branch, (data) => {
           resolve(data);
         });
       })
