@@ -18,35 +18,35 @@ program
   .description('sit cli')
 
 program
-  .command('fetch <origin> <branch>')
+  .command('fetch <repository> <branch>')
   .description('fetch rows from Sheet')
   .option(
     '-t, --type <type>',
     'sheet type',
     'GoogleSpreadSheet'
   )
-  .action((origin, branch, options) => {
+  .action((repository, branch, options) => {
     const { type } = options;
     sit({
       type: type
-    }).Sheet.fetch(origin, branch).then(result => {
+    }).Sheet.fetch(repository, branch).then(result => {
       console.log(`updated file: ${result}`);
     });
   });
 
 program
-  .command('push <origin> <branch>')
-  .description('push locales to Sheet')
+  .command('push <repository> <branch>')
+  .description('push rows into Sheet')
   .option(
     '-t, --type <type>',
     'sheet type',
     'GoogleSpreadSheet'
   )
-  .action((origin, branch, options) => {
+  .action((repository, branch, options) => {
     const { type } = options;
     sit({
       type: type
-    }).Sheet.push(branch).then(result => {
+    }).Sheet.push(repository, branch).then(result => {
       result.forEach(data => {
         console.log(data);
       })

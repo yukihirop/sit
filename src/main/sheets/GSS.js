@@ -27,8 +27,8 @@ function GSS(opts) {
   const local = new Local(opts);
   const worksheet = new Worksheet(headerData);
 
-  const getInfo = (origin, branch, callback) => {
-    return Client(remotes[origin], opts).then(doc => {
+  const getInfo = (repoName, branch, callback) => {
+    return Client(remotes[repoName], opts).then(doc => {
       new Promise((resolve, reject) => {
         doc.getInfo((err, info) => {
           if (err) reject(err);
@@ -43,8 +43,8 @@ function GSS(opts) {
     });
   };
 
-  const getRows = (origin, branch, callback) => {
-    return getInfo(origin, branch, sheet => {
+  const getRows = (repoName, branch, callback) => {
+    return getInfo(repoName, branch, sheet => {
       new Promise((resolve, reject) => {
         sheet.getRows((err, rows) => {
           if (err) reject(err);
@@ -58,8 +58,8 @@ function GSS(opts) {
     });
   };
 
-  const pushRows = (origin, branch, callback) => {
-    return Client(remotes[origin], opts).then(doc => {
+  const pushRows = (repoName, branch, callback) => {
+    return Client(remotes[repoName], opts).then(doc => {
       new Promise((resolve, reject) => {
         doc.addWorksheet({
           title: branch
