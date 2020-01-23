@@ -16,9 +16,9 @@ sit init
 # Configure .sitconfig
 #
 # Fetch sheet
-sit fetch master
+sit fetch origin master
 # Update sheet
-sit push master
+sit push origin master
 # cat-file
 sit cat-file
 # compute sit object
@@ -29,22 +29,22 @@ sit hash-object
 
 ```bash
 $ sit -h
-Usage: index [options] [command]
+Usage: sit [options] [command]
 
 sit cli
 
 Options:
-  -V, --version                 output the version number
-  -h, --help                    output usage information
+  -V, --version                          output the version number
+  -h, --help                             output usage information
 
 Commands:
-  fetch [options] <branch>      fetch rows from Sheet
-  push [options] <branch>       push locales to Sheet
-  cat-file [options] <hash>     cat sit objects
-  hash-object [options] <path>  compute hash sit object
-  init                          create setting file (.sitconfig)
-  clasp                         clasp cli
-  repo                          repo cli
+  fetch [options] <repository> <branch>  fetch rows from Sheet
+  push [options] <repository> <branch>   push rows into Sheet
+  cat-file [options] <hash>              cat sit objects
+  hash-object [options] <path>           compute hash sit object
+  init                                   create setting file (.sitconfig)
+  clasp                                  clasp cli
+  repo                                   repo cli
 ```
 
 ## ❤️ Support Sheets
@@ -67,7 +67,6 @@ The default settings are as follows:
 version: "1.0.0"
 sheet:
   gss:
-    url: &sheet_url <your/GoogleSpreadSheet/url>
     auth:
       credPath: ./creds.json
     openAPIV3Schema:
@@ -84,7 +83,10 @@ sheet:
           description: キー
 repo:
   local: ./.sit
-  remote: *sheet_url
+  remote:
+    origin: <your/GoogleSpreadSheet/url>
 local:
-  distDirPath: ./dist/locales
+  dist:
+    path: ./dist
+    sheetName: "master_data.csv"
 ```
