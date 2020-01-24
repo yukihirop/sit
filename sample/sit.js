@@ -18,3 +18,5 @@ client.Repo.catFile('fcd37b4', { isPrettyPrint: true });
 
 let hash = client.Repo.hashObject('src/main/SitRepo.js', { type: 'blob', write: false });
 console.log(hash);
+
+client.Repo.commit({ message: 'initial commit' });

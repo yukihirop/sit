@@ -90,6 +90,17 @@ program
   })
 
 program
+  .command('commit')
+  .description('commit sit object')
+  .option(
+    '-m, --message <message>',
+    'commit message'
+)
+  .action(options => {
+    sit().Repo.commit(options);
+  })
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)
