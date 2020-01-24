@@ -56,6 +56,55 @@ class SitRepo extends SitBaseRepo {
     const data = fileSafeLoad(path);
     return this._objectHash(data, type, write);
   }
+
+  // private
+  _add(path, opts) {
+    // STEP 1: Update index
+    // Do not necessary.
+
+    // STEP 2: Create sit objects (blob)
+    return this.hashObject(path, Object.assign(opts, { type: 'blob', write: true }));
+  }
+
+  // private
+  commit(opts = {}) {
+    const { message } = opts
+      , refBranch = this._HEAD()
+      , branch = refBranch.split('/').slice(-1)[0]
+      , beforeHEADHash = this._refResolve('HEAD')
+      , afterHEADHash = this._add(this.distFilePath, opts)
+      , isExistMessage = (message !== '') && (message !== undefined)
+      , isChangeHash = beforeHEADHash !== afterHEADHash;
+
+    if (isExistMessage && isChangeHash) {
+      // STEP 1: Update COMMIT_EDITMSG
+      this._writeSyncFile('COMMIT_EDITMSG', message);
+
+      // STEP 2: Update HEAD
+      this._writeSyncFile(refBranch, afterHEADHash);
+
+      // STEP 3: Update logs/HEAD
+      this._writeLog("logs/HEAD", beforeHEADHash, afterHEADHash, `commit ${message}`);
+
+      // STEP 4: Update logs/refs/heads/<branch>
+      this._writeLog(`logs/${refBranch}`, beforeHEADHash, afterHEADHash, `commit ${message}`);
+
+      // STEP 5: Update index
+      // Do not necessary
+
+      // STEP 6: Create sit objects (commit, tree)
+      // Do not necessary
+
+      // STEP 7: display info
+      // TODO: display insertions(+), deletions(-) info
+      console.log(`[${branch} ${afterHEADHash.slice(0, 7)}] ${message}`);
+
+    } else if (isExistMessage && !isChangeHash) {
+      console.log(`On branch ${branch}\nnothing to commit`);
+    } else {
+      console.error('Need message to commit');
+    }
+  }
 }
 
 module.exports = SitRepo;

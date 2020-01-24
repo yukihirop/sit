@@ -9,20 +9,49 @@ const {
   fileSafeLoad,
   fileUnzip,
   fileDeflate,
-  fileBasename
+  fileBasename,
+  appendFile
 } = require('../utils/file');
 
 const recursive = require('recursive-readdir')
+  , moment = require('moment')
   , crypto = require('crypto')
   , shasum = crypto.createHash('sha1');
+
 
 const SitBlob = require('./SitBlob');
 const SitTree = require('./SitTree');
 
+const INITIAL_HASH = '0000000000000000000000000000000000000000';
+
 class SitBaseRepo {
   constructor(opts) {
-    this.settingPath = opts.settingPath
-    this.localRepo = this._createLocalRepo(this.settingPath)
+    this.settingPath = opts.settingPath;
+    this.settingData = yamlSafeLoad(this.settingPath);
+    this.distFilePath = `${this.settingData["dist"]["path"]}/${this.settingData["dist"]["sheetName"]}`;
+
+    this.localRepo = this._createLocalRepo(this.settingPath);
+  }
+
+  _HEAD() {
+    let data = fileSafeLoad(this._repoFile(false, 'HEAD'));
+    data = data.trim();
+
+    if (data.startsWith("ref: ")) {
+      return data.slice(5)
+    } else {
+      throw new Error(`Invalid format HEAD`)
+    }
+  }
+
+  _writeLog(path, beforeHash, afterHash, message) {
+    const space = ' ';
+    const data = `${beforeHash}${space}${afterHash}${space}${moment().format('x')}${space}${moment().format('ZZ')}\t${message}\r\n`;
+    appendFile(`${this.localRepo}/${path}`, data);
+  }
+
+  _writeSyncFile(path, data) {
+    writeSyncFile(`${this.localRepo}/${path}`, data);
   }
 
   /*
@@ -192,13 +221,19 @@ class SitBaseRepo {
   }
 
   _refResolve(ref) {
-    let data = fileSafeLoad(this._repoFile(false, ref));
-    data = data.trim();
+    const fullRefPath = this._repoFile(false, ref);
 
-    if (data.startsWith("ref: ")) {
-      return this._refResolve(data.slice(5))
+    if (isExistFile(fullRefPath)) {
+      let data = fileSafeLoad(fullRefPath);
+      data = data.trim();
+
+      if (data.startsWith("ref: ")) {
+        return this._refResolve(data.slice(5));
+      } else {
+        return data;
+      }
     } else {
-      return data
+      return INITIAL_HASH;
     }
   }
 

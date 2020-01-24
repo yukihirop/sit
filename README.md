@@ -17,6 +17,8 @@ sit init
 #
 # Fetch sheet
 sit fetch origin master
+# commit
+sit commit -m 'initial commit'
 # Update sheet
 sit push origin master
 # cat-file
@@ -28,7 +30,7 @@ sit hash-object
 ## 📖 Usage
 
 ```bash
-$ sit -h
+sit -h
 Usage: sit [options] [command]
 
 sit cli
@@ -42,6 +44,7 @@ Commands:
   push [options] <repository> <branch>   push rows into Sheet
   cat-file [options] <hash>              cat sit objects
   hash-object [options] <path>           compute hash sit object
+  commit [options]                       commit sit object
   init                                   create setting file (.sitconfig)
   clasp                                  clasp cli
   repo                                   repo cli

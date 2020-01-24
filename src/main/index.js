@@ -64,6 +64,10 @@ function sit(opts) {
     return repo.hashObject(path, opts);
   }
 
+  Repo.commit = (opts) => {
+    return repo.commit(opts);
+  }
+
   return {
     Sheet,
     Repo
