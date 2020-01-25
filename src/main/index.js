@@ -37,13 +37,39 @@ function sit(opts) {
       })
     }
 
-    Sheet.push = (repoName, branch = 'master') => {
-      return new Promise((resolve, reject) => {
-        sheet.pushRows(repoName, branch, (data) => {
-          resolve(data);
+    Repo.push = (repoName, branch = 'master', opts) => {
+      const { type, force } = opts;
+
+      // Update local repo
+      repo.push(repoName, branch, opts).then((hashData) => {
+
+        const { beforeHash, afterHash } = hashData;
+
+        if (beforeHash === afterHash) {
+          console.log('Everything up-to-date');
+          return;
+        }
+
+        // Push spreadsheet
+        let updateBranchPromise = sheet.pushRows(repoName, branch, local.getData(), force);
+        let updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", [[branch, afterHash]], false, ['reponame', 'sha1']);
+
+        return Promise.all([updateRefRemotePromise, updateBranchPromise]).then(() => {
+
+          console.log(`\
+Writed objects: 100% (1/1)
+Total 1\n\
+remote:\n\
+remote: Create a pull request for ${branch} on ${type} by visiting:\n\
+remote:     ${repo.remoteRepo(repoName)}\n\
+remote:\n\
+To ${repo.remoteRepo(repoName)}\n\
+    ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}
+`);
         });
-      })
+      });
     }
+
   } else {
     console.log(...validator.getErrors());
   }
