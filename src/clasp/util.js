@@ -57,7 +57,7 @@ function getShownSheetNames() {
 
 function getDiffBranches() {
   var sheetsBranches = getShownSheetNames();
-  var refsBranches = getColumValues(REMOTE_REF, 'A', 0)
+  var refsBranches = getColumValues(REMOTE_REF, 'A', 1)
   var result = refsBranches.filter(function (branch) {
     return sheetsBranches.indexOf(branch) == -1
   });
