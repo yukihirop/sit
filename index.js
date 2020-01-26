@@ -35,25 +35,6 @@ program
   });
 
 program
-  .command('push <repository> <branch>')
-  .description('push rows into Sheet')
-  .option(
-    '-t, --type <type>',
-    'sheet type',
-    'GoogleSpreadSheet'
-  )
-  .action((repository, branch, options) => {
-    const { type } = options;
-    sit({
-      type: type
-    }).Sheet.push(repository, branch).then(result => {
-      result.forEach(data => {
-        console.log(data);
-      })
-    });
-  });
-
-program
   .command('cat-file <hash>')
   .description('cat sit objects')
   .option(
@@ -95,10 +76,29 @@ program
   .option(
     '-m, --message <message>',
     'commit message'
-)
+  )
   .action(options => {
     sit().Repo.commit(options);
   })
+
+program
+  .command('push <repository> <branch>')
+  .description('push rows into Sheet')
+  .option(
+    '-t, --type <type>',
+    'sheet type',
+    'GoogleSpreadSheet'
+  )
+  .option(
+    '-f, --force',
+    'override sheet'
+  )
+  .action((repository, branch, options) => {
+    const { type, force } = options;
+    sit({
+      type: type
+    }).Repo.push(repository, branch, options);
+  });
 
 program
   .useSubcommand(initCmd)

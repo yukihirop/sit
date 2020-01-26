@@ -2,7 +2,7 @@
 
 const merge = require('deepmerge');
 
-function Worksheet(headerData) {
+function Worksheet() {
   /*
   {
     '0.1': { rowNum: 0, colNum: 1, value: 'hello', type: 'item' },

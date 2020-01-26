@@ -3,7 +3,7 @@
 const sit = require('../src/main/index');
 const client = sit()
 
-client.Sheet.fetch('origin', 'master').then(result => {
+client.Sheet.fetch('origin', 'refs/remotes').then(result => {
   console.log(result);
 });
 

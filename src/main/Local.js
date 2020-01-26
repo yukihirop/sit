@@ -37,16 +37,10 @@ function Local(opts) {
   }
 
   const getData = () => {
-    return new Promise((resolve, reject) => {
-      try {
-        var fullDistPath = absolutePath(distDirPath)
+    const fullDistPath = absolutePath(distDirPath)
           , fullPath = `${fullDistPath}/${distSheetName}`
 
-        resolve(csvSafeLoad(fullPath))
-      } catch (err) {
-        reject(err)
-      }
-    })
+    return csvSafeLoad(fullPath);
   }
 
   return {

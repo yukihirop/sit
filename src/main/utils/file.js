@@ -130,7 +130,7 @@ const appendFile = (file, data) => {
 }
 
 const fileSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {
-  var loadPath = file;
+  let loadPath = file;
 
   if (isRelative) {
     loadPath = path.resolve(currentPath, file);

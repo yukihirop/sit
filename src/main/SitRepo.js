@@ -21,6 +21,7 @@ class SitRepo extends SitBaseRepo {
       mkdirSyncRecursive(`${localRepo}/refs/remotes`);
       mkdirSyncRecursive(`${localRepo}/objects`);
       mkdirSyncRecursive(`${localRepo}/logs/refs/heads`);
+      mkdirSyncRecursive(`${localRepo}/logs/refs/remotes`);
 
       writeSyncFile(`${localRepo}/HEAD`, "ref: refs/heads/master", true);
       writeSyncFile(`${localRepo}`, "", true);
@@ -104,6 +105,23 @@ class SitRepo extends SitBaseRepo {
     } else {
       console.error('Need message to commit');
     }
+  }
+
+  push(repoName, branch, opts) {
+    return new Promise((resolve, reject) => {
+      const logPath = `logs/refs/remotes/${repoName}/${branch}`;
+      const refPath = `refs/remotes/${repoName}/${branch}`;
+      const beforeHash = this._refResolve(refPath);
+      const afterHash = this._refResolve('HEAD');
+
+      // STEP 1: Update logs/refs/remotes/<repoName>/<branch>
+      this._writeLog(logPath, beforeHash, afterHash, `update by push`);
+
+      // STEP 2: Update refs/remotes/<repoName>/<branch>
+      this._writeSyncFile(refPath, afterHash);
+
+      resolve({ beforeHash: beforeHash, afterHash: afterHash });
+    });
   }
 }
 

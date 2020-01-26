@@ -1,100 +1,102 @@
 'use strict';
 
-const uuidv4 = require('uuid/v4');
+const {
+  yamlSafeLoad
+} = require('../utils/file');
 
 const Client = require('./GSSClient');
-const { yamlSafeLoad } = require('../utils/file');
 const Worksheet = require('./Worksheet');
-const Local = require('../Local')
-
-const _mergedDefaultOptions = (opts) => {
-  const defaultOpts = {
-    workSheetName: 'シート1'
-  }
-  return Object.assign({}, defaultOpts, opts)
-}
 
 function GSS(opts) {
   const { settingPath } = opts;
 
   const settingData = yamlSafeLoad(settingPath)
     , remotes = settingData["repo"]["remote"]
-    , sheetSchema = settingData["sheet"]["gss"]["openAPIV3Schema"]["properties"]
-    , headerData = Object.keys(sheetSchema);
+    , sheetSchema = settingData["sheet"]["gss"]["openAPIV3Schema"]["properties"];
 
-  opts = _mergedDefaultOptions(opts);
+  const worksheet = new Worksheet();
 
-  const local = new Local(opts);
-  const worksheet = new Worksheet(headerData);
-
-  const getInfo = (repoName, branch, callback) => {
+  const getInfo = (repoName, sheetName, callback) => {
     return Client(remotes[repoName], opts).then(doc => {
       new Promise((resolve, reject) => {
         doc.getInfo((err, info) => {
           if (err) reject(err);
-          var wh = info.worksheets.filter(sheet => sheet.title == branch)[0]
+          var wh = info.worksheets.filter(sheet => sheet.title == sheetName)[0]
           resolve(wh);
         });
-      }).then(sheet => {
-        if (callback) {
-          callback(sheet);
-        }
+      }).then((sheet) => {
+        if (callback) callback(doc, sheet);
       });
     });
   };
 
-  const getRows = (repoName, branch, callback) => {
-    return getInfo(repoName, branch, sheet => {
+  const getRows = (repoName, sheetName) => {
+    return getInfo(repoName, sheetName, (_, sheet) => {
       new Promise((resolve, reject) => {
         sheet.getRows((err, rows) => {
           if (err) reject(err);
           resolve(rows);
         });
-      }).then(rows => {
-        if (callback) {
-          callback(rows);
-        }
       });
     });
   };
 
-  const pushRows = (repoName, branch, callback) => {
-    return Client(remotes[repoName], opts).then(doc => {
+  /* e.x.)
+    data = [['master', '0230dedd90bfa7fb5abd035d7f5495dcbe2ad850']]
+    data = [['こんちは', 'hello', 'greeting.hello'],
+            ['さようなら', 'good bye', 'greeting.good_bye']]
+  */
+  const pushRows = (repoName, sheetName, data, force = false, headers = _headers(sheetSchema)) => {
+    return getInfo(repoName, sheetName, (doc, sheet) => {
       new Promise((resolve, reject) => {
-        doc.addWorksheet({
-          title: branch
-        }, (err, sheet) => {
-          if (err) reject(err);
-          resolve(sheet);
-        });
-      }).then(sheet => {
-        local.getData().then(result => {
-          _bulkPushRow(sheet, worksheet.csvData(result));
-          if (callback) callback(result);
-        });
+
+        if (sheet) {
+          sheet.getRows((err, rows) => {
+            if (err) reject(err);
+            let csvData = rows2CSV(rows, headers);
+
+            if (force) {
+              csvData = data;
+            } else {
+              csvData.push(...data);
+            }
+
+            _bulkPushRow(sheet, worksheet.csvData(csvData), headers);
+            resolve(csvData);
+          });
+        } else {
+          doc.addWorksheet({
+            title: sheetName
+          }, (err, newSheet) => {
+            if (err) reject(err);
+            _bulkPushRow(newSheet, worksheet.csvData(data), headers);
+            resolve(data);
+          });
+        }
       });
     });
   }
 
-  const rows2CSV = (rows) => {
-    var headers = _headers(sheetSchema);
-    var result = [];
+  const rows2CSV = (rows, headers = _headers(sheetSchema)) => {
+    let result = [];
 
     rows.forEach(row => {
-      var rowResult = []
+      let rowResult = [];
+
       headers.forEach(header => {
         rowResult.push(row[header])
       });
       result.push(rowResult)
     });
     result.unshift(headers);
+
     return result;
   }
 
   // private
 
-  const _bulkPushRow = (sheet, data) => {
-    const maxRowCount = Math.ceil(Object.keys(data).length / _headers(sheetSchema).length);
+  const _bulkPushRow = (sheet, data, headers = _headers(sheetSchema)) => {
+    const maxRowCount = Math.ceil(Object.keys(data).length / headers.length);
 
     sheet.getCells({
       'min-row': 1,

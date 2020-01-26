@@ -18,7 +18,6 @@ const recursive = require('recursive-readdir')
   , crypto = require('crypto')
   , shasum = crypto.createHash('sha1');
 
-
 const SitBlob = require('./SitBlob');
 const SitTree = require('./SitTree');
 
@@ -33,6 +32,10 @@ class SitBaseRepo {
     this.localRepo = this._createLocalRepo(this.settingPath);
   }
 
+  remoteRepo(repoName) {
+    return this._createRemoteRepo(this.settingPath, repoName);
+  }
+
   _HEAD() {
     let data = fileSafeLoad(this._repoFile(false, 'HEAD'));
     data = data.trim();
@@ -44,13 +47,30 @@ class SitBaseRepo {
     }
   }
 
-  _writeLog(path, beforeHash, afterHash, message) {
+  _writeLog(path, beforeHash, afterHash, message, mkdir = true) {
     const space = ' ';
     const data = `${beforeHash}${space}${afterHash}${space}${moment().format('x')}${space}${moment().format('ZZ')}\t${message}\r\n`;
+
+    if (mkdir) {
+      const fullDirPath = this.localRepo + '/' + path.split('/').slice(0, -1).join('/');
+
+      if (!isExistFile(fullDirPath)) {
+        mkdirSyncRecursive(fullDirPath);
+      }
+    }
+
     appendFile(`${this.localRepo}/${path}`, data);
   }
 
-  _writeSyncFile(path, data) {
+  _writeSyncFile(path, data, mkdir = true) {
+    if (mkdir) {
+      const fullDirPath = this.localRepo + '/' + path.split('/').slice(0, -1).join('/');
+
+      if (!isExistFile(fullDirPath)) {
+        mkdirSyncRecursive(fullDirPath);
+      }
+    }
+
     writeSyncFile(`${this.localRepo}/${path}`, data);
   }
 
@@ -220,11 +240,21 @@ class SitBaseRepo {
     return yamlData["repo"]["local"];
   }
 
+  _createRemoteRepo(path, repoName) {
+    const yamlData = yamlSafeLoad(path);
+    return yamlData["repo"]["remote"][repoName];
+  }
+
   _refResolve(ref) {
     const fullRefPath = this._repoFile(false, ref);
 
     if (isExistFile(fullRefPath)) {
-      let data = fileSafeLoad(fullRefPath);
+      let data = fileSafeLoad(fullRefPath, false);
+
+      if (!data) {
+        console.log("なんでよ");
+      }
+
       data = data.trim();
 
       if (data.startsWith("ref: ")) {
