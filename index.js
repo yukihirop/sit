@@ -71,6 +71,13 @@ program
   })
 
 program
+  .command('status')
+  .description('status sit object')
+  .action(options => {
+    sit().Repo.status(options);
+  });
+
+program
   .command('commit')
   .description('commit sit object')
   .option(

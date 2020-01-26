@@ -43,6 +43,7 @@ Commands:
   fetch [options] <repository> <branch>  fetch rows from Sheet
   cat-file [options] <hash>              cat sit objects
   hash-object [options] <path>           compute hash sit object
+  status                                 status sit object
   commit [options]                       commit sit object
   push [options] <repository> <branch>   push rows into Sheet
   init                                   create setting file (.sitconfig)

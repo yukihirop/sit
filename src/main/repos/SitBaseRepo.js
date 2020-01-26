@@ -250,11 +250,6 @@ class SitBaseRepo {
 
     if (isExistFile(fullRefPath)) {
       let data = fileSafeLoad(fullRefPath, false);
-
-      if (!data) {
-        console.log("なんでよ");
-      }
-
       data = data.trim();
 
       if (data.startsWith("ref: ")) {
@@ -264,6 +259,21 @@ class SitBaseRepo {
       }
     } else {
       return INITIAL_HASH;
+    }
+  }
+
+  _branchResolve() {
+    const fullRefPath = this._repoFile(false, "HEAD");
+
+    if (isExistFile(fullRefPath)) {
+      let data = fileSafeLoad(fullRefPath, false);
+      data = data.trim();
+
+      if (data.startsWith("ref: ")) {
+        return data.slice(5).split('/').slice(-1)[0];
+      } else {
+        return 'master';
+      }
     }
   }
 

@@ -67,6 +67,23 @@ class SitRepo extends SitBaseRepo {
     return this.hashObject(path, Object.assign(opts, { type: 'blob', write: true }));
   }
 
+  status(opts = {}) {
+    opts = Object.assign(opts, { type: 'blob' });
+
+    const currentBranch = this._branchResolve();
+    const currentHash = this._refResolve('HEAD');
+    const calculateHash = this.hashObject(this.distFilePath, opts);
+
+    if (currentHash !== calculateHash) {
+      console.log(`modified: ${this.distFilePath}`);
+    } else {
+      console.log(`\
+On branch ${currentBranch}\n\
+nothing to commit`
+      );
+    }
+  }
+
   // private
   commit(opts = {}) {
     const { message } = opts
