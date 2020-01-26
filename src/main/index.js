@@ -90,6 +90,10 @@ To ${repo.remoteRepo(repoName)}\n\
     return repo.hashObject(path, opts);
   }
 
+  Repo.status = (opts) => {
+    return repo.status(opts);
+  }
+
   Repo.commit = (opts) => {
     return repo.commit(opts);
   }
