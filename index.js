@@ -72,14 +72,21 @@ program
 
 program
   .command('status')
-  .description('status sit object')
+  .description('status dist file')
   .action(options => {
     sit().Repo.status(options);
   });
 
 program
+  .command('diff')
+  .description('diff dist file')
+  .action(options => {
+    sit().Repo.diff(options);
+  });
+
+program
   .command('commit')
-  .description('commit sit object')
+  .description('commit dist file')
   .option(
     '-m, --message <message>',
     'commit message'

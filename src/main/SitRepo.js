@@ -1,11 +1,17 @@
 'use strict';
 
+const jsdiff = require('diff');
+
 const {
   isExistFile,
   mkdirSyncRecursive,
   fileSafeLoad,
   writeSyncFile
 } = require('./utils/file');
+
+const {
+  colorize
+} = require('./utils/string');
 
 const SitBaseRepo = require('./repos/SitBaseRepo');
 
@@ -30,25 +36,13 @@ class SitRepo extends SitBaseRepo {
     }
   }
 
-  catFile(obj, opts) {
-    const { type, size, prettyPrint } = opts
-
-    this._objectFind(obj).then(sha => {
-      this._objectRead(sha).then(obj => {
-        if (type) {
-          console.log(obj.fmt);
-        }
-
-        if (size) {
-          console.log(obj.size);
-        }
-
-        if (prettyPrint) {
-          console.log(obj.serialize().toString());
-        }
-      }).catch(err => {
-        console.log(err);
-      })
+  catFile(obj) {
+    return new Promise((resolve, reject) => {
+      this._objectFind(obj).then(sha => {
+        this._objectRead(sha).then(obj => {
+          resolve(obj);
+        })
+      });
     })
   }
 
@@ -65,6 +59,27 @@ class SitRepo extends SitBaseRepo {
 
     // STEP 2: Create sit objects (blob)
     return this.hashObject(path, Object.assign(opts, { type: 'blob', write: true }));
+  }
+
+  diff(opts = {}) {
+    opts = Object.assign(opts, { type: 'blob' });
+    const headHash = this._refResolve('HEAD');
+    const calculateHash = this.hashObject(this.distFilePath, opts);
+    const index = `${headHash.slice(0, 7)}..${calculateHash.slice(0, 7)}`;
+
+    this.catFile(headHash).then(obj => {
+      const headStream = obj.serialize().toString();
+      const currentStream = fileSafeLoad(this.distFilePath);
+
+      let patch = jsdiff.createPatch(index, headStream, currentStream, this.distFilePath, this.distFilePath);
+      patch = patch
+        .replace(/^[---].*\t/gm, '--- ')
+        .replace(/^[+++].*\t/gm, '+++ ')
+        .replace(/^\-.*/gm, colorize('$&', 'removed'))
+        .replace(/^\+.*/gm, colorize('$&', 'added'))
+        .replace(/^@@.+@@/gm, colorize('$&', 'section'));
+      console.log(patch);
+    });
   }
 
   status(opts = {}) {
