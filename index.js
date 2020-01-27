@@ -71,6 +71,17 @@ program
   })
 
 program
+  .command('checkout [name]')
+  .description('checkout branch')
+  .option(
+    '-b, --branch <branch>',
+    'branch'
+  )
+  .action((name, options) => {
+    sit().Repo.checkout(name, options);
+  });
+
+program
   .command('status')
   .description('status dist file')
   .action(options => {
