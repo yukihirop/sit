@@ -83,7 +83,24 @@ To ${repo.remoteRepo(repoName)}\n\
   }
 
   Repo.catFile = (obj, opts) => {
-    return repo.catFile(obj, opts);
+    const { type, size, prettyPrint } = opts;
+
+    return repo.catFile(obj).then(result => {
+
+      if (type) {
+        console.log(result.fmt);
+      }
+
+      if (size) {
+        console.log(result.size);
+      }
+
+      if (prettyPrint) {
+        console.log(result.serialize().toString());
+      }
+    }).catch(err => {
+      console.log(err);
+    });
   }
 
   Repo.hashObject = (path, opts) => {
@@ -92,6 +109,10 @@ To ${repo.remoteRepo(repoName)}\n\
 
   Repo.status = (opts) => {
     return repo.status(opts);
+  }
+
+  Repo.diff = (opts) => {
+    return repo.diff(opts);
   }
 
   Repo.commit = (opts) => {

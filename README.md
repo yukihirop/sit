@@ -1,6 +1,6 @@
 # sit
 
- Git like management for Sheet (ex: GoogleSpreadSheet)
+Management for Sheet (ex: GoogleSpreadSheet) like git
 
 ## 📦 Installation
 
@@ -15,16 +15,23 @@ sit init
 #
 # Configure .sitconfig
 #
+# repo init
+sit repo init
+# clasp init
+sit clasp init
+# clasp
+clasp push
+clasp deploy
 # Fetch sheet
 sit fetch origin master
+# status
+sit status
+# diff
+sit diff
 # commit
 sit commit -m 'initial commit'
 # Update sheet
 sit push origin master
-# cat-file
-sit cat-file
-# compute sit object
-sit hash-object
 ```
 
 ## 📖 Usage
@@ -43,8 +50,9 @@ Commands:
   fetch [options] <repository> <branch>  fetch rows from Sheet
   cat-file [options] <hash>              cat sit objects
   hash-object [options] <path>           compute hash sit object
-  status                                 status sit object
-  commit [options]                       commit sit object
+  status                                 status dist file
+  diff                                   diff dist file
+  commit [options]                       commit dist file
   push [options] <repository> <branch>   push rows into Sheet
   init                                   create setting file (.sitconfig)
   clasp                                  clasp cli

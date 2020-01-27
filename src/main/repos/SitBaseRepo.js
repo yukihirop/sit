@@ -134,7 +134,7 @@ class SitBaseRepo {
         const size = parseInt(binary.slice(x, y));
         const data = binary.slice(y + 1);
 
-        if (size != (binary.length - y - 1)) {
+        if (size != (binary.toString().length - y - 1)) {
           const err = new Error(`Malformed object ${sha}: bad length.`)
           reject(err);
         }
