@@ -49,7 +49,7 @@ class SitBaseRepo {
 
   _writeLog(path, beforeHash, afterHash, message, mkdir = true) {
     const space = ' ';
-    const data = `${beforeHash}${space}${afterHash}${space}${moment().format('x')}${space}${moment().format('ZZ')}\t${message}\r\n`;
+    const data = `${beforeHash || INITIAL_HASH}${space}${afterHash}${space}${moment().format('x')}${space}${moment().format('ZZ')}\t${message}\r\n`;
 
     if (mkdir) {
       const fullDirPath = this.localRepo + '/' + path.split('/').slice(0, -1).join('/');
@@ -176,6 +176,8 @@ class SitBaseRepo {
         } else {
           resolve(null);
         }
+      }).catch(err => {
+        console.error(err);
       });
     });
   }
@@ -193,6 +195,7 @@ class SitBaseRepo {
   _objectResolve(name) {
     const hashRE = new RegExp('^[0-9A-Fa-f]{1,40}$')
     const smallHashRE = new RegExp('^[0-9A-Fa-f]{1,7}');
+    let isFound = false;
 
     return new Promise((resolve, reject) => {
       if (!name) {
@@ -200,11 +203,12 @@ class SitBaseRepo {
       }
 
       if (name == "HEAD") {
-        resolve([_refResolve("HEAD")])
+        resolve([this._refResolve("HEAD")])
       }
 
       if (name.match(hashRE)) {
         if (name.length == 40) {
+          isFound = true
           resolve([name.toLowerCase()])
         } else if (name.match(smallHashRE)) {
           // This is a small hash 4 seems to be the minimal length
@@ -227,9 +231,19 @@ class SitBaseRepo {
                 }
               });
 
+              isFound = true;
               resolve(candidates);
             });
           }
+        }
+      }
+
+      if (!isFound) {
+        const fullRefPath = this._getPath(`refs/heads/${name}`);
+        if (isExistFile(fullRefPath)) {
+          resolve([this._refResolve(`refs/heads/${name}`)])
+        } else {
+          reject(`error: pathspec '${name}' did not match any file(s) known to sit`);
         }
       }
     });

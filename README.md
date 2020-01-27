@@ -28,6 +28,9 @@ sit fetch origin master
 sit status
 # diff
 sit diff
+# checkout
+sit checkout -b develop
+sit checkout master
 # commit
 sit commit -m 'initial commit'
 # Update sheet
@@ -50,6 +53,7 @@ Commands:
   fetch [options] <repository> <branch>  fetch rows from Sheet
   cat-file [options] <hash>              cat sit objects
   hash-object [options] <path>           compute hash sit object
+  checkout [options] [name]              checkout branch
   status                                 status dist file
   diff                                   diff dist file
   commit [options]                       commit dist file
