@@ -26,15 +26,39 @@ function sit(opts) {
     const sheet = new AppSheet(opts)
       , local = new AppLocal(opts)
 
-    Sheet.fetch = (repoName, branch) => {
-      return new Promise((resolve, reject) => {
-        sheet.getRows(repoName, branch, rows => {
-          var result = sheet.rows2CSV(rows);
-          local.updateData(result).then(file => {
-            resolve(file);
-          })
+    Repo.fetch = (repoName, branch) => {
+      if (repo.remoteRepo(repoName) === undefined) {
+        return console.error(`\
+fatal: '${repoName}' does not appear to be a sit repository
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights and the repository exists.`);
+      }
+
+      sheet.getRows(repoName, branch, (err, rows) => {
+        if (err) return console.error(`fatal: Couldn't find remote ref '${branch}'`);
+
+        let data = sheet.rows2CSV(rows);
+        let sha = repo.hashData(data, { type: 'blob', write: true })
+        repo.fetch(sha, repoName, branch).then(result => {
+          const { beforeHash, remoteHash, branchCount } = result
+
+          if (beforeHash === remoteHash) {
+            console.log(`\
+remote: Total ${branchCount}\n\
+From ${repo.remoteRepo(repoName)}
+* branch\t\t${branch}\t-> FETCH_HEAD`)
+          } else {
+            console.log(`\
+remote: Total ${branchCount}\n\
+From ${repo.remoteRepo(repoName)}
+* branch\t\t${branch}\t-> FETCH_HEAD\n\
+ ${beforeHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`)
+          }
+        }).catch(err => {
+          console.error(err);
         });
-      })
+      });
     }
 
     Repo.push = (repoName, branch = 'master', opts) => {
@@ -64,8 +88,7 @@ remote: Create a pull request for ${branch} on ${type} by visiting:\n\
 remote:     ${repo.remoteRepo(repoName)}\n\
 remote:\n\
 To ${repo.remoteRepo(repoName)}\n\
-    ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}
-`);
+    ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
         });
       });
     }

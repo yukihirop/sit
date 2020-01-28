@@ -18,23 +18,6 @@ program
   .description('sit cli')
 
 program
-  .command('fetch <repository> <branch>')
-  .description('fetch rows from Sheet')
-  .option(
-    '-t, --type <type>',
-    'sheet type',
-    'GoogleSpreadSheet'
-  )
-  .action((repository, branch, options) => {
-    const { type } = options;
-    sit({
-      type: type
-    }).Sheet.fetch(repository, branch).then(result => {
-      console.log(`updated file: ${result}`);
-    });
-  });
-
-program
   .command('cat-file <hash>')
   .description('cat sit objects')
   .option(
@@ -138,6 +121,21 @@ program
     sit({
       type: type
     }).Repo.push(repository, branch, options);
+  });
+
+program
+  .command('fetch <repository> <branch>')
+  .description('fetch rows from Sheet')
+  .option(
+    '-t, --type <type>',
+    'sheet type',
+    'GoogleSpreadSheet'
+  )
+  .action((repository, branch, options) => {
+    const { type } = options;
+    sit({
+      type: type
+    }).Repo.fetch(repository, branch)
   });
 
 program

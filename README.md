@@ -50,15 +50,15 @@ Options:
   -h, --help                             output usage information
 
 Commands:
-  fetch [options] <repository> <branch>  fetch rows from Sheet
   cat-file [options] <hash>              cat sit objects
   hash-object [options] <path>           compute hash sit object
-  branch [options]                       display local branch
+  branch [options]                       operate branch
   checkout [options] [name]              checkout branch
   status                                 status dist file
   diff                                   diff dist file
   commit [options]                       commit dist file
   push [options] <repository> <branch>   push rows into Sheet
+  fetch [options] <repository> <branch>  fetch rows from Sheet
   init                                   create setting file (.sitconfig)
   clasp                                  clasp cli
   repo                                   repo cli
