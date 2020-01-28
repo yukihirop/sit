@@ -53,6 +53,7 @@ Commands:
   fetch [options] <repository> <branch>  fetch rows from Sheet
   cat-file [options] <hash>              cat sit objects
   hash-object [options] <path>           compute hash sit object
+  branch [options]                       display local branch
   checkout [options] [name]              checkout branch
   status                                 status dist file
   diff                                   diff dist file

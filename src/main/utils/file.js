@@ -5,7 +5,8 @@ const fs = require('fs')
   , yaml = require('js-yaml')
   , csv = require('csv')
   , csvSync = require('csv-parse/lib/sync')
-  , zlib = require('zlib');
+  , zlib = require('zlib')
+  , recursive = require('recursive-readdir');
 
 const currentPath = fs.realpathSync('./');
 const rootPath = path.resolve(__dirname, '../../../');
@@ -163,6 +164,14 @@ const fileBasename = (file) => {
   return path.basename(file);
 }
 
+const deleteSyncFile = (path) => {
+  try {
+    fs.unlinkSync(path);
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   isExistFile,
   isDir,
@@ -181,5 +190,7 @@ module.exports = {
   fileSafeLoad,
   fileUnzip,
   fileDeflate,
-  fileBasename
+  fileBasename,
+  recursive,
+  deleteSyncFile
 }

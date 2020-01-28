@@ -6,7 +6,8 @@ const {
   isExistFile,
   mkdirSyncRecursive,
   fileSafeLoad,
-  writeSyncFile
+  writeSyncFile,
+  recursive
 } = require('./utils/file');
 
 const {
@@ -61,9 +62,60 @@ class SitRepo extends SitBaseRepo {
     return this.hashObject(path, Object.assign(opts, { type: 'blob', write: true }));
   }
 
+  branch(opts = {}) {
+    const { all, deleteBranch } = opts;
+    const currentBranch = this._branchResolve('HEAD');
+    let fullBranchDirPath;
+
+    if (deleteBranch) {
+      if (deleteBranch === currentBranch) {
+        console.error(`error: Cannot delete branch '${deleteBranch}' checked out`);
+      } else {
+        this._objectFind(deleteBranch).then((sha) => {
+          if (!sha) {
+            console.error(`error: branch '${deleteBranch}' not found.`)
+          }
+
+          let deleteHash = this._refResolve(`refs/heads/${deleteBranch}`);
+
+          // STEP 1: Delete logs/refs/heads/<deleteBranch>
+          this._deleteSyncFile(`logs/refs/heads/${deleteBranch}`);
+
+          // STEP 2: Delete refs/heads/<deleteBranch>
+          this._deleteSyncFile(`refs/heads/${deleteBranch}`);
+
+          console.log(`Deleted branch ${deleteBranch} ( was ${deleteHash.slice(0,7)})`);
+        });
+      }
+
+    } else {
+
+      if (all) {
+        fullBranchDirPath = this._getPath('refs');
+      } else {
+        fullBranchDirPath = this._getPath('refs/heads');
+      }
+
+      recursive(fullBranchDirPath, (err, files) => {
+        if (err) reject(err);
+
+        files.map(file => {
+          let refPath = file.split('/').slice(1).join('/')
+          let branch = this._branchResolve(refPath);
+
+          if (branch === currentBranch) {
+            console.log(`* ${branch}`);
+          } else {
+            console.log(`  ${branch}`);
+          }
+        });
+      });
+    }
+  }
+
   checkout(name, opts = {}) {
     const { branch } = opts;
-    const currentBranch = this._branchResolve();
+    const currentBranch = this._branchResolve(`HEAD`);
     const currentHash = this._refResolve('HEAD');
     const fullCurrentRefPath = this._getPath(`refs/heads/${branch}`);
 
@@ -134,7 +186,7 @@ class SitRepo extends SitBaseRepo {
   status(opts = {}) {
     opts = Object.assign(opts, { type: 'blob' });
 
-    const currentBranch = this._branchResolve();
+    const currentBranch = this._branchResolve('HEAD');
     const currentHash = this._refResolve('HEAD');
     const calculateHash = this.hashObject(this.distFilePath, opts);
 
