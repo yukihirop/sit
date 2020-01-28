@@ -71,6 +71,21 @@ program
   })
 
 program
+  .command('branch')
+  .description('operate branch')
+  .option(
+    '-a, --all',
+    'display branch all'
+  )
+  .option(
+    '-D, --deleteBranch <deleteBranch>',
+    'delete branch'
+  )
+  .action(options => {
+    sit().Repo.branch(options);
+  });
+
+program
   .command('checkout [name]')
   .description('checkout branch')
   .option(

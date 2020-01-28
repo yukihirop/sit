@@ -107,6 +107,10 @@ To ${repo.remoteRepo(repoName)}\n\
     return repo.hashObject(path, opts);
   }
 
+  Repo.branch = (opts) => {
+    return repo.branch(opts);
+  }
+
   Repo.checkout = (name, opts) => {
     return repo.checkout(name, opts);
   }

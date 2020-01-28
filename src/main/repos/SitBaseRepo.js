@@ -10,7 +10,8 @@ const {
   fileUnzip,
   fileDeflate,
   fileBasename,
-  appendFile
+  appendFile,
+  deleteSyncFile
 } = require('../utils/file');
 
 const recursive = require('recursive-readdir')
@@ -72,6 +73,10 @@ class SitBaseRepo {
     }
 
     writeSyncFile(`${this.localRepo}/${path}`, data);
+  }
+
+  _deleteSyncFile(path) {
+    return deleteSyncFile(`${this.localRepo}/${path}`);
   }
 
   /*
@@ -276,10 +281,10 @@ class SitBaseRepo {
     }
   }
 
-  _branchResolve() {
-    const fullRefPath = this._repoFile(false, "HEAD");
+  _branchResolve(name) {
+    const fullRefPath = this._repoFile(false, name);
 
-    if (isExistFile(fullRefPath)) {
+    if (name === 'HEAD') {
       let data = fileSafeLoad(fullRefPath, false);
       data = data.trim();
 
@@ -287,6 +292,17 @@ class SitBaseRepo {
         return data.slice(5).split('/').slice(-1)[0];
       } else {
         return 'master';
+      }
+    } else {
+      const localBranchRefRE = new RegExp('^refs\/heads\/.+$');
+      const remoteBranchRefRE = new RegExp('^refs\/remotes\/.+\/.+$');
+
+      if (name.match(localBranchRefRE)) {
+        return name.split('/').slice(-1)[0];
+      } else if (name.match(remoteBranchRefRE)) {
+        return name.split('/').slice(2).join('/');
+      } else {
+        return null
       }
     }
   }
