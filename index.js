@@ -139,6 +139,25 @@ program
   });
 
 program
+  .command('merge [repository] [branch]')
+  .description('merge rows')
+  .option(
+    '--continue',
+    'continue merge'
+  )
+  .option(
+    '--stat',
+    'merge status'
+  )
+  .option(
+    '--abort',
+    'abort merge'
+  )
+  .action((repository, branch, options) => {
+    sit().Repo.merge(repository, branch, options);
+  });
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)

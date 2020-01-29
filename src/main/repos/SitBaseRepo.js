@@ -16,8 +16,7 @@ const {
 
 const recursive = require('recursive-readdir')
   , moment = require('moment')
-  , crypto = require('crypto')
-  , shasum = crypto.createHash('sha1');
+  , crypto = require('crypto');
 
 const SitBlob = require('./SitBlob');
 const SitTree = require('./SitTree');
@@ -31,11 +30,30 @@ class SitBaseRepo {
     this.distFilePath = `${this.settingData["dist"]["path"]}/${this.settingData["dist"]["sheetName"]}`;
 
     this.localRepo = this._createLocalRepo(this.settingPath);
-    this.currentBranch = this._branchResolve('HEAD');
   }
 
   remoteRepo(repoName) {
     return this._createRemoteRepo(this.settingPath, repoName);
+  }
+
+  currentBranch() {
+    return this._branchResolve('HEAD');
+  }
+
+  beforeHEADHash() {
+    return this._refResolve('HEAD');
+  }
+
+  afterHEADHash() {
+    return this._add(this.distFilePath, {});
+  }
+
+  _add(path, opts) {
+    // STEP 1: Update index
+    // Do not necessary.
+
+    // STEP 2: Create sit objects (blob)
+    return this.hashObject(path, Object.assign(opts, { type: 'blob', write: true }));
   }
 
   _HEAD() {
@@ -47,6 +65,10 @@ class SitBaseRepo {
     } else {
       throw new Error(`Invalid format HEAD`)
     }
+  }
+
+  _isExistFile(path) {
+    return isExistFile(`${this.localRepo}/${path}`);
   }
 
   _writeLog(path, beforeHash, afterHash, message, mkdir = true) {
@@ -80,6 +102,89 @@ class SitBaseRepo {
     return deleteSyncFile(`${this.localRepo}/${path}`);
   }
 
+  _twoWayMerge(toData, fromData, toName, fromName, callback) {
+    const toMark = '<<<<<<<';
+    const sepalate = '=======';
+    const fromMark = '>>>>>>>';
+
+    this._createtwoWayMergeData(toData, fromData, result => {
+      let arr = [];
+      let currentItemIndex = 0;
+      let currentConflict = false;
+      const initialItem = { startIndex: 0, length: 0, to: [], from: [] };
+
+      Object.keys(result).forEach((key, index) => {
+        let line = result[key];
+        let item = arr[currentItemIndex] || JSON.parse(JSON.stringify(initialItem));
+
+        if (line.conflict) {
+          item.startIndex = currentItemIndex;
+          item.length++;
+          item.to.push(line.to);
+          item.from.push(line.from);
+          arr[currentItemIndex] = item;
+          currentConflict = true
+        } else {
+          if (currentConflict) {
+            currentItemIndex++;
+            item = arr[currentItemIndex] || JSON.parse(JSON.stringify(initialItem))
+            item.startIndex = index;
+            item.to.push(line.to);
+            item.from.push(line.from);
+            arr[currentItemIndex] = item;
+            currentConflict = false
+          } else {
+            item.startIndex = index;
+            item.to.push(line.to);
+            item.from.push(line.from);
+            arr[currentItemIndex] = item;
+            currentItemIndex++;
+          }
+        }
+      });
+
+      let data = [];
+      let isConflict = false;
+      arr.forEach(item => {
+        // conflict
+        if (item.length > 0) {
+          isConflict = true;
+          data.push(`${toMark} ${toName}`);
+          data.push(...item.to.filter(n => n));
+          data.push(sepalate);
+          data.push(...item.from.filter(n => n));
+          data.push(`${fromMark} ${fromName}`);
+        } else {
+          data.push(...item.to);
+        }
+      });
+
+      callback({ conflict: isConflict, data: data });
+    });
+  }
+
+  _createtwoWayMergeData(toData, fromData, callback) {
+    let result = {};
+    let index = 0;
+    while ((toData.length !== 0) || (fromData.length !== 0)) {
+      let toLine = toData.shift() || null;
+      let fromLine = fromData.shift() || null;
+
+
+      if (toLine === fromLine) {
+        result[index] = { conflict: false, to: toLine, from: fromLine };
+      } else {
+        result[index] = { conflict: true, to: toLine, from: fromLine };
+      }
+
+      if ((toData.length === 0) && (fromData.length === 0)) {
+        callback(result);
+      }
+
+      index++
+    }
+  }
+
   /*
     Choose constructor depending on
     object type found in header.
@@ -106,6 +211,7 @@ class SitBaseRepo {
     const header = `${obj.fmt} ${data.length}\0`;
     const store = header + data;
 
+    const shasum = crypto.createHash('sha1');
     shasum.update(store);
     const sha = shasum.digest('hex');
 
@@ -263,6 +369,14 @@ class SitBaseRepo {
   _createRemoteRepo(path, repoName) {
     const yamlData = yamlSafeLoad(path);
     return yamlData["repo"]["remote"][repoName];
+  }
+
+  _refResolveAtLocal(branch) {
+    return this._refResolve(`refs/heads/${branch}`);
+  }
+
+  _refResolveAtRemote(repoName, branch) {
+    return this._refResolve(`refs/remotes/${repoName}/${branch}`);
   }
 
   _refResolve(ref) {

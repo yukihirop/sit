@@ -23,7 +23,8 @@ sit clasp init
 clasp push
 clasp deploy
 # Fetch sheet
-sit fetch origin master
+sit fetch origin develop
+sit merge origin develop
 # status
 sit status
 # diff
@@ -59,6 +60,7 @@ Commands:
   commit [options]                       commit dist file
   push [options] <repository> <branch>   push rows into Sheet
   fetch [options] <repository> <branch>  fetch rows from Sheet
+  merge [options] [repository] [branch]  merge rows
   init                                   create setting file (.sitconfig)
   clasp                                  clasp cli
   repo                                   repo cli
