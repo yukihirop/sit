@@ -31,6 +31,7 @@ class SitBaseRepo {
     this.distFilePath = `${this.settingData["dist"]["path"]}/${this.settingData["dist"]["sheetName"]}`;
 
     this.localRepo = this._createLocalRepo(this.settingPath);
+    this.currentBranch = this._branchResolve('HEAD');
   }
 
   remoteRepo(repoName) {

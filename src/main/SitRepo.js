@@ -53,6 +53,11 @@ class SitRepo extends SitBaseRepo {
     return this._objectHash(data, type, write);
   }
 
+  hashData(data, opts) {
+    const { type, write } = opts;
+    return this._objectHash(data, type, write);
+  }
+
   // private
   _add(path, opts) {
     // STEP 1: Update index
@@ -254,6 +259,35 @@ nothing to commit`
       this._writeSyncFile(refPath, afterHash);
 
       resolve({ beforeHash: beforeHash, afterHash: afterHash });
+    });
+  }
+
+  fetch(remoteHash, repoName, branch) {
+    return new Promise((resolve, reject) => {
+      if (repoName) {
+        if (branch) {
+          const beforeHash = this._refResolve(`refs/remotes/${repoName}/${branch}`);
+
+          // STEP 1: Update FETCH_HEAD
+          this._writeSyncFile("FETCH_HEAD", `${remoteHash}\t\tbranch '${branch}' of ${repoName}`);
+
+          // STEP 2: Update logs/refs/remotes/<repoName>/<branch>
+          const logPath = `logs/refs/remotes/${repoName}/${branch}`;
+          this._writeLog(logPath, beforeHash, remoteHash, `fetch ${repoName} ${branch}: fast-forward`);
+
+          // STEP3: Update refs/remotes/<repoName>/<branch>
+          const refPath = `refs/remotes/${repoName}/${branch}`;
+          this._writeSyncFile(refPath, remoteHash);
+
+          const branchCount = 1;
+
+          resolve({ beforeHash, remoteHash, branchCount });
+        } else {
+          reject("branch is required")
+        }
+      } else {
+        reject("reponame is required")
+      }
     });
   }
 }

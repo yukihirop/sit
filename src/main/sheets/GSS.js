@@ -30,14 +30,21 @@ function GSS(opts) {
     });
   };
 
-  const getRows = (repoName, sheetName) => {
+  const getRows = (repoName, sheetName, callback) => {
     return getInfo(repoName, sheetName, (_, sheet) => {
-      new Promise((resolve, reject) => {
+      if (sheet) {
         sheet.getRows((err, rows) => {
-          if (err) reject(err);
-          resolve(rows);
+          if (callback) {
+            if (err) {
+              callback(err, null)
+            } else {
+              callback(null, rows);
+            };
+          }
         });
-      });
+      } else {
+        if(callback) callback(true, null)
+      }
     });
   };
 
