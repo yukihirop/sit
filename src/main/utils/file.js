@@ -172,6 +172,16 @@ const deleteSyncFile = (path) => {
   }
 }
 
+const mTimeMs = (file, isRelative = true) => {
+  let loadPath = file;
+
+  if (isRelative) {
+    loadPath = path.resolve(currentPath, file)
+  }
+
+  return fs.statSync(loadPath).mtimeMs;
+}
+
 module.exports = {
   isExistFile,
   isDir,
@@ -192,5 +202,6 @@ module.exports = {
   fileDeflate,
   fileBasename,
   recursive,
-  deleteSyncFile
+  deleteSyncFile,
+  mTimeMs
 }
