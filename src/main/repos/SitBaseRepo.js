@@ -32,30 +32,6 @@ class SitBaseRepo {
     this.localRepo = this._createLocalRepo(this.settingPath);
   }
 
-  remoteRepo(repoName) {
-    return this._createRemoteRepo(this.settingPath, repoName);
-  }
-
-  currentBranch() {
-    return this._branchResolve('HEAD');
-  }
-
-  beforeHEADHash() {
-    return this._refResolve('HEAD');
-  }
-
-  afterHEADHash() {
-    return this._add(this.distFilePath, {});
-  }
-
-  _add(path, opts) {
-    // STEP 1: Update index
-    // Do not necessary.
-
-    // STEP 2: Create sit objects (blob)
-    return this.hashObject(path, Object.assign(opts, { type: 'blob', write: true }));
-  }
-
   _HEAD() {
     let data = fileSafeLoad(this._repoFile(false, 'HEAD'));
     data = data.trim();
@@ -208,10 +184,10 @@ class SitBaseRepo {
 
   _objectWrite(obj, write) {
     const data = obj.serialize();
-    const header = `${obj.fmt} ${data.length}\0`;
+    const header = `${obj.fmt} ${Buffer.byteLength(data)}\0`;
     const store = header + data;
-
     const shasum = crypto.createHash('sha1');
+
     shasum.update(store);
     const sha = shasum.digest('hex');
 
@@ -246,7 +222,7 @@ class SitBaseRepo {
         const size = parseInt(binary.slice(x, y));
         const data = binary.slice(y + 1);
 
-        if (size != (binary.toString().length - y - 1)) {
+        if (size != (binary.length - y - 1)) {
           const err = new Error(`Malformed object ${sha}: bad length.`)
           reject(err);
         }

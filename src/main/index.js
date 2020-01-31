@@ -108,19 +108,21 @@ To ${repo.remoteRepo(repoName)}\n\
   Repo.catFile = (obj, opts) => {
     const { type, size, prettyPrint } = opts;
 
-    return repo.catFile(obj).then(result => {
+    repo.catFile(obj).then(result => {
 
       if (type) {
         console.log(result.fmt);
-      }
-
-      if (size) {
+        return;
+      } else if (size) {
         console.log(result.size);
+        return;
+      } else if (prettyPrint) {
+        console.log(result.serialize().toString());
+        return;
+      } else {
+        return;
       }
 
-      if (prettyPrint) {
-        console.log(result.serialize().toString());
-      }
     }).catch(err => {
       console.log(err);
     });
