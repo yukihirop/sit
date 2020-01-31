@@ -378,13 +378,18 @@ fatal: Existing because of an unresolved conflict.`);
         const origHEADHash = this._refResolve('ORIG_HEAD');
         this._writeLog("logs/HEAD", origHEADHash, origHEADHash, "reset: moving to HEAD");
 
-        // STEP 2: Delete MERGE_MODE
+        // STEP 2: Update dist file
+        this.catFile(origHEADHash).then(obj => {
+          writeSyncFile(this.distFilePath, obj.serialize().toString());
+        })
+
+        // STEP 3: Delete MERGE_MODE
         this._deleteSyncFile('MERGE_MODE');
 
-        // STEP 3: Delete MERGE_MSG
+        // STEP 4: Delete MERGE_MSG
         this._deleteSyncFile('MERGE_MSG');
 
-        // STEP 4: Delete MERGE_HEAD
+        // STEP 5: Delete MERGE_HEAD
         this._deleteSyncFile('MERGE_HEAD');
       } else {
         console.error('fatal: There is no merge to abort (MERGE_HEAD missing).');
