@@ -41,6 +41,30 @@ class SitRepo extends SitBaseRepo {
     }
   }
 
+  remoteRepo(repoName) {
+    return this._createRemoteRepo(this.settingPath, repoName);
+  }
+
+  currentBranch() {
+    return this._branchResolve('HEAD');
+  }
+
+  beforeHEADHash() {
+    return this._refResolve('HEAD');
+  }
+
+  afterHEADHash() {
+    return this._add(this.distFilePath, {});
+  }
+
+  _add(path, opts) {
+    // STEP 1: Update index
+    // Do not necessary.
+
+    // STEP 2: Create sit objects (blob)
+    return this.hashObject(path, Object.assign(opts, { type: 'blob', write: true }));
+  }
+
   catFile(obj) {
     return new Promise((resolve, reject) => {
       this._objectFind(obj).then(sha => {
