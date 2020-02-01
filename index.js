@@ -165,5 +165,8 @@ program
 if (process.argv.length <= 2) {
   program.help();
 } else {
+  if (process.argv.indexOf('-h') == -1) {
+    sit().Repo.checkLocalRepo();
+  }
   program.parse(process.argv);
 }
