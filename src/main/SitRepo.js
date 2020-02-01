@@ -85,10 +85,12 @@ class SitRepo extends SitBaseRepo {
     return this._objectHash(data, type, write);
   }
 
-  hashData(data, opts) {
+  hashObjectFromData(data, opts) {
     const { type, write } = opts;
     return this._objectHash(data, type, write);
   }
+
+
 
   branch(opts = {}) {
     const { all, deleteBranch } = opts;
@@ -478,7 +480,7 @@ Please, commit your changes before you merge.`);
               this._writeSyncFile('ORIG_HEAD', headHash);
 
               // STEP 5: Create sit object (blob)
-              this.hashData(result.data.join('\n'), { type: 'blob', write: true })
+              this.hashObjectFromData(result.data.join('\n'), { type: 'blob', write: true })
 
               // STEP 6: File update
               writeSyncFile(this.distFilePath, result.data.join('\n'));

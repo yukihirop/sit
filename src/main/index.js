@@ -43,7 +43,7 @@ Please make sure you have the correct access rights and the repository exists.`)
         if (err) return console.error(`fatal: Couldn't find remote ref '${branch}'`);
 
         let data = sheet.rows2CSV(rows);
-        let sha = repo.hashData(`${data.join('\n')}\n`, { type: 'blob', write: true });
+        let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
         repo.fetch(sha, repoName, branch).then(result => {
           const { beforeHash, remoteHash, branchCount } = result
 
