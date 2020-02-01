@@ -137,7 +137,7 @@ function GSS(opts) {
             cells[i * colCount + j].value = el.value;
           } else {
             if (clear) {
-              cells[i * colCount + j].del();
+              cells[i * colCount + j].value = '';
             }
           }
         }
