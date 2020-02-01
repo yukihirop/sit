@@ -41,6 +41,10 @@ class SitRepo extends SitBaseRepo {
     }
   }
 
+  isLocalRepo() {
+    return isExistFile(this.localRepo);
+  }
+
   remoteRepo(repoName) {
     return this._createRemoteRepo(this.settingPath, repoName);
   }

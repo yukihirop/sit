@@ -134,6 +134,13 @@ To ${repo.remoteRepo(repoName)}\n\
     return repo.init();
   }
 
+  Repo.checkLocalRepo = () => {
+    if (!repo.isLocalRepo()) {
+      console.error(`fatal: not a sit repository (or any of the parent directories): ${repo.localRepo}`);
+      process.exit();
+    };
+  }
+
   Repo.catFile = (obj, opts) => {
     const { type, size, prettyPrint } = opts;
 
