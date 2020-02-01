@@ -74,7 +74,7 @@ From ${repo.remoteRepo(repoName)}
       sheet.getRows(repoName, "refs/remotes", (err, rows) => {
         if (err) throw err;
 
-        const data = sheet.rows2CSV(rows, ['reponame', 'sha1']);
+        const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
         const json = csv2JSON(data);
         const remoteHash = json[branch];
 
@@ -105,7 +105,7 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
           }
 
           let updateBranchPromise = sheet.pushRows(repoName, branch, local.getData(), true);
-          let updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", [[branch, afterHash]], false, ['reponame', 'sha1']);
+          let updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", [[branch, afterHash]], false, ['branch', 'sha1']);
 
           return Promise.all([updateRefRemotePromise, updateBranchPromise]).then(() => {
 
