@@ -49,27 +49,6 @@ function ClaspCmd() {
       }
     });
 
-  claspCmd
-    .command('push')
-    .action(() => {
-      const stdout = execSync('clasp push');
-      console.log(stdout.toString());
-    })
-
-  claspCmd
-    .command('open')
-    .action(() => {
-      const stdout = execSync('clasp open');
-      console.log(stdout.toString());
-    })
-
-  claspCmd
-    .command('deploy')
-    .action(() => {
-      const stdout = execSync('clasp deploy');
-      console.log(stdout.toString());
-    })
-
   return claspCmd
 }
 
