@@ -238,22 +238,25 @@ nothing to commit`
       // STEP 1: Update COMMIT_EDITMSG
       this._writeSyncFile('COMMIT_EDITMSG', message);
 
-      // STEP 2: Update HEAD
+      // STEP 2: Update ORIG_HEAD
+      this._writeSyncFile('ORIG_HEAD', beforeHEADHash)
+
+      // STEP 3: Update HEAD
       this._writeSyncFile(refBranch, afterHEADHash);
 
-      // STEP 3: Update logs/HEAD
+      // STEP 4: Update logs/HEAD
       this._writeLog("logs/HEAD", beforeHEADHash, afterHEADHash, `commit ${message}`);
 
-      // STEP 4: Update logs/refs/heads/<branch>
+      // STEP 5: Update logs/refs/heads/<branch>
       this._writeLog(`logs/${refBranch}`, beforeHEADHash, afterHEADHash, `commit ${message}`);
 
-      // STEP 5: Update index
+      // STEP 6: Update index
       // Do not necessary
 
-      // STEP 6: Create sit objects (commit, tree)
+      // STEP 7: Create sit objects (commit, tree)
       // Do not necessary
 
-      // STEP 7: display info
+      // STEP 8: display info
       // TODO: display insertions(+), deletions(-) info
       console.log(`[${branch} ${afterHEADHash.slice(0, 7)}] ${message}`);
 
@@ -267,17 +270,24 @@ nothing to commit`
   push(repoName, branch, opts) {
     return new Promise((resolve, reject) => {
       const logPath = `logs/refs/remotes/${repoName}/${branch}`;
+      const localRefPath = `refs/heads/${branch}`;
       const refPath = `refs/remotes/${repoName}/${branch}`;
       const beforeHash = this._refResolve(refPath);
       const afterHash = this._refResolve('HEAD');
 
-      // STEP 1: Update logs/refs/remotes/<repoName>/<branch>
-      this._writeLog(logPath, beforeHash, afterHash, `update by push`);
+      if (this._isExistFile(localRefPath)) {
+        // STEP 1: Update logs/refs/remotes/<repoName>/<branch>
+        this._writeLog(logPath, beforeHash, afterHash, `update by push`);
 
-      // STEP 2: Update refs/remotes/<repoName>/<branch>
-      this._writeSyncFile(refPath, afterHash);
+        // STEP 2: Update refs/remotes/<repoName>/<branch>
+        this._writeSyncFile(refPath, afterHash);
 
-      resolve({ beforeHash: beforeHash, afterHash: afterHash });
+        resolve({ beforeHash: beforeHash, afterHash: afterHash });
+      } else {
+        reject(`\
+error: src refspec unknown does not match any\n\
+error: failed to push some refs to '${repoName}'`)
+      }
     });
   }
 
@@ -377,6 +387,11 @@ nothing to commit`
             // STEP 9: Update ORIG_HEAD
             const headHash = this._refResolve("HEAD");
             this._writeSyncFile('ORIG_HEAD', headHash);
+
+            // STEP 10: Update HEAD
+            const calculateHash = this._add(this.distFilePath, {});
+            const refBranch = this._HEAD()
+            this._writeSyncFile(refBranch, calculateHash);
 
             process.stdin.resume();
             console.log(`[${this.currentBranch()} ${this.afterHEADHash().slice(0, 7)}] ${commitMsg} into ${this.currentBranch()}`);

@@ -4,6 +4,10 @@ const {
   yamlSafeLoad
 } = require('../utils/file');
 
+const {
+  overrideCSV
+} = require('../utils/array');
+
 const Client = require('./GSSClient');
 const Worksheet = require('./Worksheet');
 
@@ -43,7 +47,7 @@ function GSS(opts) {
           }
         });
       } else {
-        if(callback) callback(true, null)
+        if (callback) callback(true, null)
       }
     });
   };
@@ -53,31 +57,41 @@ function GSS(opts) {
     data = [['こんちは', 'hello', 'greeting.hello'],
             ['さようなら', 'good bye', 'greeting.good_bye']]
   */
-  const pushRows = (repoName, sheetName, data, force = false, headers = _headers(sheetSchema)) => {
+  const pushRows = (repoName, sheetName, data, clear = false, headers = _headers(sheetSchema)) => {
     return getInfo(repoName, sheetName, (doc, sheet) => {
       new Promise((resolve, reject) => {
 
         if (sheet) {
           sheet.getRows((err, rows) => {
             if (err) reject(err);
-            let csvData = rows2CSV(rows, headers);
+            let oldData = rows2CSV(rows, headers);
+            let newData;
 
-            if (force) {
-              csvData = data;
+            if (clear) {
+              newData = data;
             } else {
-              csvData.push(...data);
+              newData = overrideCSV(oldData, data, 0);
             }
 
-            _bulkPushRow(sheet, worksheet.csvData(csvData), headers);
-            resolve(csvData);
+            let oldCSVData = worksheet.csvData(oldData);
+            let newCSVData = worksheet.csvData(newData);
+
+            if (clear) {
+              _bulkPushRow(sheet, oldCSVData, newCSVData, headers, true);
+            } else {
+              _bulkPushRow(sheet, newCSVData, newCSVData, headers, false);
+            }
+
+            resolve(newData);
           });
         } else {
           doc.addWorksheet({
             title: sheetName
           }, (err, newSheet) => {
             if (err) reject(err);
-            _bulkPushRow(newSheet, worksheet.csvData(data), headers);
-            resolve(data);
+            let csvData = worksheet.csvData(data);
+            _bulkPushRow(newSheet, csvData, csvData, headers, false);
+            resolve(csvData);
           });
         }
       });
@@ -102,8 +116,8 @@ function GSS(opts) {
 
   // private
 
-  const _bulkPushRow = (sheet, data, headers = _headers(sheetSchema)) => {
-    const maxRowCount = Math.ceil(Object.keys(data).length / headers.length);
+  const _bulkPushRow = (sheet, oldData, newData, headers = _headers(sheetSchema), clear = false) => {
+    const maxRowCount = Math.ceil(Object.keys(oldData).length / headers.length);
 
     sheet.getCells({
       'min-row': 1,
@@ -114,13 +128,17 @@ function GSS(opts) {
 
       // i is itemIndex
       const colCount = sheet.colCount;
-      const rowCount = cells.length / colCount
+      const rowCount = cells.length / colCount;
       for (let i = 0; i < rowCount; ++i) {
         // j is langIndex or keyIndex
         for (let j = 0; j < colCount; ++j) {
-          var el = data[`${i}.${j}`];
+          let el = newData[`${i}.${j}`];
           if (typeof el !== 'undefined') {
-            cells[i * colCount + j].value = el.value
+            cells[i * colCount + j].value = el.value;
+          } else {
+            if (clear) {
+              cells[i * colCount + j].del();
+            }
           }
         }
       }

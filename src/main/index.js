@@ -5,6 +5,10 @@ const AppSheet = require('./Sheet');
 const AppLocal = require('./Local');
 const AppRepo = require('./SitRepo');
 
+const {
+  csv2JSON
+} = require('./utils/array');
+
 function sit(opts) {
   const defaultOpts = {
     type: 'GoogleSpreadSheet',
@@ -39,7 +43,7 @@ Please make sure you have the correct access rights and the repository exists.`)
         if (err) return console.error(`fatal: Couldn't find remote ref '${branch}'`);
 
         let data = sheet.rows2CSV(rows);
-        let sha = repo.hashData(data.join('\n'), { type: 'blob', write: true })
+        let sha = repo.hashData(`${data.join('\n')}\n`, { type: 'blob', write: true });
         repo.fetch(sha, repoName, branch).then(result => {
           const { beforeHash, remoteHash, branchCount } = result
 
@@ -63,24 +67,49 @@ From ${repo.remoteRepo(repoName)}
 
     Repo.push = (repoName, branch = 'master', opts) => {
       const { type, force } = opts;
+      const ORIGHEADHash = repo._refResolve('ORIG_HEAD');
+      const HEADHash = repo._refResolve('HEAD');
 
-      // Update local repo
-      repo.push(repoName, branch, opts).then((hashData) => {
+      // Fetch refs/remotes from sheet
+      sheet.getRows(repoName, "refs/remotes", (err, rows) => {
+        if (err) throw err;
 
-        const { beforeHash, afterHash } = hashData;
+        const data = sheet.rows2CSV(rows, ['reponame', 'sha1']);
+        const json = csv2JSON(data);
+        const remoteHash = json[branch];
 
-        if (beforeHash === afterHash) {
+        if (HEADHash === remoteHash) {
           console.log('Everything up-to-date');
           return;
         }
 
-        // Push spreadsheet
-        let updateBranchPromise = sheet.pushRows(repoName, branch, local.getData(), force);
-        let updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", [[branch, afterHash]], false, ['reponame', 'sha1']);
+        if (!force && (remoteHash !== undefined) && (ORIGHEADHash !== remoteHash)) {
+          console.error(`\
+To ${repo.remoteRepo(repoName)}\n\
+ ! [rejected]\t\t${branch} -> ${branch} (non-fast-forward)\n\
+error: failed to push some refs to '${repo.remoteRepo(repoName)}'\n\
+hint: Updates wre rejected because the tip of your current branch is behind\n\
+hint: its remote counterpart. Integrate the remote changes (e.q.\n\
+hint: 'sit pull ...' before pushing again.\n\
+hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
+          return;
+        }
 
-        return Promise.all([updateRefRemotePromise, updateBranchPromise]).then(() => {
+        // Update local repo
+        repo.push(repoName, branch, opts).then(hashData => {
+          const { beforeHash, afterHash } = hashData;
 
-          console.log(`\
+          if (!force && (remoteHash !== undefined) && (beforeHash === afterHash)) {
+            console.log(`Everything up-to-date`);
+            return;
+          }
+
+          let updateBranchPromise = sheet.pushRows(repoName, branch, local.getData(), true);
+          let updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", [[branch, afterHash]], false, ['reponame', 'sha1']);
+
+          return Promise.all([updateRefRemotePromise, updateBranchPromise]).then(() => {
+
+            console.log(`\
 Writed objects: 100% (1/1)
 Total 1\n\
 remote:\n\
@@ -89,10 +118,14 @@ remote:     ${repo.remoteRepo(repoName)}\n\
 remote:\n\
 To ${repo.remoteRepo(repoName)}\n\
     ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
+          });
+
+        }).catch(err => {
+          console.error(err);
+          process.exit(1);
         });
       });
     }
-
   } else {
     console.log(...validator.getErrors());
   }

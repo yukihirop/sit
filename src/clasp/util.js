@@ -1,3 +1,10 @@
+// https://javascript.programmer-reference.com/js-string-byte-length/
+function getByteLength(str){
+  str = (str==null)?"":str;
+  return encodeURI(str).replace(/%../g, "*").length;
+}
+
+
 function findOrCreateSheet(sheetName, hidden) {
   var findSh = SpreadsheetApp.getActive().getSheetByName(sheetName);
 
