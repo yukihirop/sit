@@ -134,10 +134,6 @@ To ${repo.remoteRepo(repoName)}\n\
     return repo.init();
   }
 
-  Repo.objectRead = (sha) => {
-    return repo.objectRead(sha)
-  }
-
   Repo.catFile = (obj, opts) => {
     const { type, size, prettyPrint } = opts;
 
