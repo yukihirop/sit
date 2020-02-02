@@ -62,6 +62,7 @@ Commands:
   fetch [options] <repository> <branch>  fetch rows from Sheet
   merge [options] [repository] [branch]  merge rows
   clone <repository>                     clone rows from sheet
+  browse-remote [repository]             browse remote repository
   init                                   create setting file (.sitconfig)
   clasp                                  clasp cli
   repo                                   repo cli

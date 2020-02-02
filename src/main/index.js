@@ -258,6 +258,10 @@ remote: done.`);
     return repo.merge(repoName, branch, options);
   }
 
+  Repo.browseRemote = (repoName) => {
+    return repo.browseRemote(repoName);
+  }
+
   Clasp.init = () => {
     return clasp.init();
   }

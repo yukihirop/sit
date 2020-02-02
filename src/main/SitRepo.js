@@ -1,7 +1,8 @@
 'use strict';
 
 const jsdiff = require('diff')
-  , chokidar = require('chokidar');
+  , chokidar = require('chokidar')
+  , opener = require('opener');
 
 const {
   isExistFile,
@@ -542,6 +543,20 @@ Fast-forward
           });
         });
       })
+    }
+  }
+
+  browseRemote(repoName) {
+    if (!repoName) {
+      repoName = 'origin';
+    }
+
+    try {
+      const url = this.settingData["repo"]["remote"][repoName]
+      opener(url);
+    } catch (err) {
+      console.error(err);
+      process.exit(1);
     }
   }
 }
