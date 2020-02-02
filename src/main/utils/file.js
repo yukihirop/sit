@@ -1,12 +1,14 @@
 'use strict';
 
 const fs = require('fs')
+  , fsExtra = require('fs-extra')
   , path = require('path')
   , yaml = require('js-yaml')
   , csv = require('csv')
   , csvSync = require('csv-parse/lib/sync')
   , zlib = require('zlib')
-  , recursive = require('recursive-readdir');
+  , recursive = require('recursive-readdir')
+  , rmdir = require('rmdir');
 
 const currentPath = fs.realpathSync('./');
 const rootPath = path.resolve(__dirname, '../../../');
@@ -164,6 +166,10 @@ const fileBasename = (file) => {
   return path.basename(file);
 }
 
+const fileCopySync = (fromPath, toPath, opts) => {
+  fsExtra.copySync(fromPath, toPath, opts);
+}
+
 const deleteSyncFile = (path) => {
   try {
     fs.unlinkSync(path);
@@ -180,6 +186,18 @@ const mTimeMs = (file, isRelative = true) => {
   }
 
   return fs.statSync(loadPath).mtimeMs;
+}
+
+const rmDirSync = (file, isRelative = true) => {
+  let loadPath = file;
+
+  if (isRelative) {
+    loadPath = path.resolve(currentPath, file)
+  }
+
+  rmdir(loadPath, (err, dirs, files) => {
+    if (err) throw err;
+  });
 }
 
 module.exports = {
@@ -201,7 +219,9 @@ module.exports = {
   fileUnzip,
   fileDeflate,
   fileBasename,
+  fileCopySync,
   recursive,
   deleteSyncFile,
-  mTimeMs
+  mTimeMs,
+  rmDirSync
 }

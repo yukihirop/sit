@@ -4,6 +4,7 @@ const Validator = require('./Validator');
 const AppSheet = require('./Sheet');
 const AppLocal = require('./Local');
 const AppRepo = require('./SitRepo');
+const AppClasp = require('./Clasp');
 
 const {
   csv2JSON
@@ -21,9 +22,11 @@ function sit(opts) {
 
   const validator = new Validator(opts)
   var Sheet = {}
-    , Repo = {};
+    , Repo = {}
+    , Clasp = {};
 
   const repo = new AppRepo(opts);
+  const clasp = new AppClasp(opts);
 
   if (validator.isValid()) {
 
@@ -43,7 +46,7 @@ Please make sure you have the correct access rights and the repository exists.`)
         if (err) return console.error(`fatal: Couldn't find remote ref '${branch}'`);
 
         let data = sheet.rows2CSV(rows);
-        let sha = repo.hashData(`${data.join('\n')}\n`, { type: 'blob', write: true });
+        let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
         repo.fetch(sha, repoName, branch).then(result => {
           const { beforeHash, remoteHash, branchCount } = result
 
@@ -126,12 +129,75 @@ To ${repo.remoteRepo(repoName)}\n\
         });
       });
     }
+
+    Repo.clone = (repoName, opts) => {
+      let url = repo.remoteRepo(repoName);
+
+      if (url === undefined) {
+        return console.error(`\
+fatal: '${repoName}' does not appear to be a sit repository\n\
+fatal: Could not read from remote repository.\n\
+
+Please make sure you have the correct access rights and the repository exists.`);
+      }
+
+      sheet.getRows(repoName, 'refs/remotes', (err, rows) => {
+        if (err) return console.log(`fatal: repository '${url}' not found`);
+
+        const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
+        const json = csv2JSON(data);
+        const remoteHash = json['master'];
+
+        if (remoteHash === undefined) {
+          console.error(`This Spreadsheet may not be repository.\nPlease visit ${url}\nMake sure that this Spreadsheet is rpeository.`)
+          process.exit(1);
+        }
+
+        sheet.getRows(repoName, 'master', (err, rows) => {
+          if (err) return console.error(`fatal: Couldn't find remote ref 'master'`);
+
+          try {
+            // Initialize local repo
+            let result = repo.init();
+
+            // Copy clasp scripts
+            clasp.init();
+
+            if (!result) {
+              throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`)
+            }
+
+            let data = sheet.rows2CSV(rows);
+            let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
+
+            // Update local repo
+            repo.clone(url, sha, data);
+
+            console.log(`\
+Cloning into ... '${repo.distFilePath}'\n\
+remote: Total 1\n\
+remote: done.`);
+
+          } catch (err) {
+            console.error(err.message);
+            repo.rollback();
+            process.exit(1);
+          }
+        });
+      });
+    }
+
   } else {
     console.log(...validator.getErrors());
   }
 
   Repo.init = () => {
-    return repo.init();
+    const result = repo.init();
+    if (result) {
+      console.log(`created local repo: ${repo.localRepo}`);
+    } else {
+      console.log(`already exist local repo: ${repo.localRepo}`);
+    }
   }
 
   Repo.checkLocalRepo = () => {
@@ -192,9 +258,14 @@ To ${repo.remoteRepo(repoName)}\n\
     return repo.merge(repoName, branch, options);
   }
 
+  Clasp.init = () => {
+    return clasp.init();
+  }
+
   return {
     Sheet,
-    Repo
+    Repo,
+    Clasp
   }
 }
 

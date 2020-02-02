@@ -9,7 +9,8 @@ const {
   fileSafeLoad,
   writeSyncFile,
   recursive,
-  mTimeMs
+  mTimeMs,
+  rmDirSync
 } = require('./utils/file');
 
 const {
@@ -25,7 +26,7 @@ class SitRepo extends SitBaseRepo {
     const localRepo = this.localRepo;
 
     if (isExistFile(localRepo)) {
-      console.log(`already exist local repo: ${localRepo}`);
+      return false
     } else {
       mkdirSyncRecursive(localRepo)
       mkdirSyncRecursive(`${localRepo}/refs/heads`);
@@ -37,8 +38,38 @@ class SitRepo extends SitBaseRepo {
       writeSyncFile(`${localRepo}/HEAD`, "ref: refs/heads/master", true);
       writeSyncFile(`${localRepo}`, "", true);
 
-      console.log(`created local repo: ${localRepo}`);
+      return true
     }
+  }
+
+  rollback() {
+    const localRepo = this.localRepo;
+
+    if (isExistFile(localRepo)) {
+      rmDirSync(localRepo);
+    } else {
+      console.log(`Do not exist local repo: ${localRepo}`);
+    }
+  }
+
+  clone(url, masterHash, data) {
+    // STEP 1: Update refs/heads/master
+    this._writeSyncFile("refs/heads/master", masterHash);
+
+    // STEP 2: Create refs/remotes/origin/HEAD
+    this._writeSyncFile("refs/remotes/origin/HEAD", "ref: refs/remotes/origin/master");
+
+    // STEP 3: Update logs/refs/heads/master
+    this._writeLog("logs/refs/heads/master", this._initialHash(), masterHash, `clone: from ${url}`);
+
+    // STEP 4: Update logs/refs/remotes/origin/HEAD
+    this._writeLog("logs/refs/remotes/origin/HEAD", this._initialHash(), masterHash, `clone: from ${url}`)
+
+    // STEP 5: Update logs/HEAD
+    this._writeLog("logs/HEAD", this._initialHash(), masterHash, `clone: from ${url}`);
+
+    // STEP 6: Update dist file instead of Update index
+    writeSyncFile(this.distFilePath, data);
   }
 
   isLocalRepo() {
@@ -85,7 +116,7 @@ class SitRepo extends SitBaseRepo {
     return this._objectHash(data, type, write);
   }
 
-  hashData(data, opts) {
+  hashObjectFromData(data, opts) {
     const { type, write } = opts;
     return this._objectHash(data, type, write);
   }
@@ -478,7 +509,7 @@ Please, commit your changes before you merge.`);
               this._writeSyncFile('ORIG_HEAD', headHash);
 
               // STEP 5: Create sit object (blob)
-              this.hashData(result.data.join('\n'), { type: 'blob', write: true })
+              this.hashObjectFromData(result.data.join('\n'), { type: 'blob', write: true })
 
               // STEP 6: File update
               writeSyncFile(this.distFilePath, result.data.join('\n'));

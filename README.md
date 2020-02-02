@@ -61,6 +61,7 @@ Commands:
   push [options] <repository> <branch>   push rows into Sheet
   fetch [options] <repository> <branch>  fetch rows from Sheet
   merge [options] [repository] [branch]  merge rows
+  clone <repository>                     clone rows from sheet
   init                                   create setting file (.sitconfig)
   clasp                                  clasp cli
   repo                                   repo cli
