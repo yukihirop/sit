@@ -4,6 +4,7 @@ const Validator = require('./Validator');
 const AppSheet = require('./Sheet');
 const AppLocal = require('./Local');
 const AppRepo = require('./SitRepo');
+const AppClasp = require('./Clasp');
 
 const {
   csv2JSON
@@ -21,9 +22,11 @@ function sit(opts) {
 
   const validator = new Validator(opts)
   var Sheet = {}
-    , Repo = {};
+    , Repo = {}
+    , Clasp = {};
 
   const repo = new AppRepo(opts);
+  const clasp = new AppClasp(opts);
 
   if (validator.isValid()) {
 
@@ -157,6 +160,9 @@ Please make sure you have the correct access rights and the repository exists.`)
             // Initialize local repo
             let result = repo.init();
 
+            // Copy clasp scripts
+            clasp.init();
+
             if (!result) {
               throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`)
             }
@@ -252,9 +258,14 @@ remote: done.`);
     return repo.merge(repoName, branch, options);
   }
 
+  Clasp.init = () => {
+    return clasp.init();
+  }
+
   return {
     Sheet,
-    Repo
+    Repo,
+    Clasp
   }
 }
 

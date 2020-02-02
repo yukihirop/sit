@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs')
+  , fsExtra = require('fs-extra')
   , path = require('path')
   , yaml = require('js-yaml')
   , csv = require('csv')
@@ -165,6 +166,10 @@ const fileBasename = (file) => {
   return path.basename(file);
 }
 
+const fileCopySync = (fromPath, toPath, opts) => {
+  fsExtra.copySync(fromPath, toPath, opts);
+}
+
 const deleteSyncFile = (path) => {
   try {
     fs.unlinkSync(path);
@@ -214,6 +219,7 @@ module.exports = {
   fileUnzip,
   fileDeflate,
   fileBasename,
+  fileCopySync,
   recursive,
   deleteSyncFile,
   mTimeMs,
