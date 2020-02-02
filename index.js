@@ -158,6 +158,13 @@ program
   });
 
 program
+  .command('clone <repository>')
+  .description('clone rows from sheet')
+  .action((repository, options) => {
+    sit().Repo.clone(repository, options);
+  })
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)
@@ -165,7 +172,14 @@ program
 if (process.argv.length <= 2) {
   program.help();
 } else {
-  if (process.argv.indexOf('-h') == -1) {
+  const checkConditions = [
+    process.argv.indexOf('-h') == -1,
+    process.argv.indexOf('--help') == -1,
+    process.argv.indexOf('clone') == -1
+  ];
+  const isCheck = !checkConditions.some(c => c === false);
+
+  if (isCheck) {
     sit().Repo.checkLocalRepo();
   }
   program.parse(process.argv);

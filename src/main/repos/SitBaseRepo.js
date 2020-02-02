@@ -32,6 +32,10 @@ class SitBaseRepo {
     this.localRepo = this._createLocalRepo(this.settingPath);
   }
 
+  _initialHash() {
+    return INITIAL_HASH;
+  }
+
   _HEAD() {
     let data = fileSafeLoad(this._repoFile(false, 'HEAD'));
     data = data.trim();

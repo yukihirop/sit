@@ -21,15 +21,29 @@ function GSS(opts) {
   const worksheet = new Worksheet();
 
   const getInfo = (repoName, sheetName, callback) => {
-    return Client(remotes[repoName], opts).then(doc => {
+    let url = remotes[repoName];
+    return Client(url, opts).then(doc => {
       new Promise((resolve, reject) => {
         doc.getInfo((err, info) => {
           if (err) reject(err);
-          var wh = info.worksheets.filter(sheet => sheet.title == sheetName)[0]
-          resolve(wh);
+          if (info) {
+            var wh = info.worksheets.filter(sheet => sheet.title == sheetName)[0]
+            resolve(wh);
+          } else {
+            console.error(`Make sharing settings for the service account.\nPlease visit ${url}`);
+            process.exit(1);
+          }
         });
       }).then((sheet) => {
-        if (callback) callback(doc, sheet);
+        if (sheet) {
+          if (callback) callback(doc, sheet);
+        } else {
+          console.error(`Do not exits sheet: '${sheetName}' in ${url}\nPerhaps, This Spreadsheet may not be repository.`);
+          process.exit(1);
+        }
+      }).catch(err => {
+        console.error(err);
+        process.exit(1);
       });
     });
   };
@@ -60,7 +74,6 @@ function GSS(opts) {
   const pushRows = (repoName, sheetName, data, clear = false, headers = _headers(sheetSchema)) => {
     return getInfo(repoName, sheetName, (doc, sheet) => {
       new Promise((resolve, reject) => {
-
         if (sheet) {
           sheet.getRows((err, rows) => {
             if (err) reject(err);

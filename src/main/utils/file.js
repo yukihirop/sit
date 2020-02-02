@@ -6,7 +6,8 @@ const fs = require('fs')
   , csv = require('csv')
   , csvSync = require('csv-parse/lib/sync')
   , zlib = require('zlib')
-  , recursive = require('recursive-readdir');
+  , recursive = require('recursive-readdir')
+  , rmdir = require('rmdir');
 
 const currentPath = fs.realpathSync('./');
 const rootPath = path.resolve(__dirname, '../../../');
@@ -182,6 +183,18 @@ const mTimeMs = (file, isRelative = true) => {
   return fs.statSync(loadPath).mtimeMs;
 }
 
+const rmDirSync = (file, isRelative = true) => {
+  let loadPath = file;
+
+  if (isRelative) {
+    loadPath = path.resolve(currentPath, file)
+  }
+
+  rmdir(loadPath, (err, dirs, files) => {
+    if (err) throw err;
+  });
+}
+
 module.exports = {
   isExistFile,
   isDir,
@@ -203,5 +216,6 @@ module.exports = {
   fileBasename,
   recursive,
   deleteSyncFile,
-  mTimeMs
+  mTimeMs,
+  rmDirSync
 }
