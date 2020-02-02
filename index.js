@@ -165,6 +165,13 @@ program
   })
 
 program
+  .command('browse-remote [repository]')
+  .description('browse remote repository')
+  .action((repository, _options) => {
+    sit().Repo.browseRemote(repository);
+  });
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)

@@ -20,6 +20,7 @@
     "google-spreadsheet": "^2.0.8",
     "js-yaml": "^3.13.1",
     "moment": "^2.24.0",
+    "opener": "^1.5.1",
     "recursive-readdir": "^2.2.2",
     "rmdir": "^1.2.0",
     "uuid": "^3.4.0"
