@@ -130,7 +130,8 @@ function GSS(opts) {
   // private
 
   const _bulkPushRow = (sheet, oldData, newData, headers = _headers(sheetSchema), clear = false) => {
-    const maxRowCount = Math.ceil(Object.keys(oldData).length / headers.length);
+    let dataLength = Object.keys(oldData).length + Object.keys(newData).length;
+    const maxRowCount = Math.ceil(dataLength / headers.length);
 
     sheet.getCells({
       'min-row': 1,
