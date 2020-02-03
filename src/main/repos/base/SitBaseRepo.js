@@ -11,16 +11,16 @@ const {
   fileBasename,
   appendFile,
   deleteSyncFile
-} = require('../utils/file');
+} = require('../../utils/file');
 
-const SitConfig = require('../SitConfig');
+const SitConfig = require('../../SitConfig');
 
 const recursive = require('recursive-readdir')
   , moment = require('moment')
   , crypto = require('crypto');
 
-const SitBlob = require('./SitBlob');
-const SitTree = require('./SitTree');
+const SitBlob = require('../objects/SitBlob');
+const SitTree = require('../objects/SitTree');
 
 const INITIAL_HASH = '0000000000000000000000000000000000000000';
 

@@ -20,7 +20,7 @@ const {
 
 const editor = require('./utils/editor');
 
-const SitBaseRepo = require('./repos/SitBaseRepo');
+const SitBaseRepo = require('./repos/base/SitBaseRepo');
 
 class SitRepo extends SitBaseRepo {
   init() {
