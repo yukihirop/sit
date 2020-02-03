@@ -69,7 +69,7 @@ From ${repo.remoteRepo(repoName)}
 
     Repo.push = (repoName, branch = 'master', opts) => {
       const { type, force } = opts;
-      const ORIGHEADHash = repo._refResolve('ORIG_HEAD');
+      const REMOTEHEADHash = repo._refResolve('REMOTE_HEAD');
       const HEADHash = repo._refResolve('HEAD');
 
       // Fetch refs/remotes from sheet
@@ -85,7 +85,7 @@ From ${repo.remoteRepo(repoName)}
           return;
         }
 
-        if (!force && (remoteHash !== undefined) && (ORIGHEADHash !== remoteHash)) {
+        if (!force && (remoteHash !== undefined) && (REMOTEHEADHash !== remoteHash)) {
           console.error(`\
 To ${repo.remoteRepo(repoName)}\n\
  ! [rejected]\t\t${branch} -> ${branch} (non-fast-forward)\n\

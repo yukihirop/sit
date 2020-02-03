@@ -409,25 +409,29 @@ error: failed to push some refs to '${repoName}'`)
             // STEP 4: Update logs/refs/heads/<HEAD-branch>
             this._writeLog(`logs/refs/heads/${this.currentBranch()}`, this.beforeHEADHash(), this.afterHEADHash(), `commit (merge): ${commitMsg} into ${this.currentBranch()}`);
 
-            // STEP 5: Delete MERGE_MODE
-            this._deleteSyncFile('MERGE_MODE');
+            // STEP 5: Create sit object (commit)
 
-            // STEP 6: Delete MERGE_MSG
-            this._deleteSyncFile('MERGE_MSG');
-
-            // STEP 7: Delete MERGE_HEAD
-            this._deleteSyncFile('MERGE_HEAD');
-
-            // STEP 8: Create sit object (commit)
-
-            // STEP 9: Update ORIG_HEAD
+            // STEP 6: Update ORIG_HEAD
             const headHash = this._refResolve("HEAD");
             this._writeSyncFile('ORIG_HEAD', headHash);
 
-            // STEP 10: Update HEAD
+            // STEP 7: Update HEAD
             const calculateHash = this._add(this.distFilePath, {});
             const refBranch = this._HEAD()
             this._writeSyncFile(refBranch, calculateHash);
+
+            // STEP 8: Update REMOTE_HEAD
+            const remoteHead = this._refResolve("MERGE_HEAD");
+            this._writeSyncFile("REMOTE_HEAD", remoteHead);
+
+            // STEP 9: Delete MERGE_MODE
+            this._deleteSyncFile('MERGE_MODE');
+
+            // STEP 10: Delete MERGE_MSG
+            this._deleteSyncFile('MERGE_MSG');
+
+            // STEP 11: Delete MERGE_HEAD
+            this._deleteSyncFile('MERGE_HEAD');
 
             process.stdin.resume();
             console.log(`[${this.currentBranch()} ${this.afterHEADHash().slice(0, 7)}] ${commitMsg} into ${this.currentBranch()}`);
