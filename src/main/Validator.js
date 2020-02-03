@@ -1,14 +1,14 @@
 'use strict';
 
-const { yamlSafeLoad, packageJSON } = require('./utils/file');
+const { packageJSON } = require('./utils/file');
 const GSSValidator = require('./validators/GSSValidator');
 
+const SitConfig = require('./SitConfig');
+
 function Validator(opts) {
-  const { type, baseURL, settingPath } = opts;
-  const yamlData = yamlSafeLoad(settingPath)
-    , version = yamlData['version'];
+  const { type, baseURL } = opts;
 
-
+  const version = SitConfig.version;
   let _errors = [];
 
   const getErrors = () => {
@@ -38,7 +38,7 @@ function Validator(opts) {
 
     switch (type) {
       case 'GoogleSpreadSheet':
-        const remotes = yamlData['repo']['remote'];
+        const remotes = SitConfig.repo.remote;
         Object.keys(remotes).forEach((name) => {
           let url = remotes[name];
           let validator = new GSSValidator(url, baseURL);

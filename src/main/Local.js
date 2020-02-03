@@ -2,11 +2,12 @@
 
 const {
   mkdirSyncRecursive,
-  yamlSafeLoad,
   absolutePath,
   writeSyncCSV,
   csvSafeLoad
 } = require('./utils/file');
+
+const SitConfig = require('./SitConfig');
 
 const _mergedDefaultOptions = (opts) => {
   const defaultOpts = {};
@@ -16,10 +17,8 @@ const _mergedDefaultOptions = (opts) => {
 function Local(opts) {
   opts = _mergedDefaultOptions(opts);
 
-  const { settingPath } = opts;
-  const yamlData = yamlSafeLoad(settingPath)
-    , distDirPath = yamlData["dist"]["path"]
-    , distSheetName = yamlData["dist"]["sheetName"];
+  const distDirPath = SitConfig.dist.path
+    , distSheetName = SitConfig.dist.sheetName;
 
   mkdirSyncRecursive(distDirPath);
 

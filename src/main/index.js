@@ -14,8 +14,7 @@ function sit(opts) {
   const defaultOpts = {
     type: 'GoogleSpreadSheet',
     baseURL: 'https://docs.google.com/spreadsheets/d/',
-    worksheetIndex: 0,
-    settingPath: `./.sitconfig`
+    worksheetIndex: 0
   };
 
   opts = Object.assign({}, defaultOpts, opts);

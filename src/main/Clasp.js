@@ -2,7 +2,6 @@
 
 const {
   appendFile,
-  yamlSafeLoad,
   rootAbsolutePath,
   absolutePath,
   isExistFile,
@@ -10,13 +9,11 @@ const {
   fileCopySync
 } = require('./utils/file');
 
-const fs = require('fs-extra')
+const SitConfig = require('./SitConfig');
 
 class Clasp {
   constructor(opts) {
-    this.settingPath = opts.settingPath;
-    this.settingData = yamlSafeLoad(this.settingPath);
-    this.localRepo = this.settingData["repo"]["local"];
+    this.localRepo = SitConfig.repo.local;
     this.claspPath = `${this.localRepo}/scripts/clasp`;
   }
 

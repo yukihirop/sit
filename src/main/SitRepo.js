@@ -78,7 +78,7 @@ class SitRepo extends SitBaseRepo {
   }
 
   remoteRepo(repoName) {
-    return this._createRemoteRepo(this.settingPath, repoName);
+    return this._createRemoteRepo(repoName);
   }
 
   currentBranch() {
@@ -552,7 +552,7 @@ Fast-forward
     }
 
     try {
-      const url = this.settingData["repo"]["remote"][repoName]
+      const url = this.remoteRepo(repoName);
       opener(url);
     } catch (err) {
       console.error(err);

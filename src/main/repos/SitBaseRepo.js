@@ -3,7 +3,6 @@
 const {
   isExistFile,
   isDir,
-  yamlSafeLoad,
   writeSyncFile,
   mkdirSyncRecursive,
   fileSafeLoad,
@@ -13,6 +12,8 @@ const {
   appendFile,
   deleteSyncFile
 } = require('../utils/file');
+
+const SitConfig = require('../SitConfig');
 
 const recursive = require('recursive-readdir')
   , moment = require('moment')
@@ -25,11 +26,8 @@ const INITIAL_HASH = '0000000000000000000000000000000000000000';
 
 class SitBaseRepo {
   constructor(opts) {
-    this.settingPath = opts.settingPath;
-    this.settingData = yamlSafeLoad(this.settingPath);
-    this.distFilePath = `${this.settingData["dist"]["path"]}/${this.settingData["dist"]["sheetName"]}`;
-
-    this.localRepo = this._createLocalRepo(this.settingPath);
+    this.distFilePath = `${SitConfig.dist.path}/${SitConfig.dist.sheetName}`;
+    this.localRepo = SitConfig.repo.local;
   }
 
   _initialHash() {
@@ -341,14 +339,8 @@ class SitBaseRepo {
     });
   }
 
-  _createLocalRepo(path) {
-    const yamlData = yamlSafeLoad(path);
-    return yamlData["repo"]["local"];
-  }
-
-  _createRemoteRepo(path, repoName) {
-    const yamlData = yamlSafeLoad(path);
-    return yamlData["repo"]["remote"][repoName];
+  _createRemoteRepo(repoName) {
+    return SitConfig.repo.remote[repoName];
   }
 
   _refResolveAtLocal(branch) {
