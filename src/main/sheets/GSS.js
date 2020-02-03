@@ -37,12 +37,7 @@ function GSS(opts) {
           }
         });
       }).then((sheet) => {
-        if (sheet) {
-          if (callback) callback(doc, sheet);
-        } else {
-          console.error(`Do not exits sheet: '${sheetName}' in ${remoteURL}\nPerhaps, This Spreadsheet may not be repository.`);
-          process.exit(1);
-        }
+        if (callback) callback(doc, sheet);
       }).catch(err => {
         console.error(err);
         process.exit(1);
