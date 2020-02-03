@@ -346,7 +346,7 @@ class SitBaseRepo {
   }
 
   _createRemoteRepo(repoName) {
-    return SitConfig.remote[repoName].url;
+    return SitConfig.config('local').remote[repoName].url;
   }
 
   _refResolveAtLocal(branch) {

@@ -39,7 +39,7 @@ function Validator(opts) {
 
     switch (type) {
       case 'GoogleSpreadSheet':
-        const remotes = SitConfig.remote;
+        const remotes = SitConfig.config('local').remote;
         if (remotes) {
           Object.keys(remotes).forEach((name) => {
             let url = remotes[name];

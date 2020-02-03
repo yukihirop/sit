@@ -19,7 +19,7 @@ function GSS(opts) {
     let remoteURL;
 
     if (!url) {
-      remoteURL = SitConfig.remote[repoName].url;
+      remoteURL = SitConfig.config('local').remote[repoName].url;
     } else {
       remoteURL = url
     }
