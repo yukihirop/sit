@@ -1,22 +1,16 @@
 'use strict';
 
 const {
-  yamlSafeLoad
-} = require('../utils/file');
-
-const {
   overrideCSV
 } = require('../utils/array');
 
 const Client = require('./GSSClient');
 const Worksheet = require('./Worksheet');
+const SitConfig = require('../SitConfig');
 
 function GSS(opts) {
-  const { settingPath } = opts;
-
-  const settingData = yamlSafeLoad(settingPath)
-    , remotes = settingData["repo"]["remote"]
-    , sheetSchema = settingData["sheet"]["gss"]["openAPIV3Schema"]["properties"];
+  const remotes = SitConfig.repo.remote
+    , sheetSchema = SitConfig.sheet.gss.openAPIV3Schema.properties;
 
   const worksheet = new Worksheet();
 

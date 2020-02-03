@@ -1,7 +1,9 @@
 'use strict';
 
 const GoogleSpreadSheet = require('google-spreadsheet');
-const { yamlSafeLoad, jsonSafeLoad } = require('../utils/file');
+
+const { jsonSafeLoad } = require('../utils/file');
+const SitConfig = require('../SitConfig');
 
 const _createSheetId = (uri, baseURL) => {
   // https://teratail.com/questions/116620
@@ -11,12 +13,11 @@ const _createSheetId = (uri, baseURL) => {
 }
 
 function GSSClient(uri, opts) {
-  const { baseURL, settingPath } = opts;
+  const { baseURL } = opts;
   const sheetId = _createSheetId(uri, baseURL);
   const doc = new GoogleSpreadSheet(sheetId);
 
-  var yamlData = yamlSafeLoad(settingPath)
-    , credPath = yamlData["sheet"]["gss"]["auth"]["credPath"]
+  const credPath = SitConfig.sheet.gss.auth.credPath
     , creds = jsonSafeLoad(credPath);
 
   return new Promise((resolve, reject) => {

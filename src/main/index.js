@@ -14,8 +14,7 @@ function sit(opts) {
   const defaultOpts = {
     type: 'GoogleSpreadSheet',
     baseURL: 'https://docs.google.com/spreadsheets/d/',
-    worksheetIndex: 0,
-    settingPath: `./.sitconfig`
+    worksheetIndex: 0
   };
 
   opts = Object.assign({}, defaultOpts, opts);
@@ -70,7 +69,7 @@ From ${repo.remoteRepo(repoName)}
 
     Repo.push = (repoName, branch = 'master', opts) => {
       const { type, force } = opts;
-      const ORIGHEADHash = repo._refResolve('ORIG_HEAD');
+      const REMOTEHEADHash = repo._refResolve('REMOTE_HEAD');
       const HEADHash = repo._refResolve('HEAD');
 
       // Fetch refs/remotes from sheet
@@ -86,7 +85,7 @@ From ${repo.remoteRepo(repoName)}
           return;
         }
 
-        if (!force && (remoteHash !== undefined) && (ORIGHEADHash !== remoteHash)) {
+        if (!force && (remoteHash !== undefined) && (REMOTEHEADHash !== remoteHash)) {
           console.error(`\
 To ${repo.remoteRepo(repoName)}\n\
  ! [rejected]\t\t${branch} -> ${branch} (non-fast-forward)\n\
@@ -171,7 +170,7 @@ Please make sure you have the correct access rights and the repository exists.`)
             let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
 
             // Update local repo
-            repo.clone(url, sha, data);
+            repo.clone(url, sha, data.join('\n'));
 
             console.log(`\
 Cloning into ... '${repo.distFilePath}'\n\
