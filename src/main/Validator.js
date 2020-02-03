@@ -3,12 +3,12 @@
 const { packageJSON } = require('./utils/file');
 const GSSValidator = require('./validators/GSSValidator');
 
-const SitConfig = require('./SitConfig');
+const SitSetting = require('./SitSetting');
 
 function Validator(opts) {
   const { type, baseURL } = opts;
 
-  const version = SitConfig.version;
+  const version = SitSetting.version;
   let _errors = [];
 
   const getErrors = () => {
@@ -38,7 +38,7 @@ function Validator(opts) {
 
     switch (type) {
       case 'GoogleSpreadSheet':
-        const remotes = SitConfig.repo.remote;
+        const remotes = SitSetting.repo.remote;
         Object.keys(remotes).forEach((name) => {
           let url = remotes[name];
           let validator = new GSSValidator(url, baseURL);

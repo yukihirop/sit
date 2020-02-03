@@ -4,4 +4,4 @@ const {
   yamlSafeLoad
 } = require('./utils/file');
 
-module.exports = yamlSafeLoad('.sitconfig')
+module.exports = yamlSafeLoad('.sitsetting')

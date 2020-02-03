@@ -13,7 +13,7 @@ npm install -g sit
 ```bash
 sit init
 #
-# Configure .sitconfig
+# Configure .sitsetting
 #
 # repo init
 sit repo init
@@ -63,7 +63,7 @@ Commands:
   merge [options] [repository] [branch]  merge rows
   clone <repository>                     clone rows from sheet
   browse-remote [repository]             browse remote repository
-  init                                   create setting file (.sitconfig)
+  init                                   create setting file (.sitsetting)
   clasp                                  clasp cli
   repo                                   repo cli
 ```
@@ -72,9 +72,9 @@ Commands:
 
 - GoogleSpreadSheet
 
-## ⚙ .sitconfig
+## ⚙ .sitsetting
 
-The configuration file called `.sitconfig` is a file that contains all settings.
+The configuration file called `.sitsetting` is a file that contains all settings.
 
 - Schema information file managed by GoogleSpreadSheet.
 - Authentication information for using GoogleSpreadSheetAPI.

@@ -11,23 +11,23 @@ const {
   fileBasename,
   appendFile,
   deleteSyncFile
-} = require('../utils/file');
+} = require('../../utils/file');
 
-const SitConfig = require('../SitConfig');
+const SitSetting = require('../../SitSetting');
 
 const recursive = require('recursive-readdir')
   , moment = require('moment')
   , crypto = require('crypto');
 
-const SitBlob = require('./SitBlob');
-const SitTree = require('./SitTree');
+const SitBlob = require('../objects/SitBlob');
+const SitTree = require('../objects/SitTree');
 
 const INITIAL_HASH = '0000000000000000000000000000000000000000';
 
 class SitBaseRepo {
   constructor(opts) {
-    this.distFilePath = `${SitConfig.dist.path}/${SitConfig.dist.sheetName}`;
-    this.localRepo = SitConfig.repo.local;
+    this.distFilePath = `${SitSetting.dist.path}/${SitSetting.dist.sheetName}`;
+    this.localRepo = SitSetting.repo.local;
   }
 
   _initialHash() {
@@ -340,7 +340,7 @@ class SitBaseRepo {
   }
 
   _createRemoteRepo(repoName) {
-    return SitConfig.repo.remote[repoName];
+    return SitSetting.repo.remote[repoName];
   }
 
   _refResolveAtLocal(branch) {
