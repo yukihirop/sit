@@ -14,7 +14,8 @@ const {
   iniParse
 } = require('../../utils/file');
 
-const SitSetting = require('../../SitSetting');
+const SitSetting = require('../../SitSetting')
+  , SitConfig = require('../SitConfig');
 
 const recursive = require('recursive-readdir')
   , moment = require('moment')
@@ -345,7 +346,7 @@ class SitBaseRepo {
   }
 
   _createRemoteRepo(repoName) {
-    return SitSetting.repo.remote[repoName];
+    return SitConfig.remote[repoName].url;
   }
 
   _refResolveAtLocal(branch) {

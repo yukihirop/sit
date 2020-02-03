@@ -104,8 +104,6 @@ sheet:
           description: キー
 repo:
   local: ./.sit
-  remote:
-    origin: <your/GoogleSpreadSheet/url>
 dist:
   path: ./dist
   sheetName: "master_data.csv"
