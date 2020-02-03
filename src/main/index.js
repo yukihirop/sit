@@ -1,10 +1,10 @@
 'use strict';
 
-const Validator = require('./Validator');
 const AppSheet = require('./Sheet');
 const AppLocal = require('./Local');
 const AppRepo = require('./SitRepo');
 const AppClasp = require('./Clasp');
+const SitConfig = require('./repos/SitConfig');
 
 const {
   csv2JSON
@@ -244,6 +244,15 @@ remote: done.`);
 
   Repo.browseRemote = (repoName) => {
     return repo.browseRemote(repoName);
+  }
+
+  Repo.config = (key, value, opts) => {
+    const { global, local } = opts;
+    if (global) {
+      return new SitConfig('global').update(key, value);
+    } else if (local) {
+      return new SitConfig('local').update(key, value);
+    }
   }
 
   Clasp.init = () => {

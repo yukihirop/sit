@@ -1,16 +1,7 @@
 'use strict';
 
-const {
-  iniParse,
-  isExistFile
-} = require('../utils/file');
+const SitBaseConfig = require('./base/SitBaseConfig');
 
-const SitSetting = require('../SitSetting');
+class SitConfig extends SitBaseConfig { };
 
-const configpath = `${SitSetting.repo.local}/config`;
-
-if (isExistFile(configpath)) {
-  module.exports = iniParse(configpath);
-} else {
-  module.exports = {};
-}
+module.exports = SitConfig;

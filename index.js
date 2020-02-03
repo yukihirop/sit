@@ -172,6 +172,21 @@ program
   });
 
 program
+  .command('config <key> <value>')
+  .description('configure sitconfig')
+  .option(
+    '--global',
+    'global setting'
+  )
+  .option(
+    '--local',
+    'local setting'
+  )
+  .action((key, value, options) => {
+    sit().Repo.config(key, value, options);
+  });
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)
