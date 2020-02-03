@@ -13,7 +13,7 @@ const {
   deleteSyncFile
 } = require('../../utils/file');
 
-const SitConfig = require('../../SitConfig');
+const SitSetting = require('../../SitSetting');
 
 const recursive = require('recursive-readdir')
   , moment = require('moment')
@@ -26,8 +26,8 @@ const INITIAL_HASH = '0000000000000000000000000000000000000000';
 
 class SitBaseRepo {
   constructor(opts) {
-    this.distFilePath = `${SitConfig.dist.path}/${SitConfig.dist.sheetName}`;
-    this.localRepo = SitConfig.repo.local;
+    this.distFilePath = `${SitSetting.dist.path}/${SitSetting.dist.sheetName}`;
+    this.localRepo = SitSetting.repo.local;
   }
 
   _initialHash() {
@@ -340,7 +340,7 @@ class SitBaseRepo {
   }
 
   _createRemoteRepo(repoName) {
-    return SitConfig.repo.remote[repoName];
+    return SitSetting.repo.remote[repoName];
   }
 
   _refResolveAtLocal(branch) {

@@ -3,7 +3,7 @@
 const GoogleSpreadSheet = require('google-spreadsheet');
 
 const { jsonSafeLoad } = require('../utils/file');
-const SitConfig = require('../SitConfig');
+const SitSetting = require('../SitSetting');
 
 const _createSheetId = (uri, baseURL) => {
   // https://teratail.com/questions/116620
@@ -17,7 +17,7 @@ function GSSClient(uri, opts) {
   const sheetId = _createSheetId(uri, baseURL);
   const doc = new GoogleSpreadSheet(sheetId);
 
-  const credPath = SitConfig.sheet.gss.auth.credPath
+  const credPath = SitSetting.sheet.gss.auth.credPath
     , creds = jsonSafeLoad(credPath);
 
   return new Promise((resolve, reject) => {

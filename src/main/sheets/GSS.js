@@ -6,11 +6,11 @@ const {
 
 const Client = require('./GSSClient');
 const Worksheet = require('./Worksheet');
-const SitConfig = require('../SitConfig');
+const SitSetting = require('../SitSetting');
 
 function GSS(opts) {
-  const remotes = SitConfig.repo.remote
-    , sheetSchema = SitConfig.sheet.gss.openAPIV3Schema.properties;
+  const remotes = SitSetting.repo.remote
+    , sheetSchema = SitSetting.sheet.gss.openAPIV3Schema.properties;
 
   const worksheet = new Worksheet();
 

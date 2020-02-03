@@ -7,7 +7,7 @@ const {
   csvSafeLoad
 } = require('./utils/file');
 
-const SitConfig = require('./SitConfig');
+const SitSetting = require('./SitSetting');
 
 const _mergedDefaultOptions = (opts) => {
   const defaultOpts = {};
@@ -17,8 +17,8 @@ const _mergedDefaultOptions = (opts) => {
 function Local(opts) {
   opts = _mergedDefaultOptions(opts);
 
-  const distDirPath = SitConfig.dist.path
-    , distSheetName = SitConfig.dist.sheetName;
+  const distDirPath = SitSetting.dist.path
+    , distSheetName = SitSetting.dist.sheetName;
 
   mkdirSyncRecursive(distDirPath);
 

@@ -9,11 +9,11 @@ const {
   fileCopySync
 } = require('./utils/file');
 
-const SitConfig = require('./SitConfig');
+const SitSetting = require('./SitSetting');
 
 class Clasp {
   constructor(opts) {
-    this.localRepo = SitConfig.repo.local;
+    this.localRepo = SitSetting.repo.local;
     this.claspPath = `${this.localRepo}/scripts/clasp`;
   }
 
