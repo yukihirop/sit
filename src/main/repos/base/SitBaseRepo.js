@@ -10,10 +10,12 @@ const {
   fileDeflate,
   fileBasename,
   appendFile,
-  deleteSyncFile
+  deleteSyncFile,
+  iniParse
 } = require('../../utils/file');
 
-const SitSetting = require('../../SitSetting');
+const SitSetting = require('../../SitSetting')
+  , SitConfig = require('../SitConfig');
 
 const recursive = require('recursive-readdir')
   , moment = require('moment')
@@ -74,6 +76,10 @@ class SitBaseRepo {
     }
 
     writeSyncFile(`${this.localRepo}/${path}`, data);
+  }
+
+  _iniParse(path) {
+    return iniParse(`${this.localRepo}/${path}`);
   }
 
   _deleteSyncFile(path) {
@@ -340,7 +346,7 @@ class SitBaseRepo {
   }
 
   _createRemoteRepo(repoName) {
-    return SitSetting.repo.remote[repoName];
+    return SitConfig.config('local').remote[repoName].url;
   }
 
   _refResolveAtLocal(branch) {

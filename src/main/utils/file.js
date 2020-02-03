@@ -8,7 +8,8 @@ const fs = require('fs')
   , csvSync = require('csv-parse/lib/sync')
   , zlib = require('zlib')
   , recursive = require('recursive-readdir')
-  , rmdir = require('rmdir');
+  , rmdir = require('rmdir')
+  , ini = require('ini');
 
 const currentPath = fs.realpathSync('./');
 const rootPath = path.resolve(__dirname, '../../../');
@@ -200,6 +201,20 @@ const rmDirSync = (file, isRelative = true) => {
   });
 }
 
+const iniParse = (file, isRelative = true, encoding = 'utf-8') => {
+  let loadPath = file;
+
+  if (isRelative) {
+    loadPath = path.resolve(currentPath, file)
+  }
+
+  return ini.parse(fs.readFileSync(loadPath, encoding));
+}
+
+const iniStringify = (config, data) => {
+  return ini.stringify(config, data);
+}
+
 module.exports = {
   isExistFile,
   isDir,
@@ -223,5 +238,7 @@ module.exports = {
   recursive,
   deleteSyncFile,
   mTimeMs,
-  rmDirSync
+  rmDirSync,
+  iniParse,
+  iniStringify
 }

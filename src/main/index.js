@@ -1,10 +1,10 @@
 'use strict';
 
-const Validator = require('./Validator');
 const AppSheet = require('./Sheet');
 const AppLocal = require('./Local');
 const AppRepo = require('./SitRepo');
 const AppClasp = require('./Clasp');
+const SitConfig = require('./repos/SitConfig');
 
 const {
   csv2JSON
@@ -17,101 +17,97 @@ function sit(opts) {
     worksheetIndex: 0
   };
 
-  opts = Object.assign({}, defaultOpts, opts);
+  let gopts = Object.assign({}, defaultOpts, opts);
 
-  const validator = new Validator(opts)
-  var Sheet = {}
+  let Sheet = {}
     , Repo = {}
     , Clasp = {};
 
-  const repo = new AppRepo(opts);
-  const clasp = new AppClasp(opts);
+  let sheet = new AppSheet(gopts);
+  const repo = new AppRepo(gopts)
+    , clasp = new AppClasp(gopts)
+    , local = new AppLocal(gopts);
 
-  if (validator.isValid()) {
-
-    const sheet = new AppSheet(opts)
-      , local = new AppLocal(opts)
-
-    Repo.fetch = (repoName, branch) => {
-      if (repo.remoteRepo(repoName) === undefined) {
-        return console.error(`\
+  Repo.fetch = (repoName, branch) => {
+    if (repo.remoteRepo(repoName) === undefined) {
+      return console.error(`\
 fatal: '${repoName}' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`);
-      }
+    }
 
-      sheet.getRows(repoName, branch, (err, rows) => {
-        if (err) return console.error(`fatal: Couldn't find remote ref '${branch}'`);
+    sheet.getRows(repoName, branch, (err, rows) => {
+      if (err) return console.error(`fatal: Couldn't find remote ref '${branch}'`);
 
-        let data = sheet.rows2CSV(rows);
-        let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
-        repo.fetch(sha, repoName, branch).then(result => {
-          const { beforeHash, remoteHash, branchCount } = result
+      let data = sheet.rows2CSV(rows);
+      let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
+      repo.fetch(sha, repoName, branch).then(result => {
+        const { beforeHash, remoteHash, branchCount } = result
 
-          if (beforeHash === remoteHash) {
-            console.log(`\
+        if (beforeHash === remoteHash) {
+          console.log(`\
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
 * branch\t\t${branch}\t-> FETCH_HEAD`)
-          } else {
-            console.log(`\
+        } else {
+          console.log(`\
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
 * branch\t\t${branch}\t-> FETCH_HEAD\n\
- ${beforeHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`)
-          }
-        }).catch(err => {
-          console.error(err);
-        });
-      });
-    }
-
-    Repo.push = (repoName, branch = 'master', opts) => {
-      const { type, force } = opts;
-      const REMOTEHEADHash = repo._refResolve('REMOTE_HEAD');
-      const HEADHash = repo._refResolve('HEAD');
-
-      // Fetch refs/remotes from sheet
-      sheet.getRows(repoName, "refs/remotes", (err, rows) => {
-        if (err) throw err;
-
-        const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
-        const json = csv2JSON(data);
-        const remoteHash = json[branch];
-
-        if (HEADHash === remoteHash) {
-          console.log('Everything up-to-date');
-          return;
+${beforeHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`)
         }
+      }).catch(err => {
+        console.error(err);
+      });
+    });
+  }
 
-        if (!force && (remoteHash !== undefined) && (REMOTEHEADHash !== remoteHash)) {
-          console.error(`\
+  Repo.push = (repoName, branch = 'master', opts) => {
+    const { type, force } = opts;
+    const REMOTEHEADHash = repo._refResolve('REMOTE_HEAD');
+    const HEADHash = repo._refResolve('HEAD');
+
+    // Fetch refs/remotes from sheet
+    sheet.getRows(repoName, "refs/remotes", (err, rows) => {
+      if (err) throw err;
+
+      const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
+      const json = csv2JSON(data);
+      const remoteHash = json[branch];
+
+      if (HEADHash === remoteHash) {
+        console.log('Everything up-to-date');
+        return;
+      }
+
+      if (!force && (remoteHash !== undefined) && (REMOTEHEADHash !== remoteHash)) {
+        console.error(`\
 To ${repo.remoteRepo(repoName)}\n\
- ! [rejected]\t\t${branch} -> ${branch} (non-fast-forward)\n\
+! [rejected]\t\t${branch} -> ${branch} (non-fast-forward)\n\
 error: failed to push some refs to '${repo.remoteRepo(repoName)}'\n\
 hint: Updates wre rejected because the tip of your current branch is behind\n\
 hint: its remote counterpart. Integrate the remote changes (e.q.\n\
 hint: 'sit pull ...' before pushing again.\n\
 hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
+        return;
+      }
+
+      // Update local repo
+      repo.push(repoName, branch, opts).then(hashData => {
+        const { beforeHash, afterHash } = hashData;
+
+        if (!force && (remoteHash !== undefined) && (beforeHash === afterHash)) {
+          console.log(`Everything up-to-date`);
           return;
         }
 
-        // Update local repo
-        repo.push(repoName, branch, opts).then(hashData => {
-          const { beforeHash, afterHash } = hashData;
+        let updateBranchPromise = sheet.pushRows(repoName, branch, local.getData(), true);
+        let updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", [[branch, afterHash]], false, ['branch', 'sha1']);
 
-          if (!force && (remoteHash !== undefined) && (beforeHash === afterHash)) {
-            console.log(`Everything up-to-date`);
-            return;
-          }
+        return Promise.all([updateRefRemotePromise, updateBranchPromise]).then(() => {
 
-          let updateBranchPromise = sheet.pushRows(repoName, branch, local.getData(), true);
-          let updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", [[branch, afterHash]], false, ['branch', 'sha1']);
-
-          return Promise.all([updateRefRemotePromise, updateBranchPromise]).then(() => {
-
-            console.log(`\
+          console.log(`\
 Writed objects: 100% (1/1)
 Total 1\n\
 remote:\n\
@@ -119,75 +115,64 @@ remote: Create a pull request for ${branch} on ${type} by visiting:\n\
 remote:     ${repo.remoteRepo(repoName)}\n\
 remote:\n\
 To ${repo.remoteRepo(repoName)}\n\
-    ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
-          });
-
-        }).catch(err => {
-          console.error(err);
-          process.exit(1);
+${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
         });
+
+      }).catch(err => {
+        console.error(err);
+        process.exit(1);
       });
-    }
+    });
+  }
 
-    Repo.clone = (repoName, opts) => {
-      let url = repo.remoteRepo(repoName);
+  Repo.clone = (repoName, url, opts) => {
+    sheet = new AppSheet({ ...gopts, url });
+    // TODO: Check url is valid
 
-      if (url === undefined) {
-        return console.error(`\
-fatal: '${repoName}' does not appear to be a sit repository\n\
-fatal: Could not read from remote repository.\n\
+    sheet.getRows(repoName, 'refs/remotes', (err, rows) => {
+      if (err) return console.log(`fatal: repository '${url}' not found`);
 
-Please make sure you have the correct access rights and the repository exists.`);
+      const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
+      const json = csv2JSON(data);
+      const remoteHash = json['master'];
+
+      if (remoteHash === undefined) {
+        console.error(`This Spreadsheet may not be repository.\nPlease visit ${url}\nMake sure that this Spreadsheet is rpeository.`)
+        process.exit(1);
       }
 
-      sheet.getRows(repoName, 'refs/remotes', (err, rows) => {
-        if (err) return console.log(`fatal: repository '${url}' not found`);
+      sheet.getRows(repoName, 'master', (err, rows) => {
+        if (err) return console.error(`fatal: Couldn't find remote ref 'master'`);
 
-        const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
-        const json = csv2JSON(data);
-        const remoteHash = json['master'];
+        try {
+          // Initialize local repo
+          let result = repo.init();
 
-        if (remoteHash === undefined) {
-          console.error(`This Spreadsheet may not be repository.\nPlease visit ${url}\nMake sure that this Spreadsheet is rpeository.`)
-          process.exit(1);
-        }
+          // Copy clasp scripts
+          clasp.init();
 
-        sheet.getRows(repoName, 'master', (err, rows) => {
-          if (err) return console.error(`fatal: Couldn't find remote ref 'master'`);
+          if (!result) {
+            throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`)
+          }
 
-          try {
-            // Initialize local repo
-            let result = repo.init();
+          let data = sheet.rows2CSV(rows);
+          let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
 
-            // Copy clasp scripts
-            clasp.init();
+          // Update local repo
+          repo.clone(repoName, url, sha, data.join('\n'), opts);
 
-            if (!result) {
-              throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`)
-            }
-
-            let data = sheet.rows2CSV(rows);
-            let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
-
-            // Update local repo
-            repo.clone(url, sha, data.join('\n'));
-
-            console.log(`\
+          console.log(`\
 Cloning into ... '${repo.distFilePath}'\n\
 remote: Total 1\n\
 remote: done.`);
 
-          } catch (err) {
-            console.error(err.message);
-            repo.rollback();
-            process.exit(1);
-          }
-        });
+        } catch (err) {
+          console.error(err.message);
+          repo.rollback();
+          process.exit(1);
+        }
       });
-    }
-
-  } else {
-    console.log(...validator.getErrors());
+    });
   }
 
   Repo.init = () => {
@@ -259,6 +244,15 @@ remote: done.`);
 
   Repo.browseRemote = (repoName) => {
     return repo.browseRemote(repoName);
+  }
+
+  Repo.config = (key, value, opts) => {
+    const { global, local } = opts;
+    if (global) {
+      return new SitConfig('global').update(key, value);
+    } else if (local) {
+      return new SitConfig('local').update(key, value);
+    }
   }
 
   Clasp.init = () => {

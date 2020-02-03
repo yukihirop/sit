@@ -4,6 +4,7 @@ const { packageJSON } = require('./utils/file');
 const GSSValidator = require('./validators/GSSValidator');
 
 const SitSetting = require('./SitSetting');
+const SitConfig = require('./repos/SitConfig');
 
 function Validator(opts) {
   const { type, baseURL } = opts;
@@ -38,15 +39,19 @@ function Validator(opts) {
 
     switch (type) {
       case 'GoogleSpreadSheet':
-        const remotes = SitSetting.repo.remote;
-        Object.keys(remotes).forEach((name) => {
-          let url = remotes[name];
-          let validator = new GSSValidator(url, baseURL);
-          result = validator.isSpreadSheetURL();
-          if (!result) {
-            setErrors(...validator.getErrors())
-          }
-        })
+        const remotes = SitConfig.config('local').remote;
+        if (remotes) {
+          Object.keys(remotes).forEach((name) => {
+            let url = remotes[name];
+            let validator = new GSSValidator(url, baseURL);
+            result = validator.isSpreadSheetURL();
+            if (!result) {
+              setErrors(...validator.getErrors())
+            }
+          })
+        } else {
+          result = false
+        }
         break;
     }
 

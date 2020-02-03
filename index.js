@@ -158,17 +158,37 @@ program
   });
 
 program
-  .command('clone <repository>')
+  .command('clone <repository> <url>')
   .description('clone rows from sheet')
-  .action((repository, options) => {
-    sit().Repo.clone(repository, options);
-  })
+  .option(
+    '-t, --type <type>',
+    'sheet type',
+    'GoogleSpreadSheet'
+  )
+  .action((repository, url, options) => {
+    sit().Repo.clone(repository, url, options);
+  });
 
 program
   .command('browse-remote [repository]')
   .description('browse remote repository')
   .action((repository, _options) => {
     sit().Repo.browseRemote(repository);
+  });
+
+program
+  .command('config <key> <value>')
+  .description('configure sitconfig')
+  .option(
+    '--global',
+    'global setting'
+  )
+  .option(
+    '--local',
+    'local setting'
+  )
+  .action((key, value, options) => {
+    sit().Repo.config(key, value, options);
   });
 
 program

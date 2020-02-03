@@ -21,10 +21,12 @@ const {
 const editor = require('./utils/editor');
 
 const SitBaseRepo = require('./repos/base/SitBaseRepo');
+const SitConfig = require('./repos/SitConfig');
 
 class SitRepo extends SitBaseRepo {
   init() {
     const localRepo = this.localRepo;
+    const homeDir = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"];
 
     if (isExistFile(localRepo)) {
       return false
@@ -38,6 +40,8 @@ class SitRepo extends SitBaseRepo {
 
       writeSyncFile(`${localRepo}/HEAD`, "ref: refs/heads/master", true);
       writeSyncFile(`${localRepo}`, "", true);
+      writeSyncFile(`${localRepo}/config`, "", true);
+      writeSyncFile(`${homeDir}/.sitconfig`, "", true);
 
       return true
     }
@@ -53,23 +57,30 @@ class SitRepo extends SitBaseRepo {
     }
   }
 
-  clone(url, masterHash, data) {
+  clone(repoName, url, masterHash, data, opts) {
+    const { type } = opts;
+
     // STEP 1: Update refs/heads/master
     this._writeSyncFile("refs/heads/master", masterHash);
 
     // STEP 2: Create refs/remotes/origin/HEAD
-    this._writeSyncFile("refs/remotes/origin/HEAD", "ref: refs/remotes/origin/master");
+    this._writeSyncFile(`refs/remotes/${repoName}/HEAD`, `ref: refs/remotes/${repoName}/master`);
 
     // STEP 3: Update logs/refs/heads/master
     this._writeLog("logs/refs/heads/master", this._initialHash(), masterHash, `clone: from ${url}`);
 
     // STEP 4: Update logs/refs/remotes/origin/HEAD
-    this._writeLog("logs/refs/remotes/origin/HEAD", this._initialHash(), masterHash, `clone: from ${url}`)
+    this._writeLog(`logs/refs/remotes/${repoName}/HEAD`, this._initialHash(), masterHash, `clone: from ${url}`)
 
     // STEP 5: Update logs/HEAD
     this._writeLog("logs/HEAD", this._initialHash(), masterHash, `clone: from ${url}`);
 
-    // STEP 6: Update dist file instead of Update index
+    // STEP 6: Update config
+    const config = new SitConfig('local');
+    config.updateSection(`remote.${repoName}`, { type: type, url: url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` });
+    config.updateSection(`branch.master`, { remote: 'origin', merge: 'refs/heads/master' });
+
+    // STEP 7: Update dist file instead of Update index
     writeSyncFile(this.distFilePath, data);
   }
 
