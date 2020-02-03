@@ -9,7 +9,6 @@ const {
   fileUnzip,
   fileDeflate,
   fileBasename,
-  appendFile,
   deleteSyncFile,
   iniParse
 } = require('../../utils/file');
@@ -18,22 +17,17 @@ const SitSetting = require('../../SitSetting')
   , SitConfig = require('../SitConfig');
 
 const recursive = require('recursive-readdir')
-  , moment = require('moment')
   , crypto = require('crypto');
 
-const SitBlob = require('../objects/SitBlob');
-const SitTree = require('../objects/SitTree');
+const SitBlob = require('../objects/SitBlob')
+  , SitTree = require('../objects/SitTree')
+  , SitLogger = require('../logs/SitLogger')
+  , SitBase = require('../base/SitBase');
 
-const INITIAL_HASH = '0000000000000000000000000000000000000000';
-
-class SitBaseRepo {
+class SitBaseRepo extends SitBase {
   constructor(opts) {
+    super();
     this.distFilePath = `${SitSetting.dist.path}/${SitSetting.dist.sheetName}`;
-    this.localRepo = SitSetting.repo.local;
-  }
-
-  _initialHash() {
-    return INITIAL_HASH;
   }
 
   _HEAD() {
@@ -51,19 +45,9 @@ class SitBaseRepo {
     return isExistFile(`${this.localRepo}/${path}`);
   }
 
-  _writeLog(path, beforeHash, afterHash, message, mkdir = true) {
-    const space = ' ';
-    const data = `${beforeHash || INITIAL_HASH}${space}${afterHash}${space}${moment().format('x')}${space}${moment().format('ZZ')}\t${message}\r\n`;
-
-    if (mkdir) {
-      const fullDirPath = this.localRepo + '/' + path.split('/').slice(0, -1).join('/');
-
-      if (!isExistFile(fullDirPath)) {
-        mkdirSyncRecursive(fullDirPath);
-      }
-    }
-
-    appendFile(`${this.localRepo}/${path}`, data);
+  _writeLog(file, beforeSHA, afterSHA, message, mkdir = true) {
+    new SitLogger(beforeSHA, afterSHA).write(file, message, mkdir)
+    return this;
   }
 
   _writeSyncFile(path, data, mkdir = true) {
@@ -370,7 +354,7 @@ class SitBaseRepo {
         return data;
       }
     } else {
-      return INITIAL_HASH;
+      return this._INITIAL_HASH();
     }
   }
 

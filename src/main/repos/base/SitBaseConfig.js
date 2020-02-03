@@ -8,16 +8,17 @@ const {
 } = require('../../utils/file');
 
 const SitSetting = require('../../SitSetting');
+const SitBase = require('./SitBase');
 
 const homeDir = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"];
 const configPaths = { 'global': `${homeDir}/.sitconfig`, 'local': `${SitSetting.repo.local}/config` };
 
-class SitBaseConfig {
+class SitBaseConfig extends SitBase {
   constructor(type) {
+    super();
     this.type = type;
-    this.config = SitBaseConfig.config(this.type);
+    this.config = SitBaseConfig.config(type);
     this.configPath = configPaths[type];
-    this.localRepo = SitSetting.repo.local;
   }
 
   static config(type) {
@@ -45,7 +46,6 @@ class SitBaseConfig {
     config[mainSec] = config[mainSec] || {};
     config[mainSec][subSec] = data;
     writeSyncFile(`${this.localRepo}/config`, iniStringify(config, null));
-
   }
 
   _updateRemotes(subsection, data) {

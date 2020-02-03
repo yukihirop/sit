@@ -66,19 +66,17 @@ class SitRepo extends SitBaseRepo {
     // STEP 2: Create refs/remotes/origin/HEAD
     this._writeSyncFile(`refs/remotes/${repoName}/HEAD`, `ref: refs/remotes/${repoName}/master`);
 
-    // STEP 3: Update logs/refs/heads/master
-    this._writeLog("logs/refs/heads/master", this._initialHash(), masterHash, `clone: from ${url}`);
-
-    // STEP 4: Update logs/refs/remotes/origin/HEAD
-    this._writeLog(`logs/refs/remotes/${repoName}/HEAD`, this._initialHash(), masterHash, `clone: from ${url}`)
-
-    // STEP 5: Update logs/HEAD
-    this._writeLog("logs/HEAD", this._initialHash(), masterHash, `clone: from ${url}`);
-
-    // STEP 6: Update config
+    // STEP 3: Update config
     const config = new SitConfig('local');
     config.updateSection(`remote.${repoName}`, { type: type, url: url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` });
     config.updateSection(`branch.master`, { remote: 'origin', merge: 'refs/heads/master' });
+
+    // STEP 4: Update logs/refs/heads/master
+    // STEP 5: Update logs/refs/remotes/origin/HEAD
+    // STEP 6: Update logs/HEAD
+    this._writeLog("logs/refs/heads/master", this._INITIAL_HASH(), masterHash, `clone: from ${url}`)
+      ._writeLog(`logs/refs/remotes/${repoName}/HEAD`, this._INITIAL_HASH(), masterHash, `clone: from ${url}`)
+      ._writeLog("logs/HEAD", this._INITIAL_HASH(), masterHash, `clone: from ${url}`);
 
     // STEP 7: Update dist file instead of Update index
     writeSyncFile(this.distFilePath, data);
@@ -223,10 +221,9 @@ class SitRepo extends SitBaseRepo {
         this._writeSyncFile(`refs/heads/${branch}`, currentHash, false);
 
         // STEP 3: Append logs/HEAD
-        this._writeLog("logs/HEAD", currentHash, currentHash, `checkout: moving from ${currentBranch} to ${branch}`);
-
         // STEP 4: Append logs/refs/heads/<branch>
-        this._writeLog(`logs/refs/heads/${branch}`, null, currentHash, "branch: Created from HEAD");
+        this._writeLog("logs/HEAD", currentHash, currentHash, `checkout: moving from ${currentBranch} to ${branch}`)
+          ._writeLog(`logs/refs/heads/${branch}`, null, currentHash, "branch: Created from HEAD");
 
         console.log(`Switched to a new branch '${branch}'`);
       }
@@ -292,10 +289,9 @@ nothing to commit`
       this._writeSyncFile(refBranch, afterHEADHash);
 
       // STEP 4: Update logs/HEAD
-      this._writeLog("logs/HEAD", beforeHEADHash, afterHEADHash, `commit ${message}`);
-
       // STEP 5: Update logs/refs/heads/<branch>
-      this._writeLog(`logs/${refBranch}`, beforeHEADHash, afterHEADHash, `commit ${message}`);
+      this._writeLog("logs/HEAD", beforeHEADHash, afterHEADHash, `commit ${message}`)
+        ._writeLog(`logs/${refBranch}`, beforeHEADHash, afterHEADHash, `commit ${message}`);
 
       // STEP 6: Update index
       // Do not necessary
@@ -415,10 +411,9 @@ error: failed to push some refs to '${repoName}'`)
             const commitMsg = fileSafeLoad(`${this.localRepo}/MERGE_MSG`).split('\n')[0];
 
             // STEP 3: Update logs/HEAD
-            this._writeLog("logs/HEAD", this.beforeHEADHash(), this.afterHEADHash(), `commit (merge): ${commitMsg} into ${this.currentBranch()}`)
-
             // STEP 4: Update logs/refs/heads/<HEAD-branch>
-            this._writeLog(`logs/refs/heads/${this.currentBranch()}`, this.beforeHEADHash(), this.afterHEADHash(), `commit (merge): ${commitMsg} into ${this.currentBranch()}`);
+            this._writeLog("logs/HEAD", this.beforeHEADHash(), this.afterHEADHash(), `commit (merge): ${commitMsg} into ${this.currentBranch()}`)
+              ._writeLog(`logs/refs/heads/${this.currentBranch()}`, this.beforeHEADHash(), this.afterHEADHash(), `commit (merge): ${commitMsg} into ${this.currentBranch()}`);
 
             // STEP 5: Create sit object (commit)
 
@@ -540,11 +535,10 @@ two-way-merge failed; fix conflicts and then commit the result.`);
               this._writeSyncFile('ORIG_HEAD', headHash);
 
               // STEP 2: Update logs/HEAD
-              this._writeLog('logs/HEAD', headHash, remoteHash, `merge ${repoName}/${branch}: Fast-forward`);
-
               // STEP 3: Update logs/refs/<HEAD-branch>
               const headBranch = this._branchResolve('HEAD');
-              this._writeLog(`logs/refs/heads/${headBranch}`, headHash, remoteHash, `merge ${repoName}/${branch}: Fast-forward`);
+              this._writeLog('logs/HEAD', headHash, remoteHash, `merge ${repoName}/${branch}: Fast-forward`)
+                ._writeLog(`logs/refs/heads/${headBranch}`, headHash, remoteHash, `merge ${repoName}/${branch}: Fast-forward`);
 
               // STEP 4: Update HEAD
               this._writeSyncFile('HEAD', remoteHash);
