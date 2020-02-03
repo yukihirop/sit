@@ -57,7 +57,9 @@ class SitRepo extends SitBaseRepo {
     }
   }
 
-  clone(repoName, url, masterHash, data) {
+  clone(repoName, url, masterHash, data, opts) {
+    const { type } = opts;
+
     // STEP 1: Update refs/heads/master
     this._writeSyncFile("refs/heads/master", masterHash);
 
@@ -75,7 +77,7 @@ class SitRepo extends SitBaseRepo {
 
     // STEP 6: Update config
     const config = new SitConfig('local');
-    config.updateSection(`remote.${repoName}`, { url: url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` });
+    config.updateSection(`remote.${repoName}`, { type: type, url: url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` });
     config.updateSection(`branch.master`, { remote: 'origin', merge: 'refs/heads/master' });
 
     // STEP 7: Update dist file instead of Update index

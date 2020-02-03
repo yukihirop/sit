@@ -160,6 +160,11 @@ program
 program
   .command('clone <repository> <url>')
   .description('clone rows from sheet')
+  .option(
+    '-t, --type <type>',
+    'sheet type',
+    'GoogleSpreadSheet'
+  )
   .action((repository, url, options) => {
     sit().Repo.clone(repository, url, options);
   });

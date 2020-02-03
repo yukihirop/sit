@@ -159,7 +159,7 @@ ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
           let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
 
           // Update local repo
-          repo.clone(repoName, url, sha, data.join('\n'));
+          repo.clone(repoName, url, sha, data.join('\n'), opts);
 
           console.log(`\
 Cloning into ... '${repo.distFilePath}'\n\
