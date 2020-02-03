@@ -11,8 +11,7 @@ const {
   writeSyncFile,
   recursive,
   mTimeMs,
-  rmDirSync,
-  iniStringify
+  rmDirSync
 } = require('./utils/file');
 
 const {
@@ -22,6 +21,7 @@ const {
 const editor = require('./utils/editor');
 
 const SitBaseRepo = require('./repos/base/SitBaseRepo');
+const SitConfig = require('./repos/SitConfig');
 
 class SitRepo extends SitBaseRepo {
   init() {
@@ -74,12 +74,9 @@ class SitRepo extends SitBaseRepo {
     this._writeLog("logs/HEAD", this._initialHash(), masterHash, `clone: from ${url}`);
 
     // STEP 6: Update config
-    let config = this._iniParse('config');
-    config["remote"] = {};
-    config["remote"][repoName] = { url: url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` };
-    config.branch = {};
-    config.branch.master = { remote: 'origin', merge: 'refs/heads/master' };
-    this._writeSyncFile('config', iniStringify(config, null));
+    const config = new SitConfig('local');
+    config.updateSection(`remote.${repoName}`, { url: url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` });
+    config.updateSection(`branch.master`, { remote: 'origin', merge: 'refs/heads/master' });
 
     // STEP 7: Update dist file instead of Update index
     writeSyncFile(this.distFilePath, data);

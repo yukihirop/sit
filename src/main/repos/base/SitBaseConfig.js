@@ -17,6 +17,17 @@ class SitBaseConfig {
     this.type = type;
     this.config = SitBaseConfig.config(this.type);
     this.configPath = configPaths[type];
+    this.localRepo = SitSetting.repo.local;
+  }
+
+  static config(type) {
+    const configPath = configPaths[type];
+
+    if (isExistFile(configPath)) {
+      return iniParse(configPath);
+    } else {
+      return {};
+    }
   }
 
   update(key, value) {
@@ -28,14 +39,19 @@ class SitBaseConfig {
     }
   }
 
-  static config(type) {
-    const configPath = configPaths[type];
+  updateSection(section, data) {
+    const config = this.config;
+    const [mainSec, subSec] = section.split('.');
+    config[mainSec] = config[mainSec] || {};
+    config[mainSec][subSec] = data;
+    writeSyncFile(`${this.localRepo}/config`, iniStringify(config, null));
 
-    if (isExistFile(configPath)) {
-      return iniParse(configPath);
-    } else {
-      return {};
-    }
+  }
+
+  _updateRemotes(subsection, data) {
+    const config = this.config;
+    config.remote = config.remote || {};
+    config.remote[section]
   }
 
   _updateUserAttribute(attribute, value) {
