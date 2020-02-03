@@ -7,16 +7,24 @@ const {
 const Client = require('./GSSClient');
 const Worksheet = require('./Worksheet');
 const SitSetting = require('../SitSetting');
+const SitConfig = require('../repos/SitConfig');
 
 function GSS(opts) {
-  const remotes = SitSetting.repo.remote
-    , sheetSchema = SitSetting.sheet.gss.openAPIV3Schema.properties;
+  const { url } = opts;
+  const sheetSchema = SitSetting.sheet.gss.openAPIV3Schema.properties;
 
   const worksheet = new Worksheet();
 
   const getInfo = (repoName, sheetName, callback) => {
-    let url = remotes[repoName];
-    return Client(url, opts).then(doc => {
+    let remoteURL;
+
+    if (!url) {
+      remoteURL = SitConfig.remote[repoName].url;
+    } else {
+      remoteURL = url
+    }
+
+    return Client(remoteURL, opts).then(doc => {
       new Promise((resolve, reject) => {
         doc.getInfo((err, info) => {
           if (err) reject(err);
@@ -24,7 +32,7 @@ function GSS(opts) {
             var wh = info.worksheets.filter(sheet => sheet.title == sheetName)[0]
             resolve(wh);
           } else {
-            console.error(`Make sharing settings for the service account.\nPlease visit ${url}`);
+            console.error(`Make sharing settings for the service account.\nPlease visit ${remoteURL}`);
             process.exit(1);
           }
         });
@@ -32,7 +40,7 @@ function GSS(opts) {
         if (sheet) {
           if (callback) callback(doc, sheet);
         } else {
-          console.error(`Do not exits sheet: '${sheetName}' in ${url}\nPerhaps, This Spreadsheet may not be repository.`);
+          console.error(`Do not exits sheet: '${sheetName}' in ${remoteURL}\nPerhaps, This Spreadsheet may not be repository.`);
           process.exit(1);
         }
       }).catch(err => {

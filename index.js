@@ -158,11 +158,11 @@ program
   });
 
 program
-  .command('clone <repository>')
+  .command('clone <repository> <url>')
   .description('clone rows from sheet')
-  .action((repository, options) => {
-    sit().Repo.clone(repository, options);
-  })
+  .action((repository, url, options) => {
+    sit().Repo.clone(repository, url, options);
+  });
 
 program
   .command('browse-remote [repository]')

@@ -61,7 +61,7 @@ Commands:
   push [options] <repository> <branch>   push rows into Sheet
   fetch [options] <repository> <branch>  fetch rows from Sheet
   merge [options] [repository] [branch]  merge rows
-  clone <repository>                     clone rows from sheet
+  clone <repository> <url>               clone rows from sheet
   browse-remote [repository]             browse remote repository
   init                                   create setting file (.sitsetting)
   clasp                                  clasp cli

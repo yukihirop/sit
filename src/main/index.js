@@ -17,16 +17,16 @@ function sit(opts) {
     worksheetIndex: 0
   };
 
-  opts = Object.assign({}, defaultOpts, opts);
+  let gopts = Object.assign({}, defaultOpts, opts);
 
   let Sheet = {}
     , Repo = {}
     , Clasp = {};
 
-  const repo = new AppRepo(opts)
-    , clasp = new AppClasp(opts)
-    , sheet = new AppSheet(opts)
-    , local = new AppLocal(opts);
+  let sheet = new AppSheet(gopts);
+  const repo = new AppRepo(gopts)
+    , clasp = new AppClasp(gopts)
+    , local = new AppLocal(gopts);
 
   Repo.fetch = (repoName, branch) => {
     if (repo.remoteRepo(repoName) === undefined) {
@@ -125,16 +125,9 @@ ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
     });
   }
 
-  Repo.clone = (repoName, opts) => {
-    let url = repo.remoteRepo(repoName);
-
-    if (url === undefined) {
-      return console.error(`\
-fatal: '${repoName}' does not appear to be a sit repository\n\
-fatal: Could not read from remote repository.\n\
-
-Please make sure you have the correct access rights and the repository exists.`);
-    }
+  Repo.clone = (repoName, url, opts) => {
+    sheet = new AppSheet({ ...gopts, url });
+    // TODO: Check url is valid
 
     sheet.getRows(repoName, 'refs/remotes', (err, rows) => {
       if (err) return console.log(`fatal: repository '${url}' not found`);
