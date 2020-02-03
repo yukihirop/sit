@@ -170,7 +170,7 @@ Please make sure you have the correct access rights and the repository exists.`)
             let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
 
             // Update local repo
-            repo.clone(url, sha, data);
+            repo.clone(url, sha, data.join('\n'));
 
             console.log(`\
 Cloning into ... '${repo.distFilePath}'\n\
