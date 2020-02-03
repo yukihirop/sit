@@ -9,10 +9,10 @@ function InitCmd() {
 
   initCmd
     .name('init')
-    .description('create setting file (.sitconfig)')
+    .description('create setting file (.sitsetting)')
     .action(() => {
-      var yamlData = rootYamlSafeLoad('./src/main/template/sitconfig.yaml');
-      var settingPath = `${currentPath}/.sitconfig`;
+      var yamlData = rootYamlSafeLoad('./src/main/template.sitsetting.yaml');
+      var settingPath = `${currentPath}/.sitsetting`;
 
       if (isExistFile(settingPath)) {
         console.log(`already exist file: ${settingPath}`);
