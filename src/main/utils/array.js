@@ -49,7 +49,8 @@ function overrideCSV(csvTo, csvFrom, specifyIndex) {
       }
     });
   } else {
-    result = csvTo;
+    // Cut csvFrom header
+    result = [...csvTo, ...csvFrom.slice(1)];
   }
 
   return result;

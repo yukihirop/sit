@@ -17,7 +17,7 @@ class Clasp {
     this.claspPath = `${this.localRepo}/scripts/clasp`;
   }
 
-  init() {
+  update() {
     const rootFilesPath = rootAbsolutePath('./src/clasp');
     const destPath = absolutePath(this.claspPath);
     const rootClaspignorePath = rootAbsolutePath('./src/clasp/.claspignore');

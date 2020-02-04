@@ -11,7 +11,6 @@ const SitConfig = require('../repos/SitConfig');
 
 function GSS(opts) {
   const { url } = opts;
-  const sheetSchema = SitSetting.sheet.gss.openAPIV3Schema.properties;
 
   const worksheet = new Worksheet();
 
@@ -68,7 +67,7 @@ function GSS(opts) {
     data = [['こんちは', 'hello', 'greeting.hello'],
             ['さようなら', 'good bye', 'greeting.good_bye']]
   */
-  const pushRows = (repoName, sheetName, data, clear = false) => {
+  const pushRows = (repoName, sheetName, data, { clear, specifyIndex }) => {
     return getInfo(repoName, sheetName, (doc, sheet) => {
       new Promise((resolve, reject) => {
         const header = data[0];
@@ -82,7 +81,7 @@ function GSS(opts) {
             if (clear) {
               newData = data;
             } else {
-              newData = overrideCSV(oldData, data, 0);
+              newData = overrideCSV(oldData, data, specifyIndex);
             }
 
             let oldCSVData = worksheet.csvData(oldData);
@@ -98,7 +97,9 @@ function GSS(opts) {
           });
         } else {
           doc.addWorksheet({
-            title: sheetName
+            title: sheetName,
+            rowCount: SitSetting.sheet.gss.defaultWorksheet.rowCount,
+            colCount: SitSetting.sheet.gss.defaultWorksheet.colCount
           }, (err, newSheet) => {
             if (err) reject(err);
             let csvData = worksheet.csvData(data);
@@ -161,6 +162,7 @@ function GSS(opts) {
   }
 
   const _header = () => {
+    const sheetSchema = SitSetting.sheet.gss.openAPIV3Schema.properties;
     var keys = Object.keys(sheetSchema)
     var result = keys.map(key => {
       return sheetSchema[key]['description']

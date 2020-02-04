@@ -36,6 +36,15 @@ class SitBaseRepo extends SitBase {
     return SitConfig.config('local').remote[repoName].url;
   }
 
+  _HEADCSVData(callback) {
+    const headHash = this._refResolve('HEAD');
+    this.catFile(headHash).then(obj => {
+      const stream = obj.serialize().toString()
+      const csvData = stream.split('\n').map(line => { return line.split(',') })
+      callback(csvData);
+    });
+  }
+
   _refCSVData(branch, repoName) {
     let refPath
 
@@ -49,7 +58,7 @@ class SitBaseRepo extends SitBase {
     return parser.parseToCSV()
   }
 
-  _refLogCSVData(branch, repoName) {
+  _refLastLogCSVData(branch, repoName) {
     let logPath;
 
     if (repoName) {
@@ -59,7 +68,8 @@ class SitBaseRepo extends SitBase {
     }
 
     const parser = new SitLogParser(branch, logPath);
-    return parser.parseToCSV()
+    const logData = parser.parseToCSV()
+    return [logData[0],logData.slice(-1)[0]]
   }
 
   _HEAD() {

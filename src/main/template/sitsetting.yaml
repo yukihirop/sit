@@ -16,9 +16,11 @@ sheet:
         key:
           type: string
           description: キー
+    defaultWorksheet:
+      rowCount: 100
+      colCount: 20
 repo:
   local: ./.sit
 dist:
   path: ./dist
   sheetName: "master_data.csv"
-

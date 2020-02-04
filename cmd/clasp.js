@@ -9,9 +9,9 @@ function ClaspCmd() {
     .description('clasp cli')
 
   claspCmd
-    .command('init')
+    .command('update')
     .action(() => {
-      sit().Clasp.init();
+      sit().Clasp.update();
     });
 
   return claspCmd

@@ -1,7 +1,6 @@
 'use strict';
 
 const AppSheet = require('./Sheet');
-const AppLocal = require('./Local');
 const AppRepo = require('./SitRepo');
 const AppClasp = require('./Clasp');
 const SitConfig = require('./repos/SitConfig');
@@ -25,8 +24,7 @@ function sit(opts) {
 
   let sheet = new AppSheet(gopts);
   const repo = new AppRepo(gopts)
-    , clasp = new AppClasp(gopts)
-    , local = new AppLocal(gopts);
+    , clasp = new AppClasp(gopts);
 
   Repo.fetch = (repoName, branch) => {
     if (repo.remoteRepo(repoName) === undefined) {
@@ -81,7 +79,8 @@ ${beforeHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\t${branch}\t-> ${repoName}/
         return;
       }
 
-      if (!force && (remoteHash !== undefined) && (REMOTEHEADHash !== remoteHash)) {
+      const isPushableAboutREMOTEREADHash = (REMOTEHEADHash === repo._INITIAL_HASH()) ? true : (REMOTEHEADHash === remoteHash)
+      if (!force && (remoteHash !== undefined) && !isPushableAboutREMOTEREADHash) {
         console.error(`\
 To ${repo.remoteRepo(repoName)}\n\
 ! [rejected]\t\t${branch} -> ${branch} (non-fast-forward)\n\
@@ -94,7 +93,7 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
       }
 
       // Update local repo
-      repo.push(repoName, branch, opts).then(hashData => {
+      repo.push(repoName, branch, { ...opts, HEADHash }).then(hashData => {
         const { beforeHash, afterHash } = hashData;
 
         if (!force && (remoteHash !== undefined) && (beforeHash === afterHash)) {
@@ -102,13 +101,14 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
           return;
         }
 
-        const updateBranchPromise = sheet.pushRows(repoName, branch, local.getData(), true);
-        const updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", repo._refCSVData(branch, repoName), false);
-        const updateRefLogRemotePromise = sheet.pushRows(repoName, "logs/refs/remotes", repo._refLogCSVData(branch, repoName), false)
+        repo._HEADCSVData(csvData => {
+          const updateBranchPromise = sheet.pushRows(repoName, branch, csvData, { clear: true });
+          const updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", repo._refCSVData(branch, repoName), { clear: false, specifyIndex: 0 });
+          const updateRefLogRemotePromise = sheet.pushRows(repoName, "logs/refs/remotes", repo._refLastLogCSVData(branch, repoName), { clear: false });
 
-        return Promise.all([updateRefRemotePromise, updateRefLogRemotePromise, updateBranchPromise]).then(() => {
+          return Promise.all([updateRefRemotePromise, updateRefLogRemotePromise, updateBranchPromise]).then(() => {
 
-          console.log(`\
+            console.log(`\
 Writed objects: 100% (1/1)
 Total 1\n\
 remote:\n\
@@ -117,8 +117,8 @@ remote:     ${repo.remoteRepo(repoName)}\n\
 remote:\n\
 To ${repo.remoteRepo(repoName)}\n\
 \t${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
+          });
         });
-
       }).catch(err => {
         console.error(err);
         process.exit(1);
@@ -150,7 +150,7 @@ To ${repo.remoteRepo(repoName)}\n\
           let result = repo.init();
 
           // Copy clasp scripts
-          clasp.init();
+          clasp.update();
 
           if (!result) {
             throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`)
@@ -256,8 +256,8 @@ remote: done.`);
     }
   }
 
-  Clasp.init = () => {
-    return clasp.init();
+  Clasp.update = () => {
+    return clasp.update();
   }
 
   return {
