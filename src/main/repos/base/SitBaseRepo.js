@@ -22,9 +22,9 @@ const recursive = require('recursive-readdir')
 const SitBlob = require('../objects/SitBlob')
   , SitTree = require('../objects/SitTree')
   , SitLogger = require('../logs/SitLogger')
-  , SitBase = require('../base/SitBase');
-
-const REF_REMOTE_HEADER = ['branch', 'sha1'];
+  , SitBase = require('../base/SitBase')
+  , SitLogParser = require('../logs/SitLogParser')
+  , SitRefParser = require('../refs/SitRefParser');
 
 class SitBaseRepo extends SitBase {
   constructor(opts) {
@@ -36,8 +36,30 @@ class SitBaseRepo extends SitBase {
     return SitConfig.config('local').remote[repoName].url;
   }
 
-  refRemoteHeader() {
-    return REF_REMOTE_HEADER
+  _refCSVData(branch, repoName) {
+    let refPath
+
+    if (repoName) {
+      refPath = `${this.localRepo}/refs/remotes/${repoName}/${branch}`;
+    } else {
+      refPath = `${this.localRepo}/refs/heads/${branch}`;
+    }
+
+    const parser = new SitRefParser(branch, refPath);
+    return parser.parseToCSV()
+  }
+
+  _refLogCSVData(branch, repoName) {
+    let logPath;
+
+    if (repoName) {
+      logPath = `${this.localRepo}/logs/refs/remotes/${repoName}/${branch}`;
+    } else {
+      logPath = `${this.localRepo}/logs/refs/heads/${branch}`;
+    }
+
+    const parser = new SitLogParser(branch, logPath);
+    return parser.parseToCSV()
   }
 
   _HEAD() {

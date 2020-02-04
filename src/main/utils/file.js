@@ -35,14 +35,10 @@ const isDir = (file) => {
 const writeSyncFile = (file, data, check = false) => {
   if (check) {
     if (isExistFile(file) === false) {
-      fs.writeFile(file, data, (err) => {
-        if (err) throw err;
-      });
+      fs.writeFileSync(file, data)
     }
   } else {
-    fs.writeFile(file, data, (err) => {
-      if (err) throw err;
-    });
+    fs.writeFileSync(file, data)
   }
 }
 
@@ -107,16 +103,12 @@ const writeSyncCSV = (file, data, check = false) => {
   if (check) {
     if (isExistFile(file) === false) {
       csv.stringify(data, (_, output) => {
-        fs.writeFile(file, output, (err) => {
-          if (err) throw err;
-        });
+        fs.writeFileSync(file, output)
       });
     }
   } else {
     csv.stringify(data, (_, output) => {
-      fs.writeFile(file, output, (err) => {
-        if (err) throw err;
-      });
+      fs.writeFileSync(file, output)
     })
   }
 }
@@ -128,9 +120,7 @@ const csvSafeLoad = (file) => {
 
 const appendFile = (file, data) => {
   const fullPath = absolutePath(file);
-  fs.appendFile(fullPath, data, (err) => {
-    if (err) throw err;
-  });
+  fs.appendFileSync(fullPath, data);
 }
 
 const fileSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {

@@ -102,10 +102,11 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
           return;
         }
 
-        let updateBranchPromise = sheet.pushRows(repoName, branch, local.getData(), true);
-        let updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", [[branch, afterHash]], false, repo.refRemoteHeader());
+        const updateBranchPromise = sheet.pushRows(repoName, branch, local.getData(), true);
+        const updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", repo._refCSVData(branch, repoName), false);
+        const updateRefLogRemotePromise = sheet.pushRows(repoName, "logs/refs/remotes", repo._refLogCSVData(branch, repoName), false)
 
-        return Promise.all([updateRefRemotePromise, updateBranchPromise]).then(() => {
+        return Promise.all([updateRefRemotePromise, updateRefLogRemotePromise, updateBranchPromise]).then(() => {
 
           console.log(`\
 Writed objects: 100% (1/1)
