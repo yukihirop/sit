@@ -294,6 +294,8 @@ nothing to commit`
   }
 
   push(repoName, branch, opts) {
+    const { HEADHash } = opts;
+
     return new Promise((resolve, reject) => {
       const logPath = `logs/refs/remotes/${repoName}/${branch}`;
       const localRefPath = `refs/heads/${branch}`;
@@ -304,8 +306,10 @@ nothing to commit`
       if (this._isExistFile(localRefPath)) {
         // STEP 1: Update logs/refs/remotes/<repoName>/<branch>
         // STEP 2: Update refs/remotes/<repoName>/<branch>
+        // STEP 3: Update REMOTE_HAD
         this._writeLog(logPath, beforeHash, afterHash, `update by push`)
-          ._writeSyncFile(refPath, afterHash);
+          ._writeSyncFile(refPath, afterHash)
+          ._writeSyncFile("REMOTE_HEAD", HEADHash);
 
         resolve({ beforeHash: beforeHash, afterHash: afterHash });
       } else {

@@ -79,7 +79,8 @@ ${beforeHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\t${branch}\t-> ${repoName}/
         return;
       }
 
-      if (!force && (remoteHash !== undefined) && (REMOTEHEADHash !== remoteHash)) {
+      const isPushableAboutREMOTEREADHash = (REMOTEHEADHash === repo._INITIAL_HASH()) ? true : (REMOTEHEADHash === remoteHash)
+      if (!force && (remoteHash !== undefined) && !isPushableAboutREMOTEREADHash) {
         console.error(`\
 To ${repo.remoteRepo(repoName)}\n\
 ! [rejected]\t\t${branch} -> ${branch} (non-fast-forward)\n\
@@ -92,7 +93,7 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
       }
 
       // Update local repo
-      repo.push(repoName, branch, opts).then(hashData => {
+      repo.push(repoName, branch, { ...opts, HEADHash }).then(hashData => {
         const { beforeHash, afterHash } = hashData;
 
         if (!force && (remoteHash !== undefined) && (beforeHash === afterHash)) {
