@@ -58,7 +58,7 @@ class SitBaseRepo extends SitBase {
     return parser.parseToCSV()
   }
 
-  _refLogCSVData(branch, repoName) {
+  _refLastLogCSVData(branch, repoName) {
     let logPath;
 
     if (repoName) {
@@ -68,7 +68,8 @@ class SitBaseRepo extends SitBase {
     }
 
     const parser = new SitLogParser(branch, logPath);
-    return parser.parseToCSV()
+    const logData = parser.parseToCSV()
+    return [logData[0],logData.slice(-1)[0]]
   }
 
   _HEAD() {

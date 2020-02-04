@@ -101,9 +101,9 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
         }
 
         repo._HEADCSVData(csvData => {
-          const updateBranchPromise = sheet.pushRows(repoName, branch, csvData, true);
-          const updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", repo._refCSVData(branch, repoName), false);
-          const updateRefLogRemotePromise = sheet.pushRows(repoName, "logs/refs/remotes", repo._refLogCSVData(branch, repoName), false)
+          const updateBranchPromise = sheet.pushRows(repoName, branch, csvData, { clear: true });
+          const updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", repo._refCSVData(branch, repoName), { clear: false, specifyIndex: 0 });
+          const updateRefLogRemotePromise = sheet.pushRows(repoName, "logs/refs/remotes", repo._refLastLogCSVData(branch, repoName), { clear: false });
 
           return Promise.all([updateRefRemotePromise, updateRefLogRemotePromise, updateBranchPromise]).then(() => {
 

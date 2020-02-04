@@ -67,7 +67,7 @@ function GSS(opts) {
     data = [['こんちは', 'hello', 'greeting.hello'],
             ['さようなら', 'good bye', 'greeting.good_bye']]
   */
-  const pushRows = (repoName, sheetName, data, clear = false) => {
+  const pushRows = (repoName, sheetName, data, { clear, specifyIndex }) => {
     return getInfo(repoName, sheetName, (doc, sheet) => {
       new Promise((resolve, reject) => {
         const header = data[0];
@@ -81,7 +81,7 @@ function GSS(opts) {
             if (clear) {
               newData = data;
             } else {
-              newData = overrideCSV(oldData, data, 0);
+              newData = overrideCSV(oldData, data, specifyIndex);
             }
 
             let oldCSVData = worksheet.csvData(oldData);
