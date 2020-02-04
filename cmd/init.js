@@ -11,7 +11,7 @@ function InitCmd() {
     .name('init')
     .description('create setting file (.sitsetting)')
     .action(() => {
-      var yamlData = rootYamlSafeLoad('./src/main/template.sitsetting.yaml');
+      var yamlData = rootYamlSafeLoad('./src/main/template/sitsetting.yaml');
       var settingPath = `${currentPath}/.sitsetting`;
 
       if (isExistFile(settingPath)) {
