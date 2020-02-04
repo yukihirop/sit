@@ -12,6 +12,7 @@ function RepoCmd() {
     .command('init')
     .action(() => {
       sit().Repo.init();
+      sit().Clasp.update();
     });
 
   return repoCmd

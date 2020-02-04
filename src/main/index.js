@@ -149,7 +149,7 @@ To ${repo.remoteRepo(repoName)}\n\
           let result = repo.init();
 
           // Copy clasp scripts
-          clasp.init();
+          clasp.update();
 
           if (!result) {
             throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`)
@@ -255,8 +255,8 @@ remote: done.`);
     }
   }
 
-  Clasp.init = () => {
-    return clasp.init();
+  Clasp.update = () => {
+    return clasp.update();
   }
 
   return {
