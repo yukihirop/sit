@@ -14,7 +14,7 @@ const {
 } = require('../../utils/file');
 
 const SitSetting = require('../../SitSetting')
-  , SitConfig = require('../SitConfig');
+, SitConfig = require('../SitConfig');
 
 const recursive = require('recursive-readdir')
   , crypto = require('crypto');
@@ -28,6 +28,10 @@ class SitBaseRepo extends SitBase {
   constructor(opts) {
     super();
     this.distFilePath = `${SitSetting.dist.path}/${SitSetting.dist.sheetName}`;
+  }
+
+  remoteRepo(repoName) {
+    return SitConfig.config('local').remote[repoName].url;
   }
 
   _HEAD() {
@@ -60,6 +64,7 @@ class SitBaseRepo extends SitBase {
     }
 
     writeSyncFile(`${this.localRepo}/${path}`, data);
+    return this;
   }
 
   _iniParse(path) {
@@ -67,7 +72,17 @@ class SitBaseRepo extends SitBase {
   }
 
   _deleteSyncFile(path) {
-    return deleteSyncFile(`${this.localRepo}/${path}`);
+    deleteSyncFile(`${this.localRepo}/${path}`);
+    return this;
+  }
+
+  _mkdirSyncRecursive(file) {
+    if (file) {
+      mkdirSyncRecursive(`${this.localRepo}/${file}`);
+    } else {
+      mkdirSyncRecursive(this.localRepo);
+    }
+    return this;
   }
 
   _twoWayMerge(toData, fromData, toName, fromName, callback) {
@@ -327,10 +342,6 @@ class SitBaseRepo extends SitBase {
         }
       }
     });
-  }
-
-  _createRemoteRepo(repoName) {
-    return SitConfig.config('local').remote[repoName].url;
   }
 
   _refResolveAtLocal(branch) {
