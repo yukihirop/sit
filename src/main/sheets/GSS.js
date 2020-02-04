@@ -11,7 +11,6 @@ const SitConfig = require('../repos/SitConfig');
 
 function GSS(opts) {
   const { url } = opts;
-  const sheetSchema = SitSetting.sheet.gss.openAPIV3Schema.properties;
 
   const worksheet = new Worksheet();
 
@@ -99,8 +98,8 @@ function GSS(opts) {
         } else {
           doc.addWorksheet({
             title: sheetName,
-            rowCount: 10000,
-            colCount: 100
+            rowCount: SitSetting.sheet.gss.defaultWorksheet.rowCount,
+            colCount: SitSetting.sheet.gss.defaultWorksheet.colCount
           }, (err, newSheet) => {
             if (err) reject(err);
             let csvData = worksheet.csvData(data);
@@ -163,6 +162,7 @@ function GSS(opts) {
   }
 
   const _header = () => {
+    const sheetSchema = SitSetting.sheet.gss.openAPIV3Schema.properties;
     var keys = Object.keys(sheetSchema)
     var result = keys.map(key => {
       return sheetSchema[key]['description']
