@@ -1,8 +1,14 @@
 function onOpen(e) {
   findOrCreateSheet(MASTER_BRANCH, false)
   findOrCreateSheet(REMOTE_REF, true)
+  findOrCreateSheet(REMOTE_LOG_REF, true)
 
-  // Add header
+  // logs/refs/remotes
+  var sheet = SpreadsheetApp.getActiveSpreadsheet();
+  var wh = sheet.getSheetByName(REMOTE_LOG_REF);
+  insertOrUpdate(wh, REMOTE_LOG_REF_HEADER);
+
+  // refs/remotes
   var sheet = SpreadsheetApp.getActiveSpreadsheet();
   var wh = sheet.getSheetByName(REMOTE_REF);
   insertOrUpdate(wh, REMOTE_REF_HEADER);

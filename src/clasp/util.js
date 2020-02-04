@@ -45,7 +45,7 @@ function findRow(sheet, target, col) {
 }
 
 function getShownSheetNames() {
-  const ignoreSheets = [REMOTE_REF];
+  const ignoreSheets = [REMOTE_REF, REMOTE_LOG_REF];
   var allSheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
   var sheetNames = [];
   var sheetName = '';

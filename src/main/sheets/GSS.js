@@ -68,13 +68,15 @@ function GSS(opts) {
     data = [['こんちは', 'hello', 'greeting.hello'],
             ['さようなら', 'good bye', 'greeting.good_bye']]
   */
-  const pushRows = (repoName, sheetName, data, clear = false, headers = _headers(sheetSchema)) => {
+  const pushRows = (repoName, sheetName, data, clear = false) => {
     return getInfo(repoName, sheetName, (doc, sheet) => {
       new Promise((resolve, reject) => {
+        const header = data[0];
+
         if (sheet) {
           sheet.getRows((err, rows) => {
             if (err) reject(err);
-            let oldData = rows2CSV(rows, headers);
+            let oldData = rows2CSV(rows, header);
             let newData;
 
             if (clear) {
@@ -87,9 +89,9 @@ function GSS(opts) {
             let newCSVData = worksheet.csvData(newData);
 
             if (clear) {
-              _bulkPushRow(sheet, oldCSVData, newCSVData, headers, true);
+              _bulkPushRow(sheet, oldCSVData, newCSVData, header, true);
             } else {
-              _bulkPushRow(sheet, newCSVData, newCSVData, headers, false);
+              _bulkPushRow(sheet, newCSVData, newCSVData, header, false);
             }
 
             resolve(newData);
@@ -100,7 +102,7 @@ function GSS(opts) {
           }, (err, newSheet) => {
             if (err) reject(err);
             let csvData = worksheet.csvData(data);
-            _bulkPushRow(newSheet, csvData, csvData, headers, false);
+            _bulkPushRow(newSheet, csvData, csvData, header, false);
             resolve(csvData);
           });
         }
@@ -108,27 +110,27 @@ function GSS(opts) {
     });
   }
 
-  const rows2CSV = (rows, headers = _headers(sheetSchema)) => {
+  const rows2CSV = (rows, header = _header()) => {
     let result = [];
 
     rows.forEach(row => {
       let rowResult = [];
 
-      headers.forEach(header => {
+      header.forEach(header => {
         rowResult.push(row[header])
       });
       result.push(rowResult)
     });
-    result.unshift(headers);
+    result.unshift(header);
 
     return result;
   }
 
   // private
 
-  const _bulkPushRow = (sheet, oldData, newData, headers = _headers(sheetSchema), clear = false) => {
+  const _bulkPushRow = (sheet, oldData, newData, header, clear = false) => {
     let dataLength = Object.keys(oldData).length + Object.keys(newData).length;
-    const maxRowCount = Math.ceil(dataLength / headers.length);
+    const maxRowCount = Math.ceil(dataLength / header.length);
 
     sheet.getCells({
       'min-row': 1,
@@ -158,7 +160,7 @@ function GSS(opts) {
     });
   }
 
-  const _headers = (sheetSchema) => {
+  const _header = () => {
     var keys = Object.keys(sheetSchema)
     var result = keys.map(key => {
       return sheetSchema[key]['description']
