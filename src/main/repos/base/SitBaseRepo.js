@@ -24,6 +24,8 @@ const SitBlob = require('../objects/SitBlob')
   , SitLogger = require('../logs/SitLogger')
   , SitBase = require('../base/SitBase');
 
+const REF_REMOTE_HEADER = ['branch', 'sha1'];
+
 class SitBaseRepo extends SitBase {
   constructor(opts) {
     super();
@@ -32,6 +34,10 @@ class SitBaseRepo extends SitBase {
 
   remoteRepo(repoName) {
     return SitConfig.config('local').remote[repoName].url;
+  }
+
+  refRemoteHeader() {
+    return REF_REMOTE_HEADER
   }
 
   _HEAD() {

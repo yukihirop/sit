@@ -103,7 +103,7 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
         }
 
         let updateBranchPromise = sheet.pushRows(repoName, branch, local.getData(), true);
-        let updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", [[branch, afterHash]], false, ['branch', 'sha1']);
+        let updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", [[branch, afterHash]], false, repo.refRemoteHeader());
 
         return Promise.all([updateRefRemotePromise, updateBranchPromise]).then(() => {
 
@@ -115,7 +115,7 @@ remote: Create a pull request for ${branch} on ${type} by visiting:\n\
 remote:     ${repo.remoteRepo(repoName)}\n\
 remote:\n\
 To ${repo.remoteRepo(repoName)}\n\
-${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
+\t${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
         });
 
       }).catch(err => {

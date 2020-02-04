@@ -224,14 +224,16 @@ class SitRepo extends SitBaseRepo {
       const headStream = obj.serialize().toString();
       const currentStream = fileSafeLoad(this.distFilePath);
 
-      let patch = jsdiff.createPatch(index, headStream, currentStream, this.distFilePath, this.distFilePath);
-      patch = patch
-        .replace(/^[---].*\t/gm, '--- ')
-        .replace(/^[+++].*\t/gm, '+++ ')
-        .replace(/^\-.*/gm, colorize('$&', 'removed'))
-        .replace(/^\+.*/gm, colorize('$&', 'added'))
-        .replace(/^@@.+@@/gm, colorize('$&', 'section'));
-      console.log(patch);
+      if (headStream !== currentStream) {
+        let patch = jsdiff.createPatch(index, headStream, currentStream, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
+        patch = patch
+          .replace(/^[---].*\t/gm, '--- ')
+          .replace(/^[+++].*\t/gm, '+++ ')
+          .replace(/^\-.*/gm, colorize('$&', 'removed'))
+          .replace(/^\+.*/gm, colorize('$&', 'added'))
+          .replace(/^@@.+@@/gm, colorize('$&', 'section'));
+        console.log(patch);
+      }
     });
   }
 
@@ -343,6 +345,13 @@ error: failed to push some refs to '${repoName}'`)
   merge(repoName, branch, opts) {
     const isContinue = opts.continue;
     const { stat, abort } = opts;
+
+    if (branch !== this.currentBranch()) {
+      console.log(`\
+The current branch is '${this.currentBranch()}'\n\
+Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the remote can be merged`);
+      return;
+    }
 
     // --continue
     if (isContinue) {
