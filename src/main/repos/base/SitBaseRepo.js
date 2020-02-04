@@ -36,6 +36,15 @@ class SitBaseRepo extends SitBase {
     return SitConfig.config('local').remote[repoName].url;
   }
 
+  _HEADCSVData(callback) {
+    const headHash = this._refResolve('HEAD');
+    this.catFile(headHash).then(obj => {
+      const stream = obj.serialize().toString()
+      const csvData = stream.split('\n').map(line => { return line.split(',') })
+      callback(csvData);
+    });
+  }
+
   _refCSVData(branch, repoName) {
     let refPath
 

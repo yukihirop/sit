@@ -1,7 +1,6 @@
 'use strict';
 
 const AppSheet = require('./Sheet');
-const AppLocal = require('./Local');
 const AppRepo = require('./SitRepo');
 const AppClasp = require('./Clasp');
 const SitConfig = require('./repos/SitConfig');
@@ -25,8 +24,7 @@ function sit(opts) {
 
   let sheet = new AppSheet(gopts);
   const repo = new AppRepo(gopts)
-    , clasp = new AppClasp(gopts)
-    , local = new AppLocal(gopts);
+    , clasp = new AppClasp(gopts);
 
   Repo.fetch = (repoName, branch) => {
     if (repo.remoteRepo(repoName) === undefined) {
@@ -102,13 +100,14 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
           return;
         }
 
-        const updateBranchPromise = sheet.pushRows(repoName, branch, local.getData(), true);
-        const updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", repo._refCSVData(branch, repoName), false);
-        const updateRefLogRemotePromise = sheet.pushRows(repoName, "logs/refs/remotes", repo._refLogCSVData(branch, repoName), false)
+        repo._HEADCSVData(csvData => {
+          const updateBranchPromise = sheet.pushRows(repoName, branch, csvData, true);
+          const updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", repo._refCSVData(branch, repoName), false);
+          const updateRefLogRemotePromise = sheet.pushRows(repoName, "logs/refs/remotes", repo._refLogCSVData(branch, repoName), false)
 
-        return Promise.all([updateRefRemotePromise, updateRefLogRemotePromise, updateBranchPromise]).then(() => {
+          return Promise.all([updateRefRemotePromise, updateRefLogRemotePromise, updateBranchPromise]).then(() => {
 
-          console.log(`\
+            console.log(`\
 Writed objects: 100% (1/1)
 Total 1\n\
 remote:\n\
@@ -117,8 +116,8 @@ remote:     ${repo.remoteRepo(repoName)}\n\
 remote:\n\
 To ${repo.remoteRepo(repoName)}\n\
 \t${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
+          });
         });
-
       }).catch(err => {
         console.error(err);
         process.exit(1);
