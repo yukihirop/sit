@@ -22,7 +22,7 @@ class SitBaseLogger extends SitBase {
 
   write(file, message, mkdir) {
     const space = ' ';
-    const data = `${this.beforeSHA || this.INITIAL_HASH}${space}${this.afterSHA}${space}${this.username()}${space}<${this.email()}>${space}${moment().format('x')}${space}${moment().format('ZZ')}\t${message}\r\n`;
+    const data = `${(this.beforeSHA || this._INITIAL_HASH())}${space}${this.afterSHA}${space}${this.username()}${space}<${this.email()}>${space}${moment().format('x')}${space}${moment().format('ZZ')}\t${message}\r\n`;
 
     if (mkdir) {
       const fullDirPath = this.localRepo + '/' + file.split('/').slice(0, -1).join('/');
