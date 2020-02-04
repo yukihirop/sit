@@ -344,6 +344,13 @@ error: failed to push some refs to '${repoName}'`)
     const isContinue = opts.continue;
     const { stat, abort } = opts;
 
+    if (branch !== this.currentBranch()) {
+      console.log(`\
+The current branch is '${this.currentBranch()}'\n\
+Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the remote can be merged`);
+      return;
+    }
+
     // --continue
     if (isContinue) {
 
