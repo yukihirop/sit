@@ -98,7 +98,9 @@ function GSS(opts) {
           });
         } else {
           doc.addWorksheet({
-            title: sheetName
+            title: sheetName,
+            rowCount: 10000,
+            colCount: 100
           }, (err, newSheet) => {
             if (err) reject(err);
             let csvData = worksheet.csvData(data);
