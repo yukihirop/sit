@@ -103,6 +103,9 @@ sheet:
         key:
           type: string
           description: キー
+    defaultWorksheet:
+      rowCount: 50
+      colCount: 20
 repo:
   local: ./.sit
 dist:
