@@ -256,6 +256,10 @@ remote: done.`);
     }
   }
 
+  Repo.remote = (subcommand, repoName, url, opts) => {
+    return repo.remote(subcommand, repoName, url, opts);
+  }
+
   Clasp.update = () => {
     return clasp.update();
   }

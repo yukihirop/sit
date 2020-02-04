@@ -7,6 +7,10 @@ const {
   isExistFile
 } = require('../../utils/file');
 
+const {
+  compact
+} = require('../../utils/object');
+
 const SitSetting = require('../../SitSetting');
 const SitBase = require('./SitBase');
 
@@ -41,17 +45,14 @@ class SitBaseConfig extends SitBase {
   }
 
   updateSection(section, data) {
-    const config = this.config;
+    let config = this.config;
     const [mainSec, subSec] = section.split('.');
     config[mainSec] = config[mainSec] || {};
     config[mainSec][subSec] = data;
+    if (!data){
+      config = compact(config);
+    }
     writeSyncFile(`${this.localRepo}/config`, iniStringify(config, null));
-  }
-
-  _updateRemotes(subsection, data) {
-    const config = this.config;
-    config.remote = config.remote || {};
-    config.remote[section]
   }
 
   _updateUserAttribute(attribute, value) {
