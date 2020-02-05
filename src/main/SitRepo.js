@@ -545,6 +545,23 @@ Fast-forward
       process.exit(1);
     }
   }
+
+  remote(subcommand, repoName, url, opts) {
+    const { type } = opts;
+    const config = new SitConfig('local')
+
+    switch (subcommand) {
+      case 'add':
+        config.updateSection(`remote.${repoName}`, { type: type, url: url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` });
+        break;
+      case 'rm':
+        config.updateSection(`remote.${repoName}`, null);
+        break;
+      case 'get-url':
+        console.log(SitConfig.config('local')['remote'][repoName]['url']);
+        break;
+    }
+  }
 }
 
 module.exports = SitRepo;

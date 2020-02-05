@@ -192,6 +192,18 @@ program
   });
 
 program
+  .command('remote <subcommand> <repository> [url]')
+  .description('set sitconfig')
+  .option(
+    '-t, --type <type>',
+    'sheet type',
+    'GoogleSpreadSheet'
+  )
+  .action((subcommand, repository, url, options) => {
+    sit().Repo.remote(subcommand, repository, url, options)
+  })
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)

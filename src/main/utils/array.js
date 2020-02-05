@@ -17,7 +17,7 @@ const csv2JSON = (csvData) => {
   return result;
 }
 
-function overrideCSV(csvTo, csvFrom, specifyIndex) {
+const overrideCSV = (csvTo, csvFrom, specifyIndex) => {
   let result = [];
 
   if (Number.isInteger(specifyIndex)) {
@@ -57,7 +57,7 @@ function overrideCSV(csvTo, csvFrom, specifyIndex) {
 }
 
 // https://qiita.com/piroor/items/02885998c9f76f45bfa0
-function uniq(array) {
+const uniq = (array) => {
   const knownElements = {};
   const uniquedArray = [];
   for (const elem of array) {

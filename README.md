@@ -47,26 +47,27 @@ Usage: sit [options] [command]
 sit cli
 
 Options:
-  -V, --version                          output the version number
-  -h, --help                             output usage information
+  -V, --version                                     output the version number
+  -h, --help                                        output usage information
 
 Commands:
-  cat-file [options] <hash>              cat sit objects
-  hash-object [options] <path>           compute hash sit object
-  branch [options]                       operate branch
-  checkout [options] [name]              checkout branch
-  status                                 status dist file
-  diff                                   diff dist file
-  commit [options]                       commit dist file
-  push [options] <repository> <branch>   push rows into Sheet
-  fetch [options] <repository> <branch>  fetch rows from Sheet
-  merge [options] [repository] [branch]  merge rows
-  clone [options] <repository> <url>     clone rows from sheet
-  browse-remote [repository]             browse remote repository
-  config [options] <key> <value>         configure sitconfig
-  init                                   create setting file (.sitsetting)
-  clasp                                  clasp cli
-  repo                                   repo cli
+  cat-file [options] <hash>                         cat sit objects
+  hash-object [options] <path>                      compute hash sit object
+  branch [options]                                  operate branch
+  checkout [options] [name]                         checkout branch
+  status                                            status dist file
+  diff                                              diff dist file
+  commit [options]                                  commit dist file
+  push [options] <repository> <branch>              push rows into Sheet
+  fetch [options] <repository> <branch>             fetch rows from Sheet
+  merge [options] [repository] [branch]             merge rows
+  clone [options] <repository> <url>                clone rows from sheet
+  browse-remote [repository]                        browse remote repository
+  config [options] <key> <value>                    configure sitconfig
+  remote [options] <subcommand> <repository> [url]  set sitconfig
+  init                                              create setting file (.sitsetting)
+  clasp                                             clasp cli
+  repo                                              repo cli
 ```
 
 ## ❤️ Support Sheets
@@ -103,6 +104,9 @@ sheet:
         key:
           type: string
           description: キー
+    defaultWorksheet:
+      rowCount: 50
+      colCount: 20
 repo:
   local: ./.sit
 dist:
