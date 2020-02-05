@@ -69,14 +69,15 @@ program
   });
 
 program
-  .command('checkout [name]')
+  .command('checkout [repository] [name]')
   .description('checkout branch')
   .option(
     '-b, --branch <branch>',
     'branch'
   )
-  .action((name, options) => {
-    sit().Repo.checkout(name, options);
+  .action((repository, name, options) => {
+    const { branch } = options;
+    sit().Repo.checkout(repository, name, { branch });
   });
 
 program

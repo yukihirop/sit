@@ -291,8 +291,8 @@ remote: done.`);
     return repo.branch(opts);
   }
 
-  Repo.checkout = (name, opts) => {
-    return repo.checkout(name, opts);
+  Repo.checkout = (repoName, name, opts) => {
+    return repo.checkout(repoName, name, opts);
   }
 
   Repo.status = (opts) => {

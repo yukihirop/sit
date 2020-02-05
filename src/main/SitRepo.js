@@ -169,33 +169,60 @@ class SitRepo extends SitBaseRepo {
     }
   }
 
-  checkout(name, opts = {}) {
+  checkout(repoName, name, opts = {}) {
     const { branch } = opts;
-    const currentBranch = this._branchResolve(`HEAD`);
-    const currentHash = this._refResolve('HEAD');
-    const fullCurrentRefPath = this._getPath(`refs/heads/${branch}`);
+    let isRemote;
 
-    if (name === currentBranch) {
-      console.log(`Already on '${name}'`);
-    } else if (name) {
-      this._objectFind(name).then(sha => {
-        if (sha) {
-
-          // STEP 1: Update HEAD
-          // STEP 2: Append logs/HEAD
-          // STEP 3: Update dist file instead of Update index
-          this._writeSyncFile(`HEAD`, `ref: refs/heads/${name}`, false)
-            ._writeLog("logs/HEAD", currentHash, sha, `checkout: moving from ${currentBranch} to ${name}`)
-            .catFile(sha).then(obj => {
-              writeSyncFile(this.distFilePath, obj.serialize().toString());
-            })
-
-          console.log(`Switched to branch '${name}'`);
-        }
-      });
+    if (repoName) {
+      if (name) {
+        isRemote = true
+      } else {
+        isRemote = false
+        name = repoName
+      }
     }
 
-    if (branch) {
+    // checkout local
+    if (!branch && !isRemote) {
+      const currentBranch = this._branchResolve(`HEAD`);
+      const currentHash = this._refResolve('HEAD');
+
+      if (name === currentBranch) {
+        console.log(`Already on '${name}'`);
+      } else if (name) {
+        this._objectFind(name).then(sha => {
+          if (sha) {
+
+            // STEP 1: Update HEAD
+            // STEP 2: Append logs/HEAD
+            // STEP 3: Update dist file instead of Update index
+            this._writeSyncFile(`HEAD`, `ref: refs/heads/${name}`, false)
+              ._writeLog("logs/HEAD", currentHash, sha, `checkout: moving from ${currentBranch} to ${name}`)
+              .catFile(sha).then(obj => {
+                writeSyncFile(this.distFilePath, obj.serialize().toString());
+              })
+
+            console.log(`Switched to branch '${name}'`);
+          }
+        });
+      }
+      // checkout local from remote
+    } else if (!branch && isRemote) {
+      const branchHash = this._refResolve(`refs/heads/${name}`);
+
+      const config = new SitConfig('local');
+      config.updateSection(`branch.${name}`, { remote: repoName, merge: `refs/heads/${name}` });
+
+      // STEP 1: Copy from refs/heads/<repoName>/<branch> to refs/heads/<branch>
+      // STEP 2: Update logs/refs/heads/<branch>
+      // STEP 3: checkout <branch>
+      this._fileCopySync(`refs/remotes/${repoName}/${name}`, `refs/heads/${name}`)
+        ._writeLog(`logs/refs/heads/${name}`, null, branchHash, `branch: Created from refs/remotes/${repoName}/${name}`)
+        .checkout(null, name);
+
+    } else if (branch) {
+      const fullCurrentRefPath = this._getPath(`refs/heads/${branch}`);
+
       if (isExistFile(fullCurrentRefPath)) {
         console.error(`fatal: A branch named '${branch}' already exists.`);
       } else {
