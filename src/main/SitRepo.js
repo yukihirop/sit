@@ -171,6 +171,8 @@ class SitRepo extends SitBaseRepo {
 
   checkout(repoName, name, opts = {}) {
     const { branch } = opts;
+    const currentBranch = this._branchResolve(`HEAD`);
+    const currentHash = this._refResolve('HEAD');
     let isRemote;
 
     if (repoName) {
@@ -184,9 +186,6 @@ class SitRepo extends SitBaseRepo {
 
     // checkout local
     if (!branch && !isRemote) {
-      const currentBranch = this._branchResolve(`HEAD`);
-      const currentHash = this._refResolve('HEAD');
-
       if (name === currentBranch) {
         console.log(`Already on '${name}'`);
       } else if (name) {
