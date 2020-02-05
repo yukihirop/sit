@@ -1,5 +1,7 @@
 'use strict';
 
+const Diff = require('diff');
+
 const csv2JSON = (csvData) => {
   let result = {}
 
@@ -69,7 +71,25 @@ const uniq = (array) => {
   return uniquedArray;
 }
 
+const diffArray = (to, from) => {
+  const diff = Diff.diffArrays(to, from)
+
+  return diff.reduce((acc, item) => {
+    let added = item.added;
+    let removed = item.removed;
+
+    if (added) {
+      acc['added'] = item.value
+    } else if (removed) {
+      acc['removed'] = item.value;
+    }
+
+    return acc;
+  },{});
+}
+
 module.exports = {
   csv2JSON,
-  overrideCSV
+  overrideCSV,
+  diffArray
 }

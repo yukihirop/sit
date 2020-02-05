@@ -59,7 +59,7 @@ Commands:
   diff                                              diff dist file
   commit [options]                                  commit dist file
   push [options] <repository> <branch>              push rows into Sheet
-  fetch [options] <repository> <branch>             fetch rows from Sheet
+  fetch [options] <repository> [branch]             fetch rows from Sheet
   merge [options] [repository] [branch]             merge rows
   clone [options] <repository> <url>                clone rows from sheet
   browse-remote [repository]                        browse remote repository
