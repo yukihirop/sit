@@ -72,11 +72,12 @@ const uniq = (array) => {
 }
 
 const diffArray = (to, from) => {
-  const diff = Diff.diffArrays(to, from)
+  const diff = Diff.diffArrays(to, from);
+  let added, removed;
 
-  return diff.reduce((acc, item) => {
-    let added = item.added;
-    let removed = item.removed;
+  const data = diff.reduce((acc, item) => {
+    added = item.added;
+    removed = item.removed;
 
     if (added) {
       acc['added'] = item.value
@@ -85,7 +86,28 @@ const diffArray = (to, from) => {
     }
 
     return acc;
-  },{});
+  }, {});
+
+  added = data['added'];
+  removed = data['removed'];
+  const shared = _getDuplicateValues([...added, ...removed])
+  const addedOnly = _getUniqueValues([...added, ...shared])
+  const removedOnly = _getUniqueValues([...removed, ...shared])
+
+  return {
+    'added': addedOnly,
+    'removed': removedOnly
+  }
+}
+
+// https://www.nxworld.net/tips/js-array-filter-snippets.html
+const _getDuplicateValues = ([...array]) => {
+  return array.filter((value, index, self) => self.indexOf(value) === index && self.lastIndexOf(value) !== index);
+}
+
+// https://www.nxworld.net/tips/js-array-filter-snippets.html
+const _getUniqueValues = ([...array]) => {
+  return array.filter((value, index, self) => self.indexOf(value) === self.lastIndexOf(value));
 }
 
 module.exports = {
