@@ -15,7 +15,7 @@ const {
 } = require('../../utils/file');
 
 const SitSetting = require('../../SitSetting')
-, SitConfig = require('../SitConfig');
+  , SitConfig = require('../SitConfig');
 
 const recursive = require('recursive-readdir')
   , crypto = require('crypto');
@@ -39,11 +39,13 @@ class SitBaseRepo extends SitBase {
 
   _HEADCSVData(callback) {
     const headHash = this._refResolve('HEAD');
-    this.catFile(headHash).then(obj => {
-      const stream = obj.serialize().toString()
-      const csvData = stream.split('\n').map(line => { return line.split(',') })
-      callback(csvData);
-    });
+    this.catFile(headHash)
+      .then(obj => {
+        const stream = obj.serialize().toString()
+        const csvData = stream.split('\n').map(line => { return line.split(',') })
+        callback(csvData);
+      })
+      .catch(err => { throw err });
   }
 
   _refCSVData(branch, repoName) {
@@ -70,7 +72,7 @@ class SitBaseRepo extends SitBase {
 
     const parser = new SitLogParser(branch, logPath);
     const logData = parser.parseToCSV()
-    return [logData[0],logData.slice(-1)[0]]
+    return [logData[0], logData.slice(-1)[0]]
   }
 
   _HEAD() {

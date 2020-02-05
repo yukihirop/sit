@@ -51,7 +51,7 @@ Please make sure you have the correct access rights and the repository exists.`)
           process.exit(1);
         }
 
-        const data = sheet.rows2CSV(rows,['branch', 'sha1']);
+        const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
         const json = csv2JSON(data.slice(1));
         const remoteBranches = Object.keys(json);
 
@@ -135,9 +135,7 @@ From ${repo.remoteRepo(repoName)}
     const HEADHash = repo._refResolve('HEAD');
 
     // Fetch refs/remotes from sheet
-    sheet.getRows(repoName, "refs/remotes", (err, rows) => {
-      if (err) throw err;
-
+    sheet.getRows(repoName, "refs/remotes").then(rows => {
       const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
       const json = csv2JSON(data);
       const remoteHash = json[branch];
