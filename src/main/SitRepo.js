@@ -101,11 +101,15 @@ class SitRepo extends SitBaseRepo {
 
   catFile(obj) {
     return new Promise((resolve, reject) => {
-      this._objectFind(obj).then(sha => {
-        this._objectRead(sha).then(obj => {
-          resolve(obj);
+      this._objectFind(obj)
+        .then(sha => {
+          this._objectRead(sha)
+            .then(obj => {
+              resolve(obj);
+            })
+            .catch(err => reject(err));
         })
-      });
+        .catch(err => reject(err));
     })
   }
 
