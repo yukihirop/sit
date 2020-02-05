@@ -37,17 +37,6 @@ class SitBaseRepo extends SitBase {
     return SitConfig.config('local').remote[repoName].url;
   }
 
-  _HEADCSVData(callback) {
-    const headHash = this._refResolve('HEAD');
-    this.catFile(headHash)
-      .then(obj => {
-        const stream = obj.serialize().toString()
-        const csvData = stream.split('\n').map(line => { return line.split(',') })
-        callback(csvData);
-      })
-      .catch(err => { throw err });
-  }
-
   _refCSVData(branch, repoName) {
     let refPath
 
@@ -76,7 +65,7 @@ class SitBaseRepo extends SitBase {
   }
 
   _HEAD() {
-    let data = fileSafeLoad(this._repoFile(false, 'HEAD'));
+    let data = fileSafeLoad(this.__repoFile(false, 'HEAD'));
     data = data.trim();
 
     if (data.startsWith("ref: ")) {
@@ -136,7 +125,7 @@ class SitBaseRepo extends SitBase {
     const sepalate = '=======';
     const fromMark = '>>>>>>>';
 
-    this._createtwoWayMergeData(toData, fromData, result => {
+    this.__createtwoWayMergeData(toData, fromData, result => {
       let arr = [];
       let currentItemIndex = 0;
       let currentConflict = false;
@@ -192,28 +181,6 @@ class SitBaseRepo extends SitBase {
     });
   }
 
-  _createtwoWayMergeData(toData, fromData, callback) {
-    let result = {};
-    let index = 0;
-    while ((toData.length !== 0) || (fromData.length !== 0)) {
-      let toLine = toData.shift() || null;
-      let fromLine = fromData.shift() || null;
-
-
-      if (toLine === fromLine) {
-        result[index] = { conflict: false, to: toLine, from: fromLine };
-      } else {
-        result[index] = { conflict: true, to: toLine, from: fromLine };
-      }
-
-      if ((toData.length === 0) && (fromData.length === 0)) {
-        callback(result);
-      }
-
-      index++
-    }
-  }
-
   /*
     Choose constructor depending on
     object type found in header.
@@ -245,7 +212,7 @@ class SitBaseRepo extends SitBase {
     const sha = shasum.digest('hex');
 
     if (write) {
-      const fullPath = this._repoFile(write, "objects", sha.slice(0, 2), sha.slice(2));
+      const fullPath = this.__repoFile(write, "objects", sha.slice(0, 2), sha.slice(2));
       fileDeflate(store, (err, buffer) => {
         if (err) throw err;
         writeSyncFile(fullPath, buffer);
@@ -260,9 +227,13 @@ class SitBaseRepo extends SitBase {
     Return a SitObject whose exact type depends.
   */
   _objectRead(sha) {
-    let path = this._repoFile(false, "objects", sha.slice(0, 2), sha.slice(2));
+    // TODO:
+    // Add SHA1 validation
+    let path = this.__repoFile(false, "objects", sha.slice(0, 2), sha.slice(2));
 
     return new Promise((resolve, reject) => {
+      if (!isExistFile(path)) reject(new Error(`Do not exists path: ${path}`));
+
       fileUnzip(path, false, (err, binary) => {
         if (err) reject(err);
 
@@ -336,7 +307,7 @@ class SitBaseRepo extends SitBase {
   _objectResolve(name) {
     const hashRE = new RegExp('^[0-9A-Fa-f]{1,40}$')
     const smallHashRE = new RegExp('^[0-9A-Fa-f]{1,7}');
-    let isFound = false;
+    const fullRefPath = this._getPath(`refs/heads/${name}`);
 
     return new Promise((resolve, reject) => {
       if (!name) {
@@ -349,7 +320,6 @@ class SitBaseRepo extends SitBase {
 
       if (name.match(hashRE)) {
         if (name.length == 40) {
-          isFound = true
           resolve([name.toLowerCase()])
         } else if (name.match(smallHashRE)) {
           // This is a small hash 4 seems to be the minimal length
@@ -357,13 +327,12 @@ class SitBaseRepo extends SitBase {
           // THis limit is documented in man sit-rev-parse
           name = name.toLowerCase();
           const prefix = name.slice(0, 2);
-          const fullPath = this._findOrCreateDir(false, "objects", prefix);
+          const fullPath = this.__findOrCreateDir(false, "objects", prefix);
 
-          if (fullPath) {
+          if (isExistFile(fullPath)) {
             let rem = name.slice(2);
 
-            recursive(fullPath, (err, files) => {
-              if (err) reject(err);
+            recursive(fullPath).then(files => {
               let candidates = files.map(file => {
                 let fileName = fileBasename(file);
 
@@ -372,34 +341,30 @@ class SitBaseRepo extends SitBase {
                 }
               });
 
-              isFound = true;
-              resolve(candidates);
+              if (candidates.length > 0) {
+                resolve(candidates);
+              } else {
+                reject(new Error(`error: pathspec '${name}' did not match any file(s) known to sit`))
+              }
+            }).catch(err => {
+              reject(err)
             });
+          } else {
+            reject(new Error(`error: pathspec '${name}' did not match any file(s) known to sit`));
           }
-        }
-      }
-
-      if (!isFound) {
-        const fullRefPath = this._getPath(`refs/heads/${name}`);
-        if (isExistFile(fullRefPath)) {
-          resolve([this._refResolve(`refs/heads/${name}`)])
         } else {
-          reject(`error: pathspec '${name}' did not match any file(s) known to sit`);
+          reject(new Error(`error: pathspec '${name}' did not match any file(s) known to sit`));
         }
+      } else if (isExistFile(fullRefPath)) {
+        resolve([this._refResolve(`refs/heads/${name}`)])
+      } else {
+        reject(new Error(`error: pathspec '${name}' did not match any file(s) known to sit`));
       }
     });
   }
 
-  _refResolveAtLocal(branch) {
-    return this._refResolve(`refs/heads/${branch}`);
-  }
-
-  _refResolveAtRemote(repoName, branch) {
-    return this._refResolve(`refs/remotes/${repoName}/${branch}`);
-  }
-
   _refResolve(ref) {
-    const fullRefPath = this._repoFile(false, ref);
+    const fullRefPath = this.__repoFile(false, ref);
 
     if (isExistFile(fullRefPath)) {
       let data = fileSafeLoad(fullRefPath, false);
@@ -416,9 +381,8 @@ class SitBaseRepo extends SitBase {
   }
 
   _branchResolve(name) {
-    const fullRefPath = this._repoFile(false, name);
-
     if (name === 'HEAD') {
+      const fullRefPath = this.__repoFile(false, name);
       let data = fileSafeLoad(fullRefPath, false);
       data = data.trim();
 
@@ -441,17 +405,40 @@ class SitBaseRepo extends SitBase {
     }
   }
 
+  // private
+  __createtwoWayMergeData(toData, fromData, callback) {
+    let result = {};
+    let index = 0;
+    while ((toData.length !== 0) || (fromData.length !== 0)) {
+      let toLine = toData.shift() || null;
+      let fromLine = fromData.shift() || null;
+
+
+      if (toLine === fromLine) {
+        result[index] = { conflict: false, to: toLine, from: fromLine };
+      } else {
+        result[index] = { conflict: true, to: toLine, from: fromLine };
+      }
+
+      if ((toData.length === 0) && (fromData.length === 0)) {
+        callback(result);
+      }
+
+      index++
+    }
+  }
+
   /*
-    For example, _repoFile(true, "refs", "remotes", "origin", "HEAD") will create
+    For example, __repoFile(true, "refs", "remotes", "origin", "HEAD") will create
     .sit/refs/remotes/origin.
   */
-  _repoFile(mkdir = false, ...path) {
-    if (this._findOrCreateDir(mkdir, ...path.slice(0, -1))) {
+  __repoFile(mkdir = false, ...path) {
+    if (this.__findOrCreateDir(mkdir, ...path.slice(0, -1))) {
       return this._getPath(...path)
     }
   }
 
-  _findOrCreateDir(mkdir = false, ...path) {
+  __findOrCreateDir(mkdir = false, ...path) {
     path = this._getPath(...path);
 
     if (isExistFile(path)) {

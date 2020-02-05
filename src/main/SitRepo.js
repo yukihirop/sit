@@ -91,6 +91,17 @@ class SitRepo extends SitBaseRepo {
     return this._add(this.distFilePath, {});
   }
 
+  _HEADCSVData(callback) {
+    const headHash = this._refResolve('HEAD');
+    this.catFile(headHash)
+      .then(obj => {
+        const stream = obj.serialize().toString()
+        const csvData = stream.split('\n').map(line => { return line.split(',') })
+        callback(csvData);
+      })
+      .catch(err => { throw err });
+  }
+
   _add(path, opts) {
     // STEP 1: Update index
     // Do not necessary.
@@ -506,7 +517,7 @@ Please, commit your changes before you merge.`);
 
     if (repoName && branch) {
       const headHash = this._refResolve("HEAD")
-      const remoteHash = this._refResolveAtRemote(repoName, branch);
+      const remoteHash = this._refResolve(`refs/remotes/${repoName}/${branch}`);
 
       this.catFile(remoteHash).then(remoteObj => {
         this.catFile(headHash).then(headObj => {
