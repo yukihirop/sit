@@ -34,7 +34,7 @@ function sit(opts) {
     , clasp = new AppClasp(gopts);
 
   Repo.fetch = (repoName, branch, opts) => {
-    const { prune, verbose } = opts;
+    const { prune, verbose, _skipRemove } = opts;
 
     if (repo.remoteRepo(repoName) === undefined) {
       return console.error(`\
@@ -72,6 +72,7 @@ Please make sure you have the correct access rights and the repository exists.`)
                 })
                 break;
               case 'removed':
+                if (_skipRemove) break;
                 branches.forEach(b => {
                   // STEP 1: Delete refs/remotes/<repoName>/<branch>
                   // STEP 2: Delete logs/refs/remotes/<repoName>/<branch>
@@ -84,7 +85,7 @@ Please make sure you have the correct access rights and the repository exists.`)
             }
           });
 
-          if (msg.length > 1) {
+          if (msg.length >= 1) {
             msg.unshift(`From ${repo.remoteRepo(repoName)}`)
             console.log(msg.join('\n'));
           }
@@ -121,6 +122,10 @@ From ${repo.remoteRepo(repoName)}
           console.error(err);
         });
       });
+    }
+
+    if (!prune && !branch && !_skipRemove) {
+      Repo.fetch(repoName, null, { prune: true, _skipRemove: true })
     }
   }
 
