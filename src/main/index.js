@@ -66,10 +66,10 @@ Please make sure you have the correct access rights and the repository exists.`)
 
             switch (status) {
               case 'added':
-                branches.map(b => {
+                branches.forEach(b => {
                   Repo.fetch(repoName, b, { prune: false, verbose: false });
                   msg.push(`* [new branch]\t\t${b}\t\t-> ${repoName}/${b}`)
-                })
+                });
                 break;
               case 'removed':
                 if (_skipRemove) break;
@@ -80,7 +80,7 @@ Please make sure you have the correct access rights and the repository exists.`)
                     ._deleteSyncFile(`logs/refs/remotes/${repoName}/${b}`)
 
                   msg.push(`- [deleted]\t\t(none)\t\t-> ${repoName}/${b}`)
-                })
+                });
                 break;
             }
           });
