@@ -10,7 +10,8 @@ const {
   fileDeflate,
   fileBasename,
   deleteSyncFile,
-  iniParse
+  iniParse,
+  fileCopySync
 } = require('../../utils/file');
 
 const SitSetting = require('../../SitSetting')
@@ -102,6 +103,11 @@ class SitBaseRepo extends SitBase {
     }
 
     writeSyncFile(`${this.localRepo}/${path}`, data);
+    return this;
+  }
+
+  _fileCopySync(from, to) {
+    fileCopySync(`${this.localRepo}/${from}`, `${this.localRepo}/${to}`);
     return this;
   }
 

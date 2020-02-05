@@ -54,7 +54,7 @@ Commands:
   cat-file [options] <hash>                         cat sit objects
   hash-object [options] <path>                      compute hash sit object
   branch [options]                                  operate branch
-  checkout [options] [name]                         checkout branch
+  checkout [options] [repository] [name]            checkout branch
   status                                            status dist file
   diff                                              diff dist file
   commit [options]                                  commit dist file

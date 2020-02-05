@@ -88,8 +88,8 @@ const diffArray = (to, from) => {
     return acc;
   }, {});
 
-  added = data['added'];
-  removed = data['removed'];
+  added = data['added'] || [];
+  removed = data['removed'] || [];
   const shared = _getDuplicateValues([...added, ...removed])
   const addedOnly = _getUniqueValues([...added, ...shared])
   const removedOnly = _getUniqueValues([...removed, ...shared])
