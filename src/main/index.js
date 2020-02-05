@@ -196,9 +196,7 @@ To ${repo.remoteRepo(repoName)}\n\
     sheet = new AppSheet({ ...gopts, url });
     // TODO: Check url is valid
 
-    sheet.getRows(repoName, 'refs/remotes', (err, rows) => {
-      if (err) return console.log(`fatal: repository '${url}' not found`);
-
+    sheet.getRows(repoName, 'refs/remotes').then(rows => {
       const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
       const json = csv2JSON(data);
       const remoteHash = json['master'];
@@ -208,9 +206,7 @@ To ${repo.remoteRepo(repoName)}\n\
         process.exit(1);
       }
 
-      sheet.getRows(repoName, 'master', (err, rows) => {
-        if (err) return console.error(`fatal: Couldn't find remote ref 'master'`);
-
+      sheet.getRows(repoName, 'master').then(rows => {
         try {
           // Initialize local repo
           let result = repo.init();
@@ -234,11 +230,17 @@ remote: Total 1\n\
 remote: done.`);
 
         } catch (err) {
-          console.error(err.message);
           repo.rollback();
+          console.error(err.message);
           process.exit(1);
         }
+      }).catch(err => {
+        console.error(`fatal: Couldn't find remote ref 'master'`);
+        process.exit(1);
       });
+    }).catch(err => {
+      console.log(`fatal: repository '${url}' not found`);
+      process.exit(1);
     });
   }
 
