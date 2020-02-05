@@ -1,13 +1,20 @@
 'use strict';
 
+const recursive = require('recursive-readdir');
+
 const AppSheet = require('./Sheet');
 const AppRepo = require('./SitRepo');
 const AppClasp = require('./Clasp');
 const SitConfig = require('./repos/SitConfig');
 
 const {
-  csv2JSON
+  csv2JSON,
+  diffArray
 } = require('./utils/array');
+
+const {
+  fileBasename
+} = require('./utils/file');
 
 function sit(opts) {
   const defaultOpts = {
@@ -26,7 +33,9 @@ function sit(opts) {
   const repo = new AppRepo(gopts)
     , clasp = new AppClasp(gopts);
 
-  Repo.fetch = (repoName, branch) => {
+  Repo.fetch = (repoName, branch, opts) => {
+    const { prune, verbose } = opts;
+
     if (repo.remoteRepo(repoName) === undefined) {
       return console.error(`\
 fatal: '${repoName}' does not appear to be a sit repository
@@ -35,30 +44,84 @@ fatal: Could not read from remote repository.
 Please make sure you have the correct access rights and the repository exists.`);
     }
 
-    sheet.getRows(repoName, branch, (err, rows) => {
-      if (err) return console.error(`fatal: Couldn't find remote ref '${branch}'`);
-
-      let data = sheet.rows2CSV(rows);
-      let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
-      repo.fetch(sha, repoName, branch).then(result => {
-        const { beforeHash, remoteHash, branchCount } = result
-
-        if (beforeHash === remoteHash) {
-          console.log(`\
-remote: Total ${branchCount}\n\
-From ${repo.remoteRepo(repoName)}
-* branch\t\t${branch}\t-> FETCH_HEAD`)
-        } else {
-          console.log(`\
-remote: Total ${branchCount}\n\
-From ${repo.remoteRepo(repoName)}
-* branch\t\t${branch}\t-> FETCH_HEAD\n\
-${beforeHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`)
+    if (prune) {
+      sheet.getRows(repoName, "refs/remotes", (err, rows) => {
+        if (err) {
+          console.error(`fatal: Couldn't find remote ref '${branch}'`);
+          process.exit(1);
         }
-      }).catch(err => {
-        console.error(err);
+
+        const data = sheet.rows2CSV(rows,['branch', 'sha1']);
+        const json = csv2JSON(data.slice(1));
+        const remoteBranches = Object.keys(json);
+
+        recursive(`${repo.localRepo}/refs/remotes/${repoName}`, (err, files) => {
+          if (err) throw err;
+          const localBranches = files.map(file => fileBasename(file));
+          const diffBranches = diffArray(localBranches, remoteBranches);
+          let msg = [];
+
+          Object.keys(diffBranches).forEach(status => {
+            let branches = diffBranches[status];
+
+            switch (status) {
+              case 'added':
+                branches.map(b => {
+                  Repo.fetch(repoName, b, { prune: false, verbose: false });
+                  msg.push(`* [new branch]\t\t${b}\t\t-> ${repoName}/${b}`)
+                })
+                break;
+              case 'removed':
+                branches.forEach(b => {
+                  // STEP 1: Delete refs/remotes/<repoName>/<branch>
+                  // STEP 2: Delete logs/refs/remotes/<repoName>/<branch>
+                  repo._deleteSyncFile(`refs/remotes/${repoName}/${b}`)
+                    ._deleteSyncFile(`logs/refs/remotes/${repoName}/${b}`)
+
+                  msg.push(`- [deleted]\t\t(none)\t\t-> ${repoName}/${b}`)
+                })
+                break;
+            }
+          });
+
+          if (msg.length > 1) {
+            msg.unshift(`From ${repo.remoteRepo(repoName)}`)
+            console.log(msg.join('\n'));
+          }
+        })
       });
-    });
+    }
+
+    if (!prune && branch) {
+      sheet.getRows(repoName, branch, (err, rows) => {
+        if (err) {
+          console.error(`fatal: Couldn't find remote ref '${branch}'`);
+          process.exit(1);
+        }
+
+        let data = sheet.rows2CSV(rows);
+        let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
+        repo.fetch(sha, repoName, branch).then(result => {
+          if (!verbose) return;
+
+          const { beforeHash, remoteHash, branchCount } = result
+          if (beforeHash === remoteHash) {
+            console.log(`\
+remote: Total ${branchCount}\n\
+From ${repo.remoteRepo(repoName)}
+  * branch\t\t${branch}\t-> FETCH_HEAD`)
+          } else {
+            console.log(`\
+remote: Total ${branchCount}\n\
+From ${repo.remoteRepo(repoName)}
+  * branch\t\t${branch}\t-> FETCH_HEAD\n\
+  ${beforeHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`)
+          }
+        }).catch(err => {
+          console.error(err);
+        });
+      });
+    }
   }
 
   Repo.push = (repoName, branch = 'master', opts) => {

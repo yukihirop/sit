@@ -124,18 +124,27 @@ program
   });
 
 program
-  .command('fetch <repository> <branch>')
+  .command('fetch <repository> [branch]')
   .description('fetch rows from Sheet')
   .option(
     '-t, --type <type>',
     'sheet type',
     'GoogleSpreadSheet'
   )
+  .option(
+    '--prune',
+    'prune refs/remotes'
+  )
+  .option(
+    '--verbose',
+    'display info',
+    true
+  )
   .action((repository, branch, options) => {
-    const { type } = options;
+    const { type, prune, verbose } = options;
     sit({
       type: type
-    }).Repo.fetch(repository, branch)
+    }).Repo.fetch(repository, branch, { prune, verbose })
   });
 
 program
