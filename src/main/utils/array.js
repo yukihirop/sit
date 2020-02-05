@@ -73,26 +73,28 @@ const uniq = (array) => {
 
 const diffArray = (to, from) => {
   const diff = Diff.diffArrays(to, from);
-  let added, removed;
+  let addedData, removedData;
 
   const data = diff.reduce((acc, item) => {
-    added = item.added;
-    removed = item.removed;
+    let added = item.added;
+    let removed = item.removed;
 
     if (added) {
-      acc['added'] = item.value
+      acc['added'] = acc['added'] || []
+      acc['added'].push(...item.value)
     } else if (removed) {
-      acc['removed'] = item.value;
+      acc['removed'] = acc['removed'] || []
+      acc['removed'].push(...item.value);
     }
 
     return acc;
   }, {});
 
-  added = data['added'] || [];
-  removed = data['removed'] || [];
-  const shared = _getDuplicateValues([...added, ...removed])
-  const addedOnly = _getUniqueValues([...added, ...shared])
-  const removedOnly = _getUniqueValues([...removed, ...shared])
+  addedData = data['added'] || [];
+  removedData = data['removed'] || [];
+  const sharedData = _getDuplicateValues([...addedData, ...removedData]);
+  const addedOnly = _getUniqueValues([...addedData, ...sharedData]);
+  const removedOnly = _getUniqueValues([...removedData, ...sharedData]);
 
   return {
     'added': addedOnly,
