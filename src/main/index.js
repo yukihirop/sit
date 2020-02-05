@@ -45,12 +45,7 @@ Please make sure you have the correct access rights and the repository exists.`)
     }
 
     if (prune) {
-      sheet.getRows(repoName, "refs/remotes", (err, rows) => {
-        if (err) {
-          console.error(`fatal: Couldn't find remote ref '${branch}'`);
-          process.exit(1);
-        }
-
+      sheet.getRows(repoName, "refs/remotes").then(rows => {
         const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
         const json = csv2JSON(data.slice(1));
         const remoteBranches = Object.keys(json);
@@ -90,16 +85,14 @@ Please make sure you have the correct access rights and the repository exists.`)
             console.log(msg.join('\n'));
           }
         })
+      }).catch(err => {
+        console.error(`fatal: Couldn't find remote ref '${branch}'`);
+        process.exit(1);
       });
     }
 
     if (!prune && branch) {
-      sheet.getRows(repoName, branch, (err, rows) => {
-        if (err) {
-          console.error(`fatal: Couldn't find remote ref '${branch}'`);
-          process.exit(1);
-        }
-
+      sheet.getRows(repoName, branch).then(rows => {
         let data = sheet.rows2CSV(rows);
         let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
         repo.fetch(sha, repoName, branch).then(result => {
@@ -119,8 +112,12 @@ From ${repo.remoteRepo(repoName)}
   ${beforeHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`)
           }
         }).catch(err => {
-          console.error(err);
+          console.error(err.message);
+          process.exit(1);
         });
+      }).catch(err => {
+        console.error(`fatal: Couldn't find remote ref '${branch}'`);
+        process.exit(1);
       });
     }
 
