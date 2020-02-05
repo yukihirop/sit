@@ -105,7 +105,7 @@ sheet:
           type: string
           description: キー
     defaultWorksheet:
-      rowCount: 50
+      rowCount: 10000
       colCount: 20
 repo:
   local: ./.sit
