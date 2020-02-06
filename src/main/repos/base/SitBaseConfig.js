@@ -49,7 +49,7 @@ class SitBaseConfig extends SitBase {
     const [mainSec, subSec] = section.split('.');
     config[mainSec] = config[mainSec] || {};
     config[mainSec][subSec] = data;
-    if (!data){
+    if (!data) {
       config = compact(config);
     }
     writeSyncFile(`${this.localRepo}/config`, iniStringify(config, null));
