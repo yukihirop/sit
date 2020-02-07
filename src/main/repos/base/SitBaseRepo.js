@@ -54,9 +54,9 @@ class SitBaseRepo extends SitBase {
     let logPath;
 
     if (repoName) {
-      logPath = `${this.localRepo}/logs/refs/remotes/${repoName}/${branch}`;
+      logPath = `logs/refs/remotes/${repoName}/${branch}`;
     } else {
-      logPath = `${this.localRepo}/logs/refs/heads/${branch}`;
+      logPath = `logs/refs/heads/${branch}`;
     }
 
     const parser = new SitLogParser(branch, logPath);
