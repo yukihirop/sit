@@ -12,7 +12,7 @@ class SitRefParser extends SitBase {
   constructor(branch, refFile) {
     super();
     this.branch = branch;
-    this.refFile = refFile;
+    this.refFile = `${this.localRepo}/${refFile}`;
   }
 
   parseToCSV() {

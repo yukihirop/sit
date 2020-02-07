@@ -41,9 +41,9 @@ class SitBaseRepo extends SitBase {
     let refPath
 
     if (repoName) {
-      refPath = `${this.localRepo}/refs/remotes/${repoName}/${branch}`;
+      refPath = `refs/remotes/${repoName}/${branch}`;
     } else {
-      refPath = `${this.localRepo}/refs/heads/${branch}`;
+      refPath = `refs/heads/${branch}`;
     }
 
     const parser = new SitRefParser(branch, refPath);
