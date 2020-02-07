@@ -14,8 +14,7 @@ const {
 const SitSetting = require('../../SitSetting');
 const SitBase = require('./SitBase');
 
-const homeDir = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"];
-const configPaths = { 'global': `${homeDir}/.sitconfig`, 'local': `${SitSetting.repo.local}/config` };
+const configPaths = { 'global': `${SitBase.homeDir()}/.sitconfig`, 'local': `${SitSetting.repo.local}/config` };
 
 class SitBaseConfig extends SitBase {
   constructor(type) {
