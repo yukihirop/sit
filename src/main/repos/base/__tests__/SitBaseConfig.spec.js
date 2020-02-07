@@ -2,18 +2,6 @@
 
 const SitBaseConfig = require('../SitBaseConfig')
 
-jest.mock('@main/SitSetting', () => {
-  return {
-    repo: {
-      local: './test/localRepo/.sit'
-    },
-    dist: {
-      path: './test/localRepo/dist',
-      sheetName: 'test_data.csv'
-    }
-  }
-});
-
 describe('SitBaseConfig', () => {
   const model = new SitBaseConfig('local')
 

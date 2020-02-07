@@ -16,19 +16,6 @@ jest.mock('@utils/file', () => (
   }
 ));
 
-jest.mock('@main/SitSetting', () => (
-  {
-    ...(jest.requireActual('@main/SitSetting')),
-    repo: {
-      local: './test/localRepo/.sit'
-    },
-    dist: {
-      path: './test/localRepo/dist',
-      sheetName: 'test_data.csv'
-    }
-  }
-));
-
 describe('SitBaseLogger', () => {
   const model = new SitBaseLogger('df9a34ac9610f4ae808c1d010100c2ed9447c714', '5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
 
