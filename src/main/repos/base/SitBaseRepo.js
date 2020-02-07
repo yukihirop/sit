@@ -289,7 +289,7 @@ class SitBaseRepo extends SitBase {
           resolve(null);
         }
       }).catch(err => {
-        console.error(err);
+        reject(err);
       });
     });
   }

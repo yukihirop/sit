@@ -14,6 +14,10 @@ const {
 } = require('./utils/file');
 
 const {
+  pathRelative
+} = require('./utils/path')
+
+const {
   colorize
 } = require('./utils/string');
 
@@ -52,7 +56,7 @@ class SitRepo extends SitBaseRepo {
     }
   }
 
-  clone(repoName, url, masterHash, data, opts) {
+  clone(repoName, url, masterHash, masterData, opts) {
     const { type } = opts;
 
     // STEP 1: Update config
@@ -72,7 +76,7 @@ class SitRepo extends SitBaseRepo {
       ._writeLog("logs/HEAD", this._INITIAL_HASH(), masterHash, `clone: from ${url}`);
 
     // STEP 7: Update dist file instead of Update index
-    writeSyncFile(this.distFilePath, data);
+    writeSyncFile(this.distFilePath, masterData);
   }
 
   isLocalRepo() {
@@ -110,9 +114,9 @@ class SitRepo extends SitBaseRepo {
     return this.hashObject(path, Object.assign(opts, { type: 'blob', write: true }));
   }
 
-  catFile(obj) {
+  catFile(name) {
     return new Promise((resolve, reject) => {
-      this._objectFind(obj)
+      this._objectFind(name)
         .then(sha => {
           this._objectRead(sha)
             .then(obj => {
@@ -167,20 +171,25 @@ class SitRepo extends SitBaseRepo {
         fullBranchDirPath = this._getPath('refs/heads');
       }
 
-      recursive(fullBranchDirPath, (err, files) => {
-        if (err) reject(err);
+      recursive(fullBranchDirPath)
+        .then(files => {
+          const result = files.reduce((acc, file) => {
+            const refPath = pathRelative(this.localRepo, file)
+            const branch = this._branchResolve(refPath);
 
-        files.map(file => {
-          let refPath = file.split('/').slice(1).join('/')
-          let branch = this._branchResolve(refPath);
-
-          if (branch === currentBranch) {
-            console.log(`* ${branch}`);
-          } else {
-            console.log(`  ${branch}`);
-          }
+            if (branch === currentBranch) {
+              acc.push(`* ${branch}`);
+            } else {
+              acc.push(`  ${branch}`);
+            }
+            return acc
+          }, [])
+          console.log(result.join('\n'));
+        })
+        .catch(err => {
+          console.error(err.message);
+          process.exit(1);
         });
-      });
     }
   }
 
@@ -204,25 +213,30 @@ class SitRepo extends SitBaseRepo {
       if (name === currentBranch) {
         console.log(`Already on '${name}'`);
       } else if (name) {
-        this._objectFind(name).then(sha => {
-          if (sha) {
+        this._objectFind(name)
+          .then(sha => {
+            if (sha) {
 
-            // STEP 1: Update HEAD
-            // STEP 2: Append logs/HEAD
-            // STEP 3: Update dist file instead of Update index
-            this._writeSyncFile(`HEAD`, `ref: refs/heads/${name}`, false)
-              ._writeLog("logs/HEAD", currentHash, sha, `checkout: moving from ${currentBranch} to ${name}`)
-              .catFile(sha).then(obj => {
-                writeSyncFile(this.distFilePath, obj.serialize().toString());
-              })
+              // STEP 1: Update HEAD
+              // STEP 2: Append logs/HEAD
+              // STEP 3: Update dist file instead of Update index
+              this._writeSyncFile(`HEAD`, `ref: refs/heads/${name}`, false)
+                ._writeLog("logs/HEAD", currentHash, sha, `checkout: moving from ${currentBranch} to ${name}`)
+                .catFile(sha).then(obj => {
+                  writeSyncFile(this.distFilePath, obj.serialize().toString());
+                })
 
-            console.log(`Switched to branch '${name}'`);
-          }
-        });
+              console.log(`Switched to branch '${name}'`);
+            }
+          })
+          .catch(err => {
+            console.error(err.message);
+            process.exit(1)
+          })
       }
       // checkout local from remote
     } else if (!branch && isRemote) {
-      const branchHash = this._refResolve(`refs/heads/${name}`);
+      const branchHash = this._refResolve(`refs/remotes/${repoName}/${name}`);
 
       const config = new SitConfig('local');
       config.updateSection(`branch.${name}`, { remote: repoName, merge: `refs/heads/${name}` });
@@ -354,9 +368,9 @@ nothing to commit`
 
         resolve({ beforeHash: beforeHash, afterHash: afterHash });
       } else {
-        reject(`\
+        reject(new Error(`\
 error: src refspec unknown does not match any\n\
-error: failed to push some refs to '${repoName}'`)
+error: failed to push some refs to '${repoName}'`))
       }
     });
   }
@@ -374,15 +388,15 @@ error: failed to push some refs to '${repoName}'`)
           // STEP 2: Update logs/refs/remotes/<repoName>/<branch>
           // STEP3: Update refs/remotes/<repoName>/<branch>
           this._writeSyncFile("FETCH_HEAD", `${remoteHash}\t\tbranch '${branch}' of ${repoName}`)
+            ._writeSyncFile(refPath, remoteHash)
             ._writeLog(logPath, beforeHash, remoteHash, `fetch ${repoName} ${branch}: fast-forward`)
-            ._writeSyncFile(refPath, remoteHash);
 
           resolve({ beforeHash, remoteHash, branchCount });
         } else {
-          reject("branch is required")
+          reject(new Error("branch is required"))
         }
       } else {
-        reject("reponame is required")
+        reject(new Error("repository is required"))
       }
     });
   }

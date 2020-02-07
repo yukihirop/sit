@@ -183,7 +183,7 @@ To ${repo.remoteRepo(repoName)}\n\
           });
         });
       }).catch(err => {
-        console.error(err);
+        console.error(err.message);
         process.exit(1);
       });
     });
