@@ -297,9 +297,7 @@ describe('SitBaseRepo', () => {
       })
     })
 
-    // FIXME
-    // fail... why?
-    xdescribe('when ref is HEAD', () => {
+    describe('when ref is HEAD', () => {
       it('should return correctly', () => {
         expect(model._branchResolve('HEAD')).toEqual('master')
       })

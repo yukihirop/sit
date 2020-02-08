@@ -6,7 +6,8 @@ const SitBlob = require('@repos/objects/SitBlob');
 
 const {
   writeSyncFile,
-  rmDirSync
+  rmDirSync,
+  recursive
 } = require('@utils/file');
 
 // https://stackoverflow.com/questions/39755439/how-to-mock-imported-named-function-in-jest-when-module-is-unmocked
@@ -14,7 +15,8 @@ jest.mock('@utils/file', () => (
   {
     ...(jest.requireActual('@utils/file')),
     writeSyncFile: jest.fn(),
-    rmDirSync: jest.fn()
+    rmDirSync: jest.fn(),
+    recursive: jest.fn()
   }
 ));
 
@@ -241,22 +243,22 @@ describe('SitRepo', () => {
   describe('#branch', () => {
     // fail... why?
     describe("when do not specify nothiing", () => {
-      xit('should return correctly', () => {
-        console.log = jest.fn()
+      it('should return correctly', () => {
+        recursive.mockReturnValue(Promise.resolve(['files']))
         model.branch()
 
-        expect(console.log.mock.calls).toEqual('')
-        expect(console.log).toHaveBeenCalledTimes(1)
+        expect(recursive).toHaveBeenCalledTimes(1)
+        expect(recursive.mock.calls[0]).toEqual(["./test/localRepo/.sit/refs/heads"])
       })
     })
 
     describe("when specify 'all' option", () => {
-      xit('should return correctly', () => {
-        console.log = jest.fn()
+      it('should return correctly', () => {
+        recursive.mockReturnValue(Promise.resolve(['files']))
         model.branch({ all: true })
 
-        expect(console.log.mock.calls).toEqual('')
-        expect(console.log).toHaveBeenCalledTimes(1)
+        expect(recursive).toHaveBeenCalledTimes(1)
+        expect(recursive.mock.calls[0]).toEqual(["./test/localRepo/.sit/refs"])
       })
     })
 
