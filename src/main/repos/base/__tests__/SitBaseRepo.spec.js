@@ -185,11 +185,6 @@ describe('SitBaseRepo', () => {
       it('should return correctly', () => {
         const result = model._objectWrite(obj, true)
         expect(result).toEqual('df19f4d0dbf626e39e57ef6bc307071ba4c5ae2c')
-
-        // FIXME:
-        // test fail because file created asyncly
-        // expect(testIsFileExist("./test/localRepo/.sit/objects/7d/17f9f61902d6ac97a2cc461ce0996e8fcfb30d")).toEqual(true)
-
       })
     })
   })

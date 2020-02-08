@@ -131,8 +131,6 @@ module.exports = {
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
   setupFiles: [
-    "./test/helpers/fileHelper.js",
-    "./test/helpers/repoHelper.js",
     "./test/helpers/envHelper.js",
     "./test/helpers/mockHelper.js"
   ],
