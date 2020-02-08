@@ -5,12 +5,17 @@ const jsdiff = require('diff')
   , opener = require('opener');
 
 const {
+  diffArray
+} = require('./utils/array');
+
+const {
   isExistFile,
   fileSafeLoad,
   writeSyncFile,
   recursive,
   mTimeMs,
-  rmDirSync
+  rmDirSync,
+  fileBasename
 } = require('./utils/file');
 
 const {
@@ -375,7 +380,9 @@ error: failed to push some refs to '${repoName}'`))
     });
   }
 
-  fetch(remoteHash, repoName, branch) {
+  fetch(remoteHash, repoName, branch, opts = {}) {
+    const { prune, remoteBranches, _skipRemove } = opts
+
     return new Promise((resolve, reject) => {
       if (repoName) {
         if (branch) {
@@ -393,7 +400,46 @@ error: failed to push some refs to '${repoName}'`))
 
           resolve({ beforeHash, remoteHash, branchCount });
         } else {
-          reject(new Error("branch is required"))
+          if (prune) {
+            recursive(`${this.localRepo}/refs/remotes/${repoName}`)
+              .then(files => {
+                const localBranches = files.map(file => fileBasename(file));
+                const diffBranches = diffArray(localBranches, remoteBranches);
+                let msg = [];
+
+                Object.keys(diffBranches).forEach(status => {
+                  let branches = diffBranches[status];
+
+                  switch (status) {
+                    case 'added':
+                      branches.forEach(b => {
+                        this.fetch(remoteHash, repoName, b, { prune: false, verbose: false });
+                        msg.push(`* [new branch]\t\t${b}\t\t-> ${repoName}/${b}`)
+                      });
+                      break;
+                    case 'removed':
+                      if (_skipRemove) break;
+                      branches.forEach(b => {
+                        // STEP 1: Delete refs/remotes/<repoName>/<branch>
+                        // STEP 2: Delete logs/refs/remotes/<repoName>/<branch>
+                        this._deleteSyncFile(`refs/remotes/${repoName}/${b}`)
+                          ._deleteSyncFile(`logs/refs/remotes/${repoName}/${b}`)
+
+                        msg.push(`- [deleted]\t\t(none)\t\t-> ${repoName}/${b}`)
+                      });
+                      break;
+                  }
+                });
+
+                if (msg.length >= 1) {
+                  msg.unshift(`From ${this.remoteRepo(repoName)}`)
+                  console.log(msg.join('\n'));
+                  resolve();
+                }
+              })
+          } else {
+            reject(new Error("branch is required"))
+          }
         }
       } else {
         reject(new Error("repository is required"))
