@@ -1,0 +1,8 @@
+[remote.origin]
+type=GoogleSpreadSheet
+url="https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"
+fetch=+refs/heads/*:refs/remotes/origin/*
+
+[branch.master]
+remote=origin
+merge=refs/heads/master

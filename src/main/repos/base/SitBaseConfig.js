@@ -14,8 +14,7 @@ const {
 const SitSetting = require('../../SitSetting');
 const SitBase = require('./SitBase');
 
-const homeDir = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"];
-const configPaths = { 'global': `${homeDir}/.sitconfig`, 'local': `${SitSetting.repo.local}/config` };
+const configPaths = { 'global': `${SitBase.homeDir()}/.sitconfig`, 'local': `${SitSetting.repo.local}/config` };
 
 class SitBaseConfig extends SitBase {
   constructor(type) {
@@ -49,7 +48,7 @@ class SitBaseConfig extends SitBase {
     const [mainSec, subSec] = section.split('.');
     config[mainSec] = config[mainSec] || {};
     config[mainSec][subSec] = data;
-    if (!data){
+    if (!data) {
       config = compact(config);
     }
     writeSyncFile(`${this.localRepo}/config`, iniStringify(config, null));
