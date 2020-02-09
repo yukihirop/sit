@@ -445,7 +445,7 @@ error: failed to push some refs to '${repoName}'`))
     });
   }
 
-  merge(repoName, branch, opts) {
+  merge(repoName, branch, opts = {}) {
     const isContinue = opts.continue;
     const { stat, abort } = opts;
 
@@ -530,7 +530,7 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
         });
       });
 
-    } else if (this._isExistFile('MERGE_HEAD') && !stat && !abort) {
+    } else if (this._isExistFile('MERGE_HEAD') && !stat && !abort && branch) {
       console.error(`\
 error: Merging is not possible because you have unmerged files.\n\
 hint: Fix them up in the work tree, and then use 'sit merge --continue'\n\
@@ -616,8 +616,10 @@ two-way-merge failed; fix conflicts and then commit the result.`);
               // STEP 4: Update HEAD
               this._writeSyncFile('ORIG_HEAD', headHash)
                 ._writeLog('logs/HEAD', headHash, remoteHash, `merge ${repoName}/${branch}: Fast-forward`)
-                ._writeLog(`logs/refs/heads/${headBranch}`, headHash, remoteHash, `merge ${repoName}/${branch}: Fast-forward`)
-                ._writeSyncFile('HEAD', remoteHash);
+                ._writeLog(`logs/refs/heads/${headBranch}`, headHash, remoteHash, `merge ${repoName}/${branch}: Fast-forward`);
+
+              // STEP 5: Update dist file
+              writeSyncFile(this.distFilePath, result.data.join('\n'));
 
               console.log(`\
 Updating ${headHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\n
@@ -658,6 +660,9 @@ Fast-forward
         break;
       case 'get-url':
         console.log(SitConfig.config('local')['remote'][repoName]['url']);
+        break;
+      default:
+        console.log(`Do not support subcommand: '${subcommand}'`)
         break;
     }
   }
