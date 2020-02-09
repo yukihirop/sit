@@ -518,7 +518,7 @@ describe('SitRepo', () => {
   describe('#fetch', () => {
     describe('when repoName is blank', () => {
       it('should return correctly', (done) => {
-        model.fetch('a7092c2cd3447d0f953e46b8cf81dd59e6745222', null, 'develop')
+        model.fetch(null, 'develop', { remoteHash: 'a7092c2cd3447d0f953e46b8cf81dd59e6745222' })
           .catch(err => {
             expect(err.message).toEqual("repository is required")
             done()
@@ -528,11 +528,23 @@ describe('SitRepo', () => {
 
     describe('when branch is blank', () => {
       it('should return correctly', (done) => {
-        model.fetch('a7092c2cd3447d0f953e46b8cf81dd59e6745222', 'origin', null)
-          .catch(err => {
-            expect(err.message).toEqual("branch is required")
-            done()
-          })
+        recursive.mockReturnValueOnce(Promise.resolve(
+          ["./test/localRepo/.sit/refs/remotes/origin/master",
+            "./test/localRepo/.sit/refs/remotes/origin/test"
+          ])
+        )
+        jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
+        jest.spyOn(model, '_writeLog').mockReturnValue(model)
+
+        model.fetch('origin', null, {
+          prune: false,
+          remoteRefs: { 'test-1': 'a7092c2cd3447d0f953e46b8cf81dd59e6745222', 'test-2': '953b3794394d6b48d8690bc5e53aa2ffe2133035' },
+          remoteBranches: ['test-1', 'test-2']
+        }).then(() => {
+          expect(recursive).toHaveBeenCalledTimes(1)
+          expect(recursive.mock.calls[0]).toEqual(["./test/localRepo/.sit/refs/remotes/origin"])
+          done()
+        })
       })
     })
 
@@ -540,7 +552,7 @@ describe('SitRepo', () => {
       it('should return correctly', (done) => {
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-        model.fetch('a7092c2cd3447d0f953e46b8cf81dd59e6745222', 'origin', 'test')
+        model.fetch('origin', 'test', { remoteHash: 'a7092c2cd3447d0f953e46b8cf81dd59e6745222' })
           .then(result => {
             expect(result).toEqual({ "beforeHash": "a7092c2cd3447d0f953e46b8cf81dd59e6745222", "branchCount": 1, "remoteHash": "a7092c2cd3447d0f953e46b8cf81dd59e6745222" })
 
@@ -566,7 +578,11 @@ describe('SitRepo', () => {
         jest.spyOn(model, '_writeLog').mockReturnValue(model)
         jest.spyOn(model, '_deleteSyncFile').mockReturnValue(model)
 
-        model.fetch('a7092c2cd3447d0f953e46b8cf81dd59e6745222', 'origin', null, { prune: true, remoteBranches: ['test-1', 'test-2'] }).then(() => {
+        model.fetch('origin', null, {
+          prune: true,
+          remoteRefs: { 'test-1': 'a7092c2cd3447d0f953e46b8cf81dd59e6745222', 'test-2': '953b3794394d6b48d8690bc5e53aa2ffe2133035' },
+          remoteBranches: ['test-1', 'test-2']
+        }).then(() => {
 
           expect(recursive).toHaveBeenCalledTimes(1)
           expect(recursive.mock.calls[0]).toEqual(["./test/localRepo/.sit/refs/remotes/origin"])
