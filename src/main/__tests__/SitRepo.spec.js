@@ -244,7 +244,7 @@ describe('SitRepo', () => {
     // fail... why?
     describe("when do not specify nothiing", () => {
       it('should return correctly', () => {
-        recursive.mockReturnValue(Promise.resolve(['files']))
+        recursive.mockReturnValueOnce(Promise.resolve(['files']))
         model.branch()
 
         expect(recursive).toHaveBeenCalledTimes(1)
@@ -254,7 +254,7 @@ describe('SitRepo', () => {
 
     describe("when specify 'all' option", () => {
       it('should return correctly', () => {
-        recursive.mockReturnValue(Promise.resolve(['files']))
+        recursive.mockReturnValueOnce(Promise.resolve(['files']))
         model.branch({ all: true })
 
         expect(recursive).toHaveBeenCalledTimes(1)
@@ -552,6 +552,26 @@ describe('SitRepo', () => {
             expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/test", "a7092c2cd3447d0f953e46b8cf81dd59e6745222", "a7092c2cd3447d0f953e46b8cf81dd59e6745222", "fetch origin test: fast-forward"])
             done()
           })
+      })
+    })
+
+    describe('when fetch --prune', () => {
+      it('should return correctly', (done) => {
+        recursive.mockReturnValueOnce(Promise.resolve(
+          ["./test/localRepo/.sit/refs/remotes/origin/master",
+            "./test/localRepo/.sit/refs/remotes/origin/test"
+          ])
+        )
+        jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
+        jest.spyOn(model, '_writeLog').mockReturnValue(model)
+        jest.spyOn(model, '_deleteSyncFile').mockReturnValue(model)
+
+        model.fetch('a7092c2cd3447d0f953e46b8cf81dd59e6745222', 'origin', null, { prune: true, remoteBranches: ['test-1', 'test-2'] }).then(() => {
+
+          expect(recursive).toHaveBeenCalledTimes(1)
+          expect(recursive.mock.calls[0]).toEqual(["./test/localRepo/.sit/refs/remotes/origin"])
+          done()
+        })
       })
     })
   })
