@@ -28,7 +28,6 @@ function sit(opts) {
 
   Repo.fetch = (repoName, branch, opts = {}) => {
     const { prune, verbose } = opts;
-    let { _skipRemove } = opts
 
     if (repo.remoteRepo(repoName) === undefined) {
       return console.error(`\
@@ -78,9 +77,8 @@ From ${repo.remoteRepo(repoName)}
           const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
           const remoteRefs = csv2JSON(data.slice(1));
           const remoteBranches = Object.keys(remoteRefs);
-          _skipRemove = false
 
-          repo.fetch(repoName, null, { prune, remoteBranches, remoteRefs, _skipRemove }, (repoName, addedBranches) => {
+          repo.fetch(repoName, null, { prune, remoteBranches, remoteRefs }, (repoName, addedBranches) => {
             const promises = addedBranches.map(branch => {
               sheet.getRows(repoName, branch)
                 .then(rows => {
