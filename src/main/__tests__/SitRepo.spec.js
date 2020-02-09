@@ -3,6 +3,8 @@
 const SitRepo = require('../SitRepo')
 const SitConfig = require('@repos/SitConfig')
 const SitBlob = require('@repos/objects/SitBlob');
+const editor = require('@utils/editor');
+const opener = require('opener');
 
 const {
   writeSyncFile,
@@ -19,6 +21,9 @@ jest.mock('@utils/file', () => (
     recursive: jest.fn()
   }
 ));
+
+jest.mock('@utils/editor');
+jest.mock('opener');
 
 describe('SitRepo', () => {
   const model = new SitRepo()
@@ -614,6 +619,189 @@ describe('SitRepo', () => {
 
         expect(console.error).toHaveBeenCalledTimes(1)
         expect(console.error.mock.calls[0]).toEqual(["fatal: There is no merge in progress (MERGE_HEAD missing)"])
+      })
+    })
+
+    describe('when merge --continue when MERGE_HEAD exist', () => {
+      it('should return correctly', () => {
+        console.log = jest.fn()
+        const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValueOnce(model)
+        jest.spyOn(model, '_writeLog').mockReturnValueOnce(model)
+        jest.spyOn(model, '_deleteSyncFile').mockReturnValueOnce(model)
+        model.merge(null, null, { continue: true })
+
+        expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(1)
+        expect(mockModel__writeSyncFile.mock.calls[0][0]).toEqual('COMMIT_EDITMSG')
+        expect(mockModel__writeSyncFile.mock.calls[0][1]).toEqual(`\
+Merge remote-tracking branch 'origin/test'
+
+# Conflict
+#       ./test/dist/test_data.csv
+
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+# 	./test/localRepo/.sit/MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch develop
+# All conflicts fixed but you are still merging.
+#
+# Changes for commit:
+#	modified:	./test/dist/test_data.csv
+#
+`)
+
+        expect(editor.open).toHaveBeenCalledTimes(1)
+        expect(editor.open.mock.calls[0][0]).toEqual("./test/localRepo/.sit/COMMIT_EDITMSG")
+      })
+    })
+
+    describe('when merge origin test', () => {
+      it('should return correctly', () => {
+        console.error = jest.fn()
+        model.merge('origin', 'master')
+
+        expect(console.error).toHaveBeenCalledTimes(1)
+        expect(console.error.mock.calls[0]).toEqual([`\
+error: Merging is not possible because you have unmerged files.
+hint: Fix them up in the work tree, and then use 'sit merge --continue'
+hint: as appropriate to mark resolution and make a commit.
+fatal: Existing because of an unresolved conflict.`])
+      })
+    })
+
+    describe('when merge --abort when MERGE_HEAD exist', () => {
+      it('should return correctly', () => {
+        const obj = new SitBlob(model, '1,2,3', 3)
+        const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
+        const mockModel__deleteSyncFile = jest.spyOn(model, '_deleteSyncFile').mockReturnValue(model)
+        const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValue(Promise.resolve(obj))
+        model.merge(null, null, { abort: true })
+
+        expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "reset: moving to HEAD"])
+
+        expect(mockModel__deleteSyncFile).toHaveBeenCalledTimes(3)
+        expect(mockModel__deleteSyncFile.mock.calls[0]).toEqual(["MERGE_MODE"])
+        expect(mockModel__deleteSyncFile.mock.calls[1]).toEqual(["MERGE_MSG"])
+        expect(mockModel__deleteSyncFile.mock.calls[2]).toEqual(["MERGE_HEAD"])
+
+        expect(mockModel_catFile).toHaveBeenCalledTimes(1)
+        expect(mockModel_catFile.mock.calls[0]).toEqual(["0000000000000000000000000000000000000000"])
+      })
+    })
+
+    describe('when merge --stat when MERGE_HEAD exist', () => {
+      it('should return correctly', () => {
+        console.error = jest.fn()
+        model.merge(null, null, { stat: true })
+
+        expect(console.error).toHaveBeenCalledTimes(1)
+        expect(console.error.mock.calls[0]).toEqual([`\
+fatal: You have not concluded your merge (MERGE_HEAD exists)
+Please, commit your changes before you merge.`])
+      })
+    })
+
+    describe('when merge --stat when MERGE_HEAD do not exist', () => {
+      it('should return correctly', () => {
+        console.log = jest.fn()
+        const mockModel__isExistFile = jest.spyOn(model, '_isExistFile').mockReturnValue(false)
+        model.merge(null, null, { stat: true })
+
+        expect(mockModel__isExistFile).toHaveBeenCalledTimes(2)
+        expect(mockModel__isExistFile.mock.calls[0]).toEqual(["MERGE_HEAD"])
+        expect(mockModel__isExistFile.mock.calls[1]).toEqual(["MERGE_HEAD"])
+
+        expect(console.log).toHaveBeenCalledTimes(1)
+        expect(console.log.mock.calls[0]).toEqual(["Already up to date."])
+      })
+    })
+
+    describe('when merge origin master (conflict)', () => {
+      it('should return correctly', () => {
+        const obj = new SitBlob(model, '1,2,3', 3)
+        jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
+        jest.spyOn(model, '_writeLog').mockReturnValue(model)
+        jest.spyOn(model, 'hashObjectFromData').mockReturnValue(true)
+        const mockModel__isExistFile = jest.spyOn(model, '_isExistFile').mockReturnValue(false)
+        const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValue(Promise.resolve(obj))
+        model.merge('origin', 'master')
+
+        expect(mockModel__isExistFile).toHaveBeenCalledTimes(1)
+        expect(mockModel__isExistFile.mock.calls[0]).toEqual(["MERGE_HEAD"])
+
+        expect(mockModel_catFile).toHaveBeenCalledTimes(1)
+        expect(mockModel_catFile.mock.calls[0]).toEqual(["5b1cf86e97c6633e9a2dd85567e33d636dd3748a"])
+      })
+    })
+  })
+
+  describe('#browseRemote', () => {
+    describe('when repoName do not exist', () => {
+      it('should return correctly', () => {
+        model.browseRemote()
+
+        expect(opener).toHaveBeenCalledTimes(1)
+        expect(opener.mock.calls[0]).toEqual(["https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+      })
+    })
+
+    describe('when repoName exist', () => {
+      it('should return correctly', () => {
+        model.browseRemote('origin')
+
+        expect(opener).toHaveBeenCalledTimes(1)
+        expect(opener.mock.calls[0]).toEqual(["https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+      })
+    })
+  })
+
+  describe('#remote', () => {
+    const url = "https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"
+
+    describe('when subcommand is add', () => {
+      it('should return correctly', () => {
+        SitConfig.prototype.updateSection = jest.fn()
+        model.remote('add', 'origin', url, { type: 'GoogleSpreadSheet' })
+
+        expect(SitConfig.prototype.updateSection).toHaveBeenCalledTimes(1)
+        expect(SitConfig.prototype.updateSection.mock.calls[0]).toEqual(["remote.origin", { "fetch": "+refs/heads/*:refs/remotes/origin/*", "type": "GoogleSpreadSheet", "url": "https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0" }])
+      })
+    })
+
+    describe('when subcommand is rm', () => {
+      it('should return correctly', () => {
+        SitConfig.prototype.updateSection = jest.fn()
+        model.remote('rm', 'origin', url, { type: 'GoogleSpreadSheet' })
+
+        expect(SitConfig.prototype.updateSection).toHaveBeenCalledTimes(1)
+        expect(SitConfig.prototype.updateSection.mock.calls[0]).toEqual(["remote.origin", null])
+      })
+    })
+
+    describe('when subcommand is get-url', () => {
+      it('should return correctly', () => {
+        console.log = jest.fn()
+        model.remote('get-url', 'origin', url, { type: 'GoogleSpreadSheet' })
+
+        expect(console.log).toHaveBeenCalledTimes(1)
+        expect(console.log.mock.calls[0]).toEqual(["https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+      })
+    })
+
+    describe('when subcommand is not-support', () => {
+      it('should return correctly', () => {
+        console.log = jest.fn()
+        model.remote('not-support', 'origin', url, { type: 'GoogleSpreadSheet' })
+
+        expect(console.log).toHaveBeenCalledTimes(1)
+        expect(console.log.mock.calls[0]).toEqual(["Do not support subcommand: 'not-support'"])
       })
     })
   })
