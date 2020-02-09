@@ -380,7 +380,7 @@ error: failed to push some refs to '${repoName}'`))
     });
   }
 
-  fetch(repoName, branch, opts = {}) {
+  fetch(repoName, branch, opts = {}, handler = () => { }) {
     const { prune, remoteHash, remoteRefs, remoteBranches } = opts
 
     return new Promise((resolve, reject) => {
@@ -405,6 +405,7 @@ error: failed to push some refs to '${repoName}'`))
               const localBranches = files.map(file => fileBasename(file));
               const diffBranches = diffArray(localBranches, remoteBranches);
               let msg = [];
+              let added = [];
 
               Object.keys(diffBranches).forEach(status => {
                 let branches = diffBranches[status];
@@ -413,6 +414,7 @@ error: failed to push some refs to '${repoName}'`))
                   case 'added':
                     branches.forEach(b => {
                       this.fetch(repoName, b, { prune: false, verbose: false, remoteHash: remoteRefs[b] });
+                      added.push(b)
                       msg.push(`* [new branch]\t\t${b}\t\t-> ${repoName}/${b}`)
                     });
                     break;
@@ -429,6 +431,10 @@ error: failed to push some refs to '${repoName}'`))
                     break;
                 }
               });
+
+              if (added.length > 1) {
+                handler(repoName, added)
+              }
 
               resolve(msg);
             })
