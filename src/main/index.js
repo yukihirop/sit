@@ -38,57 +38,61 @@ fatal: Could not read from remote repository.
 Please make sure you have the correct access rights and the repository exists.`);
     }
 
-    if (prune) {
-      sheet.getRows(repoName, "refs/remotes").then(rows => {
-        const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
-        const json = csv2JSON(data.slice(1));
-        const remoteBranches = Object.keys(json);
-        _skipRemove = false
+    if (repoName) {
+      if (branch) {
+        sheet.getRows(repoName, branch)
+          .then(rows => {
+            const data = sheet.rows2CSV(rows);
+            const remoteHash = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
 
-        repo.fetch(null, repoName, null, { prune, remoteBranches, _skipRemove })
+            repo.fetch(repoName, branch, { prune, remoteHash })
+              .then(result => {
+                if (!verbose) return;
 
-      }).catch(err => {
-        console.error(`fatal: Couldn't find remote ref '${branch}'`);
-        process.exit(1);
-      });
-    }
-
-    if (!prune && branch) {
-      sheet.getRows(repoName, branch)
-        .then(rows => {
-          let data = sheet.rows2CSV(rows);
-          let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
-          repo.fetch(sha, repoName, branch, { prune })
-            .then(result => {
-              if (!verbose) return;
-
-              const { beforeHash, remoteHash, branchCount } = result
-              if (beforeHash === remoteHash) {
-                console.log(`\
+                const { beforeHash, remoteHash, branchCount } = result
+                if (beforeHash === remoteHash) {
+                  console.log(`\
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD`)
-              } else {
-                console.log(`\
+                } else {
+                  console.log(`\
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD\n\
   ${beforeHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`)
+                }
+              })
+              .catch(err => {
+                console.error(err.message);
+                process.exit(1);
+              });
+          })
+          .catch(err => {
+            console.error(`fatal: Couldn't find remote ref '${branch}'`);
+            process.exit(1);
+          });
+
+      } else {
+        sheet.getRows(repoName, "refs/remotes").then(rows => {
+          const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
+          const remoteRefs = csv2JSON(data.slice(1));
+          const remoteBranches = Object.keys(remoteRefs);
+          _skipRemove = false
+
+          repo.fetch(repoName, null, { prune, remoteBranches, remoteRefs, _skipRemove })
+            .then(msg => {
+              if (msg.length >= 1) {
+                msg.unshift(`From ${repo.remoteRepo(repoName)}`)
+                console.log(msg.join('\n'));
               }
             })
-            .catch(err => {
-              console.error(err.message);
-              process.exit(1);
-            });
-        })
-        .catch(err => {
+
+        }).catch(err => {
           console.error(`fatal: Couldn't find remote ref '${branch}'`);
           process.exit(1);
         });
-    }
-
-    if (!prune && !branch && !_skipRemove) {
-      Repo.fetch(repoName, null, { prune: true, _skipRemove: true })
+      }
     }
   }
 
