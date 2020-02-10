@@ -9,21 +9,30 @@ const Worksheet = require('./Worksheet');
 const SitSetting = require('../SitSetting');
 const SitConfig = require('../repos/SitConfig');
 
-function GSS(opts) {
-  const { url } = opts;
+class GSS {
+  constructor(opts = {}) {
+    const defaultOpts = {
+      type: 'GoogleSpreadSheet',
+      baseURL: 'https://docs.google.com/spreadsheets/d/',
+      worksheetIndex: 0
+    };
+    const gopts = Object.assign({}, defaultOpts, opts);
 
-  const worksheet = new Worksheet();
+    this.opts = gopts
+    this.url = opts.url
+    this.worksheet = new Worksheet()
+  }
 
-  const loadInfo = (repoName, sheetName, callback) => {
+  loadInfo(repoName, sheetName, callback) {
     let remoteURL;
 
-    if (!url) {
-      remoteURL = SitConfig.config('local').remote[repoName].url;
+    if (!this.url) {
+      remoteURL = SitConfig.config('local').remote[repoName].url
     } else {
-      remoteURL = url
+      remoteURL = this.url
     }
 
-    return Client(remoteURL, opts).then(doc => {
+    return Client(remoteURL, this.opts).then(doc => {
       new Promise((resolve, reject) => {
         doc.loadInfo().then(() => {
           if (doc) {
@@ -39,36 +48,38 @@ function GSS(opts) {
         if (callback) callback(doc, sheet);
       })
     });
-  };
+  }
 
-  const getRows = (repoName, sheetName) => {
+  getRows(repoName, sheetName) {
     return new Promise((resolve, reject) => {
-      loadInfo(repoName, sheetName, (_, sheet) => {
+      this.loadInfo(repoName, sheetName, (_, sheet) => {
         if (sheet) {
           sheet.getRows()
             .then(rows => resolve(rows))
             .catch(err => reject(err));
         } else {
-          reject(true)
+          reject(new Error(`Do not exist sheet: ${sheetName}`))
         }
       });
     });
-  };
+  }
 
   /* e.x.)
     data = [['master', '0230dedd90bfa7fb5abd035d7f5495dcbe2ad850']]
     data = [['こんちは', 'hello', 'greeting.hello'],
             ['さようなら', 'good bye', 'greeting.good_bye']]
   */
-  const pushRows = (repoName, sheetName, data, { clear, specifyIndex }) => {
-    return loadInfo(repoName, sheetName, (doc, sheet) => {
+  pushRows(repoName, sheetName, data, { clear, specifyIndex }) {
+    const worksheet = this.worksheet;
+
+    return this.loadInfo(repoName, sheetName, (doc, sheet) => {
       new Promise((resolve, reject) => {
         const header = data[0];
 
         if (sheet) {
           sheet.getRows()
             .then(rows => {
-              let oldData = rows2CSV(rows, header);
+              let oldData = this.rows2CSV(rows, header);
               let newData;
 
               if (clear) {
@@ -81,9 +92,9 @@ function GSS(opts) {
               let newCSVData = worksheet.csvData(newData);
 
               if (clear) {
-                _bulkPushRow(sheet, oldCSVData, newCSVData, header, true);
+                this._bulkPushRow(sheet, oldCSVData, newCSVData, header, true);
               } else {
-                _bulkPushRow(sheet, newCSVData, newCSVData, header, false);
+                this._bulkPushRow(sheet, newCSVData, newCSVData, header, false);
               }
 
               resolve(newData);
@@ -99,7 +110,7 @@ function GSS(opts) {
           })
             .then((newSheet) => {
               let csvData = worksheet.csvData(data);
-              _bulkPushRow(newSheet, csvData, csvData, header, false);
+              this._bulkPushRow(newSheet, csvData, csvData, header, false);
               resolve(csvData);
             })
             .catch(err => reject(err));
@@ -108,7 +119,7 @@ function GSS(opts) {
     });
   }
 
-  const rows2CSV = (rows, header = _header()) => {
+  rows2CSV(rows, header = this._header()) {
     let result = [];
 
     rows.forEach(row => {
@@ -124,9 +135,10 @@ function GSS(opts) {
     return result;
   }
 
+
   // private
 
-  const _bulkPushRow = async (sheet, oldData, newData, header, clear = false) => {
+  async _bulkPushRow(sheet, oldData, newData, header, clear = false) {
     let dataLength = Object.keys(oldData).length + Object.keys(newData).length;
     const rowCount = Math.ceil(dataLength / header.length);
 
@@ -138,16 +150,18 @@ function GSS(opts) {
     });
 
     // i is itemIndex
-    const colCount = sheet.columnCount;
+    const colCount = header.length;
     for (let i = 0; i < rowCount; ++i) {
       // j is langIndex or keyIndex
       for (let j = 0; j < colCount; ++j) {
-        let el = newData[`${i}.${j}`];
+        const el = newData[`${i}.${j}`];
+        const cell = sheet.getCell(i, j);
+
         if (typeof el !== 'undefined') {
-          sheet.getCell(i, j).value = el.value;
+          cell.value = el.value;
         } else {
           if (clear) {
-            sheet.getCell(i, j).value = '';
+            cell.value = '';
           }
         }
       }
@@ -156,19 +170,13 @@ function GSS(opts) {
     await sheet.saveUpdatedCells();
   }
 
-  const _header = () => {
+  _header() {
     const sheetSchema = SitSetting.sheet.gss.openAPIV3Schema.properties;
     const keys = Object.keys(sheetSchema)
     const result = keys.map(key => {
       return sheetSchema[key]['description']
     });
     return result;
-  }
-
-  return {
-    getRows,
-    pushRows,
-    rows2CSV
   }
 }
 
