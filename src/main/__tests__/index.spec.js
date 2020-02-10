@@ -1,0 +1,339 @@
+'use strict';
+
+const sit = require('@main/index')
+const SitRepo = require('@main/SitRepo')
+const SitBlob = require('@repos/objects/SitBlob')
+const SitConfig = require('@repos/SitConfig')
+const Clasp = require('@main/Clasp')
+
+const mockSitRepo_remoteRepo = jest.fn()
+const mockSitRepo_init = jest.fn()
+
+const mockGSS_getRows = jest.fn()
+jest.mock('@main/sheets/GSS', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      getRows: mockGSS_getRows
+    }
+  })
+});
+
+describe('sit', () => {
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
+  describe('Repo.fetch', () => {
+    describe('when remoteRepo do not exist', () => {
+      it('should return correctly', () => {
+        console.error = jest.fn()
+        SitRepo.prototype.remoteRepo = mockSitRepo_remoteRepo
+        mockSitRepo_remoteRepo.mockReturnValueOnce(undefined)
+        sit().Repo.fetch('origin', 'master')
+
+        expect(console.error).toHaveBeenCalledTimes(1)
+        expect(console.error.mock.calls[0]).toEqual([`\
+fatal: 'origin' does not appear to be a sit repository
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights and the repository exists.`])
+      })
+    })
+
+    describe('when remoteRepo exist', () => {
+      describe('when branch exist', () => {
+        it('should return correctly', () => {
+          SitRepo.prototype.remoteRepo = mockSitRepo_remoteRepo
+          mockSitRepo_remoteRepo.mockReturnValueOnce('./test/localRepo/.sit')
+          mockGSS_getRows.mockReturnValueOnce(Promise.resolve([[], []]))
+          sit().Repo.fetch('origin', 'master')
+
+          expect(mockGSS_getRows).toHaveBeenCalledTimes(1)
+          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "master"])
+        })
+      })
+
+      describe('when branch do not exist', () => {
+        it('should return correctly', () => {
+          SitRepo.prototype.remoteRepo = mockSitRepo_remoteRepo
+          mockSitRepo_remoteRepo.mockReturnValueOnce('./test/localRepo/.sit')
+          mockGSS_getRows.mockReturnValueOnce(Promise.resolve([[], []]))
+          sit().Repo.fetch('origin', null)
+
+          expect(mockGSS_getRows).toHaveBeenCalledTimes(1)
+          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes"])
+        })
+      })
+    })
+  })
+
+  describe('Repo.push', () => {
+    describe('when remoteRepo do not exist', () => {
+      it('should return correctly', () => {
+        console.error = jest.fn()
+        SitRepo.prototype.remoteRepo = mockSitRepo_remoteRepo
+        mockSitRepo_remoteRepo.mockReturnValueOnce(undefined)
+        sit().Repo.push('origin', 'master')
+
+        expect(console.error).toHaveBeenCalledTimes(1)
+        expect(console.error.mock.calls[0]).toEqual([`\
+fatal: 'origin' does not appear to be a sit repository
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights and the repository exists.`])
+      })
+    })
+
+    describe('when remoteRepo exist', () => {
+      // (node:19144) UnhandledPromiseRejectionWarning: TypeError: sheet.rows2CSV is not a function
+      describe('when branch exist', () => {
+        it('should return correctly', () => {
+          SitRepo.prototype.remoteRepo = mockSitRepo_remoteRepo
+          mockSitRepo_remoteRepo.mockReturnValueOnce('./test/localRepo/.sit')
+          mockGSS_getRows.mockReturnValueOnce(Promise.resolve([[], []]))
+          sit().Repo.push('origin', 'master')
+
+          expect(mockGSS_getRows).toHaveBeenCalledTimes(1)
+          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes"])
+        })
+      })
+
+      describe('when branch do not exist', () => {
+        it('should return correctly', () => {
+          SitRepo.prototype.remoteRepo = mockSitRepo_remoteRepo
+          mockSitRepo_remoteRepo.mockReturnValueOnce('./test/localRepo/.sit')
+          console.error = jest.fn()
+          sit().Repo.push('origin', null)
+
+          expect(console.error).toHaveBeenCalledTimes(1)
+          expect(console.error.mock.calls[0]).toEqual(["branch is required"])
+        })
+      })
+    })
+  })
+
+  describe('Repo.clone', () => {
+    describe('when repoName exist', () => {
+      describe('when url exist', () => {
+        it('should return correctly', () => {
+          mockGSS_getRows.mockReturnValueOnce(Promise.resolve([[], []]))
+          sit().Repo.clone('origin', 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0')
+
+          expect(mockGSS_getRows).toHaveBeenCalledTimes(1)
+          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes"])
+        })
+      })
+
+      describe('when url do not exist', () => {
+        it('should return correctly', () => {
+          console.error = jest.fn()
+          sit().Repo.clone('origin', null)
+
+          expect(console.error).toHaveBeenCalledTimes(1)
+          expect(console.error.mock.calls[0]).toEqual(["url is required"])
+        })
+      })
+    })
+
+    describe('when repoName do not exist', () => {
+      it('should return correctly', () => {
+        console.error = jest.fn()
+        sit().Repo.clone(null, 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0')
+
+        expect(console.error).toHaveBeenCalledTimes(1)
+        expect(console.error.mock.calls[0]).toEqual(["repository is required"])
+      })
+    })
+  })
+
+  describe('Repo.init', () => {
+    describe('when localRepo already exist', () => {
+      it('should return correctly', () => {
+        SitRepo.prototype.init = mockSitRepo_init
+        mockSitRepo_init.mockReturnValueOnce(false)
+        console.log = jest.fn()
+        sit().Repo.init()
+
+        expect(console.log).toHaveBeenCalledTimes(1)
+        expect(console.log.mock.calls[0]).toEqual(["already exist local repo: ./test/localRepo/.sit"])
+      })
+    })
+
+    describe('when localRepo do not exist', () => {
+      SitRepo.prototype.init = mockSitRepo_init
+      mockSitRepo_init.mockReturnValueOnce(true)
+      console.log = jest.fn()
+      sit().Repo.init()
+
+      expect(console.log).toHaveBeenCalledTimes(1)
+      expect(console.log.mock.calls[0]).toEqual(["created local repo: ./test/localRepo/.sit"])
+    })
+  })
+
+  describe('Repo.checkLocalRepo', () => {
+    describe('when localRepo do not exist', () => {
+      it('should return correctly', () => {
+        const mockSitRepo_isLocalRepo = jest.fn()
+        SitRepo.prototype.isLocalRepo = mockSitRepo_isLocalRepo
+        mockSitRepo_isLocalRepo.mockReturnValueOnce(false)
+        console.error = jest.fn()
+        sit().Repo.checkLocalRepo()
+
+        expect(console.error).toHaveBeenCalledTimes(1)
+        expect(console.error.mock.calls[0]).toEqual(["fatal: not a sit repository (or any of the parent directories): ./test/localRepo/.sit"])
+      })
+    })
+  })
+
+  describe('Repo.catFile', () => {
+    describe('when specify type', () => {
+      it('should return correctly', () => {
+        const mockBlob = new SitBlob(null, '1,2,3\n4,5,6', 7)
+        const mockSitRepo_catFile = jest.fn()
+        SitRepo.prototype.catFile = mockSitRepo_catFile
+        mockSitRepo_catFile.mockReturnValueOnce(Promise.resolve(mockBlob))
+        sit().Repo.catFile('953b3794394d6b48d8690bc5e53aa2ffe2133035', { type: true })
+
+        expect(mockSitRepo_catFile).toHaveBeenCalledTimes(1)
+        expect(mockSitRepo_catFile.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035"])
+      })
+    })
+  })
+
+  describe('Repo.hashObject', () => {
+    it('should return correclty', () => {
+      const mockSitRepo_hashObject = jest.fn()
+      SitRepo.prototype.hashObject = mockSitRepo_hashObject
+      sit().Repo.hashObject('./test/dist/test_data.csv')
+
+      expect(mockSitRepo_hashObject).toHaveBeenCalledTimes(1)
+      expect(mockSitRepo_hashObject.mock.calls[0]).toEqual(["./test/dist/test_data.csv", {}])
+    })
+  })
+
+  describe('Repo.branch', () => {
+    it('should return correctly', () => {
+      const mockSitRepo_branch = jest.fn()
+      SitRepo.prototype.branch = mockSitRepo_branch
+      sit().Repo.branch()
+
+      expect(mockSitRepo_branch).toHaveBeenCalledTimes(1)
+      expect(mockSitRepo_branch.mock.calls[0]).toEqual([{}])
+    })
+  })
+
+  describe('Repo.checkout', () => {
+    it('should return correctly', () => {
+      const mockSitRepo_checkout = jest.fn()
+      SitRepo.prototype.checkout = mockSitRepo_checkout
+      sit().Repo.checkout('origin', 'master')
+
+      expect(mockSitRepo_checkout).toHaveBeenCalledTimes(1)
+      expect(mockSitRepo_checkout.mock.calls[0]).toEqual(['origin', 'master', {}])
+    })
+  })
+
+  describe('Repo.status', () => {
+    it('should return correctly', () => {
+      const mockSitRepo_status = jest.fn()
+      SitRepo.prototype.status = mockSitRepo_status
+      sit().Repo.status()
+
+      expect(mockSitRepo_status).toHaveBeenCalledTimes(1)
+      expect(mockSitRepo_status.mock.calls[0]).toEqual([{}])
+    })
+  })
+
+  describe('Repo.diff', () => {
+    it('should return correctly', () => {
+      const mockSitRepo_diff = jest.fn()
+      SitRepo.prototype.diff = mockSitRepo_diff
+      sit().Repo.diff()
+
+      expect(mockSitRepo_diff).toHaveBeenCalledTimes(1)
+      expect(mockSitRepo_diff.mock.calls[0]).toEqual([{}])
+    })
+  })
+
+  describe('Repo.commit', () => {
+    it('should return correctly', () => {
+      const mockSitRepo_commit = jest.fn()
+      SitRepo.prototype.commit = mockSitRepo_commit
+      sit().Repo.commit()
+
+      expect(mockSitRepo_commit).toHaveBeenCalledTimes(1)
+      expect(mockSitRepo_commit.mock.calls[0]).toEqual([{}])
+    })
+  })
+
+  describe('Repo.merge', () => {
+    it('should return correctly', () => {
+      const mockSitRepo_merge = jest.fn()
+      SitRepo.prototype.merge = mockSitRepo_merge
+      sit().Repo.merge('origin', 'master')
+
+      expect(mockSitRepo_merge).toHaveBeenCalledTimes(1)
+      expect(mockSitRepo_merge.mock.calls[0]).toEqual(['origin', 'master', {}])
+    })
+  })
+
+  describe('Repo.browseRemote', () => {
+    it('should return correctly', () => {
+      const mockSitRepo_browseRemote = jest.fn()
+      SitRepo.prototype.browseRemote = mockSitRepo_browseRemote
+      sit().Repo.browseRemote('origin')
+
+      expect(mockSitRepo_browseRemote).toHaveBeenCalledTimes(1)
+      expect(mockSitRepo_browseRemote.mock.calls[0]).toEqual(["origin"])
+    })
+  })
+
+  describe('Repo.config', () => {
+    describe('when global sitconfig', () => {
+      it('should return correctly', () => {
+        const mockSitConfig_update = jest.fn()
+        SitConfig.prototype.update = mockSitConfig_update
+        mockSitConfig_update.mockReturnValue(true)
+        sit().Repo.config('user.name', 'yukihirop', { global: true })
+
+        expect(mockSitConfig_update).toHaveBeenCalledTimes(1)
+        expect(mockSitConfig_update.mock.calls[0]).toEqual(["user.name", "yukihirop"])
+      })
+    })
+
+    describe('when local sitconfig', () => {
+      it('should return correctly', () => {
+        const mockSitConfig_update = jest.fn()
+        SitConfig.prototype.update = mockSitConfig_update
+        mockSitConfig_update.mockReturnValue(true)
+        sit().Repo.config('user.email', 'test@example.com', { local: true })
+
+        expect(mockSitConfig_update).toHaveBeenCalledTimes(1)
+        expect(mockSitConfig_update.mock.calls[0]).toEqual(["user.email", "test@example.com"])
+      })
+    })
+  })
+
+  describe('Repo.remote', () => {
+    it('should return correctly', () => {
+      const mockSitRepo_remote = jest.fn()
+      SitRepo.prototype.remote = mockSitRepo_remote
+      sit().Repo.remote('add', 'origin', 'https://test.co.jp')
+
+      expect(mockSitRepo_remote).toHaveBeenCalledTimes(1)
+      expect(mockSitRepo_remote.mock.calls[0]).toEqual(["add", "origin", "https://test.co.jp", {}])
+    })
+  })
+
+  describe('Clasp.update', () => {
+    it('should return correctly', () => {
+      const mockClasp_update = jest.fn()
+      Clasp.prototype.update = mockClasp_update
+      sit().Clasp.update()
+
+      expect(mockClasp_update).toHaveBeenCalledTimes(1)
+      expect(mockClasp_update.mock.calls[0]).toEqual([])
+    })
+  })
+})
