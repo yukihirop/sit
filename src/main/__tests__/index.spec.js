@@ -10,10 +10,12 @@ const mockSitRepo_remoteRepo = jest.fn()
 const mockSitRepo_init = jest.fn()
 
 const mockGSS_getRows = jest.fn()
+const mockGSS_pushRows = jest.fn()
 jest.mock('@main/sheets/GSS', () => {
   return jest.fn().mockImplementation(() => {
     return {
-      getRows: mockGSS_getRows
+      getRows: mockGSS_getRows,
+      pushRows: mockGSS_pushRows
     }
   })
 });
@@ -44,9 +46,16 @@ Please make sure you have the correct access rights and the repository exists.`]
     describe('when remoteRepo exist', () => {
       describe('when branch exist', () => {
         it('should return correctly', () => {
+          const mockSitRepo_hashObjectFromData = jest.fn()
+          const mockSitRepo_fetch = jest.fn()
           SitRepo.prototype.remoteRepo = mockSitRepo_remoteRepo
+          SitRepo.prototype.hashObjectFromData = mockSitRepo_hashObjectFromData
+          SitRepo.prototype.fetch = mockSitRepo_fetch
+
           mockSitRepo_remoteRepo.mockReturnValueOnce('./test/localRepo/.sit')
           mockGSS_getRows.mockReturnValueOnce(Promise.resolve([[], []]))
+          mockSitRepo_hashObjectFromData.mockReturnValueOnce('')
+          mockSitRepo_fetch.mockReturnValueOnce('')
           sit().Repo.fetch('origin', 'master')
 
           expect(mockGSS_getRows).toHaveBeenCalledTimes(1)
@@ -62,7 +71,7 @@ Please make sure you have the correct access rights and the repository exists.`]
           sit().Repo.fetch('origin', null)
 
           expect(mockGSS_getRows).toHaveBeenCalledTimes(1)
-          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes"])
+          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes", ["branch", "sha1"]])
         })
       })
     })
@@ -89,13 +98,19 @@ Please make sure you have the correct access rights and the repository exists.`]
       // (node:19144) UnhandledPromiseRejectionWarning: TypeError: sheet.rows2CSV is not a function
       describe('when branch exist', () => {
         it('should return correctly', () => {
+          const mockSitRepo_push = jest.fn()
           SitRepo.prototype.remoteRepo = mockSitRepo_remoteRepo
-          mockSitRepo_remoteRepo.mockReturnValueOnce('./test/localRepo/.sit')
+          SitRepo.prototype.push = mockSitRepo_push
+
           mockGSS_getRows.mockReturnValueOnce(Promise.resolve([[], []]))
+          mockGSS_pushRows.mockReturnValue(Promise.resolve())
+
+          mockSitRepo_remoteRepo.mockReturnValueOnce('./test/localRepo/.sit')
+          mockSitRepo_push.mockReturnValueOnce(Promise.resolve({ beforeHash: '7aceca70f741b25a21a31282c670ad7d3ad533f8', afterHash: '953b3794394d6b48d8690bc5e53aa2ffe2133035' }))
           sit().Repo.push('origin', 'master')
 
           expect(mockGSS_getRows).toHaveBeenCalledTimes(1)
-          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes"])
+          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes", ["branch", "sha1"]])
         })
       })
 
@@ -121,7 +136,7 @@ Please make sure you have the correct access rights and the repository exists.`]
           sit().Repo.clone('origin', 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0')
 
           expect(mockGSS_getRows).toHaveBeenCalledTimes(1)
-          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes"])
+          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes", ["branch", "sha1"]])
         })
       })
 

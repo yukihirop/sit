@@ -50,13 +50,13 @@ class GSS {
     });
   }
 
-  getRows(repoName, sheetName) {
+  getRows(repoName, sheetName, header = this._header()) {
     return new Promise((resolve, reject) => {
       this.loadInfo(repoName, sheetName, (_, sheet) => {
         if (sheet) {
           sheet.getRows()
-            .then(rows => resolve(rows))
-            .catch(err => reject(err));
+            .then(rows => resolve(this._rows2CSV(rows, header)))
+            .catch(err => reject(err))
         } else {
           reject(new Error(`Do not exist sheet: ${sheetName}`))
         }
@@ -79,7 +79,7 @@ class GSS {
         if (sheet) {
           sheet.getRows()
             .then(rows => {
-              let oldData = this.rows2CSV(rows, header);
+              let oldData = this._rows2CSV(rows, header);
               let newData;
 
               if (clear) {
@@ -119,7 +119,7 @@ class GSS {
     });
   }
 
-  rows2CSV(rows, header = this._header()) {
+  _rows2CSV(rows, header = this._header()) {
     let result = [];
 
     rows.forEach(row => {

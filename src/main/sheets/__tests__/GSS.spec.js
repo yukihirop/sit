@@ -22,7 +22,7 @@ describe('GSS', () => {
   describe('#getRows', () => {
     describe('when sheet exist', () => {
       it('should return correctly', (done) => {
-        model.getRows('origin', 'refs/remotes')
+        model.getRows('origin', 'refs/remotes', ['branch', 'sha1'])
           .then(rows => {
             expect(rows).not.toBeNull()
             done()
@@ -41,13 +41,13 @@ describe('GSS', () => {
     })
   })
 
-  describe('#rows2CSV', () => {
+  describe('#_rows2CSV', () => {
     it('should return correctly', () => {
       const header = ['日本語', '英語', 'キー']
       const mockRows = [
         { '日本語': 'こんにちは', '英語': 'hello', 'キー': 'greeting.hello' }
       ]
-      expect(model.rows2CSV(mockRows, header)).toEqual([["日本語", "英語", "キー"], ["こんにちは", "hello", "greeting.hello"]])
+      expect(model._rows2CSV(mockRows, header)).toEqual([["日本語", "英語", "キー"], ["こんにちは", "hello", "greeting.hello"]])
     })
   })
 })

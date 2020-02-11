@@ -39,8 +39,7 @@ Please make sure you have the correct access rights and the repository exists.`)
     } else {
       if (branch) {
         sheet.getRows(repoName, branch)
-          .then(rows => {
-            const data = sheet.rows2CSV(rows);
+          .then(data => {
             const remoteHash = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
 
             repo.fetch(repoName, branch, { prune, remoteHash })
@@ -71,16 +70,14 @@ From ${repo.remoteRepo(repoName)}
           });
 
       } else {
-        sheet.getRows(repoName, "refs/remotes").then(rows => {
-          const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
+        sheet.getRows(repoName, "refs/remotes", ['branch', 'sha1']).then(data => {
           const remoteRefs = csv2JSON(data.slice(1));
           const remoteBranches = Object.keys(remoteRefs);
 
           repo.fetch(repoName, null, { prune, remoteBranches, remoteRefs }, (repoName, addedBranches) => {
             const promises = addedBranches.map(branch => {
               sheet.getRows(repoName, branch)
-                .then(rows => {
-                  const data = sheet.rows2CSV(rows);
+                .then(data => {
                   repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
                 })
                 .catch(err => {
@@ -119,8 +116,7 @@ Please make sure you have the correct access rights and the repository exists.`)
     } else {
       if (branch) {
         // Fetch refs/remotes from sheet
-        sheet.getRows(repoName, "refs/remotes").then(rows => {
-          const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
+        sheet.getRows(repoName, "refs/remotes", ['branch', 'sha1']).then(data => {
           const json = csv2JSON(data);
           const remoteHash = json[branch];
 
@@ -186,8 +182,7 @@ To ${repo.remoteRepo(repoName)}\n\
 
     if (repoName) {
       if (url) {
-        sheet.getRows(repoName, 'refs/remotes').then(rows => {
-          const data = sheet.rows2CSV(rows, ['branch', 'sha1']);
+        sheet.getRows(repoName, 'refs/remotes', ['branch', 'sha1']).then(data => {
           const json = csv2JSON(data);
           const remoteHash = json['master'];
 
@@ -195,7 +190,7 @@ To ${repo.remoteRepo(repoName)}\n\
             console.error(`This Spreadsheet may not be repository.\nPlease visit ${url}\nMake sure that this Spreadsheet is rpeository.`)
           }
 
-          sheet.getRows(repoName, 'master').then(rows => {
+          sheet.getRows(repoName, 'master').then(data => {
             try {
               // Initialize local repo
               let result = repo.init();
@@ -207,7 +202,6 @@ To ${repo.remoteRepo(repoName)}\n\
                 throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`)
               }
 
-              let data = sheet.rows2CSV(rows);
               let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
 
               // Update local repo
