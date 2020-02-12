@@ -7,6 +7,7 @@ const colors = {
   charsRemoved: ansi.bgRed,
   charsAdded: ansi.bgGreen,
   removed: ansi.red,
+  mark: ansi.red,
   added: ansi.green,
   header: ansi.yellow,
   section: ansi.magenta,
