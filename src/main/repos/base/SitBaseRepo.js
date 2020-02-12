@@ -11,7 +11,8 @@ const {
   fileBasename,
   deleteSyncFile,
   iniParse,
-  fileCopySync
+  fileCopySync,
+  absolutePath
 } = require('../../utils/file');
 
 const SitSetting = require('../../SitSetting')
@@ -29,7 +30,7 @@ const SitBlob = require('../objects/SitBlob')
 
 class SitBaseRepo extends SitBase {
   constructor(opts) {
-    super();
+    super(opts);
     this.distFilePath = `${SitSetting.dist.path}/${SitSetting.dist.sheetName}`;
   }
 
@@ -118,9 +119,9 @@ class SitBaseRepo extends SitBase {
 
   _mkdirSyncRecursive(file) {
     if (file) {
-      mkdirSyncRecursive(`${this.localRepo}/${file}`);
+      mkdirSyncRecursive(absolutePath(`${this.localRepoName}/${file}`));
     } else {
-      mkdirSyncRecursive(this.localRepo);
+      mkdirSyncRecursive(absolutePath(this.localRepoName));
     }
     return this;
   }

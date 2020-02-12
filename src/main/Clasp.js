@@ -6,14 +6,16 @@ const {
   absolutePath,
   isExistFile,
   fileBasename,
-  fileCopySync
+  fileCopySync,
+  pathJoin
 } = require('./utils/file');
 
 const SitSetting = require('./SitSetting');
 
 class Clasp {
   constructor(opts) {
-    this.localRepo = SitSetting.repo.local;
+    this.localRepoName = SitSetting.repo.local
+    this.localRepo = `${process.env.SIT_DIR}/${this.localRepoName}` || this.findLocalRepo();
     this.claspPath = `${this.localRepo}/scripts/clasp`;
   }
 
@@ -37,6 +39,25 @@ class Clasp {
       }
     } else {
       console.error(`Don't exists local repo: ${this.localRepo}.`);
+    }
+  }
+
+  findLocalRepo(path = '.', required = true) {
+    const apath = absolutePath(path)
+    const repoPath = `${apath}/${this.localRepoName}`
+    if (isExistFile(repoPath)) {
+      return repoPath
+    } else {
+      const parent = pathJoin(apath, '..')
+      if (parent === apath) {
+        if (required) {
+          throw new Error('No sit directory.')
+        } else {
+          return null
+        }
+      } else {
+        return this.findLocalRepo(parent, required)
+      }
     }
   }
 }

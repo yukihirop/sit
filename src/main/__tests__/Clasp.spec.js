@@ -1,6 +1,7 @@
 'use strict'
 
 const Clasp = require('@main/Clasp')
+
 const {
   fileCopySync,
   appendFile,
@@ -14,7 +15,7 @@ jest.mock('@utils/file', () => (
     ...(jest.requireActual('@utils/file')),
     fileCopySync: jest.fn(),
     appendFile: jest.fn(),
-    isExistFile: jest.fn()
+    isExistFile: jest.fn(() => true)
   }
 ));
 

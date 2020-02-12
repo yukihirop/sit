@@ -205,6 +205,10 @@ const iniStringify = (config, data) => {
   return ini.stringify(config, data);
 }
 
+const pathJoin = (to, from) => {
+  return path.join(to, from)
+}
+
 module.exports = {
   isExistFile,
   isDir,
@@ -230,5 +234,6 @@ module.exports = {
   mTimeMs,
   rmDirSync,
   iniParse,
-  iniStringify
+  iniStringify,
+  pathJoin
 }
