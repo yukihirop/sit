@@ -29,7 +29,7 @@ function sit(opts) {
   Repo.fetch = (repoName, branch, opts = {}) => {
     const { prune, verbose } = opts;
 
-    if (repo.remoteRepo(repoName) === undefined) {
+    if (!repo.remoteRepo(repoName)) {
       console.error(`\
 fatal: '${repoName}' does not appear to be a sit repository
 fatal: Could not read from remote repository.

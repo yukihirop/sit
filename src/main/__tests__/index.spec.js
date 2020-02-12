@@ -30,13 +30,11 @@ describe('sit', () => {
     describe('when remoteRepo do not exist', () => {
       it('should return correctly', () => {
         console.error = jest.fn()
-        SitRepo.prototype.remoteRepo = mockSitRepo_remoteRepo
-        mockSitRepo_remoteRepo.mockReturnValueOnce(undefined)
-        sit().Repo.fetch('origin', 'master')
+        sit().Repo.fetch('typo_origin', 'master')
 
         expect(console.error).toHaveBeenCalledTimes(1)
         expect(console.error.mock.calls[0]).toEqual([`\
-fatal: 'origin' does not appear to be a sit repository
+fatal: 'typo_origin' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`])
