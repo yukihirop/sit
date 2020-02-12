@@ -102,6 +102,10 @@ const diffArray = (to, from) => {
   }
 }
 
+const isEqual = (to, from) => {
+  return JSON.stringify(to) == JSON.stringify(from)
+}
+
 // https://www.nxworld.net/tips/js-array-filter-snippets.html
 const _getDuplicateValues = ([...array]) => {
   return array.filter((value, index, self) => self.indexOf(value) === index && self.lastIndexOf(value) !== index);
@@ -115,5 +119,6 @@ const _getUniqueValues = ([...array]) => {
 module.exports = {
   csv2JSON,
   overrideCSV,
-  diffArray
+  diffArray,
+  isEqual
 }

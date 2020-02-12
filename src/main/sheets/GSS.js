@@ -1,13 +1,17 @@
 'use strict';
 
 const {
-  overrideCSV
+  diffArray,
+  overrideCSV,
+  isEqual
 } = require('../utils/array');
 
 const Client = require('./GSSClient');
 const Worksheet = require('./Worksheet');
 const SitSetting = require('../SitSetting');
 const SitConfig = require('../repos/SitConfig');
+
+const IGNORE_SHEETS = ["refs/remotes", "logs/refs/remotes"]
 
 class GSS {
   constructor(opts = {}) {
@@ -22,7 +26,7 @@ class GSS {
     this.worksheet = new Worksheet()
   }
 
-  loadInfo(repoName, sheetName, callback) {
+  loadInfo(repoName, callback) {
     let remoteURL;
 
     if (!this.url) {
@@ -36,22 +40,40 @@ class GSS {
         doc.loadInfo().then(() => {
           if (doc) {
             const whs = Object.keys(doc._rawSheets).map(key => doc._rawSheets[key]);
-            const wh = whs.filter(sheet => sheet._rawProperties.title == sheetName)[0]
-            resolve(wh);
+            resolve(whs);
           } else {
             console.error(`Make sharing settings for the service account.\nPlease visit ${remoteURL}`);
             process.exit(1);
           }
         }).catch(err => reject(err));
-      }).then(sheet => {
-        if (callback) callback(doc, sheet);
+      }).then(sheets => {
+        if (callback) callback(doc, sheets);
       })
     });
   }
 
+  getSheetNames(repoName, callback) {
+    this.loadInfo(repoName, async (_, sheets) => {
+      const sheetNames = await sheets.reduce(async (pacc, sheet) => {
+        await sheet.loadHeaderRow()
+
+        let acc = await pacc
+
+        if (isEqual(sheet.headerValues, this._header())) {
+          acc.push(sheet._rawProperties.title)
+        }
+        return acc
+      }, Promise.resolve([]))
+
+      const diff = diffArray(IGNORE_SHEETS, sheetNames)
+      callback(diff['added'])
+    })
+  }
+
   getRows(repoName, sheetName, header = this._header()) {
     return new Promise((resolve, reject) => {
-      this.loadInfo(repoName, sheetName, (_, sheet) => {
+      this.loadInfo(repoName, (_, sheets) => {
+        const sheet = sheets.filter(sheet => sheet._rawProperties.title == sheetName)[0]
         if (sheet) {
           sheet.getRows()
             .then(rows => resolve(this._rows2CSV(rows, header)))
@@ -71,7 +93,8 @@ class GSS {
   pushRows(repoName, sheetName, data, { clear, specifyIndex }) {
     const worksheet = this.worksheet;
 
-    return this.loadInfo(repoName, sheetName, (doc, sheet) => {
+    return this.loadInfo(repoName, (doc, sheets) => {
+      const sheet = sheets.filter(sheet => sheet._rawProperties.title == sheetName)[0]
       new Promise((resolve, reject) => {
         const header = data[0];
 

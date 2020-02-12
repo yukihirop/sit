@@ -1,6 +1,6 @@
 'use strict';
 
-const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { GoogleSpreadsheet } = require('../monkey_patches/google-spreadsheet');
 
 const { jsonSafeLoad } = require('../utils/file');
 const SitSetting = require('../SitSetting');
