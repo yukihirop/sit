@@ -4,6 +4,10 @@ const {
   fileSafeLoad
 } = require('../../utils/file');
 
+const {
+  colorize
+} = require('../../utils/string');
+
 const SitBase = require('../base/SitBase');
 
 const REF_REMOTE_HEADER = ['branch', 'sha1'];
@@ -22,6 +26,18 @@ class SitRefParser extends SitBase {
       REF_REMOTE_HEADER,
       [this.branch, sha]
     ];
+  }
+
+  isRemote() {
+    return this.refFile.indexOf('refs/remotes') !== -1
+  }
+
+  displayedBranch() {
+    if (this.isRemote()) {
+      return colorize(`remotes/${this.branch}`, 'mark')
+    } else {
+      return this.branch
+    }
   }
 }
 

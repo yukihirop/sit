@@ -30,6 +30,7 @@ const editor = require('./utils/editor');
 
 const SitBaseRepo = require('./repos/base/SitBaseRepo');
 const SitConfig = require('./repos/SitConfig');
+const SitRefParser = require('./repos/refs/SitRefParser');
 
 class SitRepo extends SitBaseRepo {
   init() {
@@ -181,11 +182,12 @@ class SitRepo extends SitBaseRepo {
           const result = files.reduce((acc, file) => {
             const refPath = pathRelative(this.localRepo, file)
             const branch = this._branchResolve(refPath);
+            const refParser = new SitRefParser(branch, refPath)
 
             if (branch === currentBranch) {
-              acc.push(`* ${branch}`);
+              acc.push(`* ${refParser.displayedBranch()}`);
             } else {
-              acc.push(`  ${branch}`);
+              acc.push(`  ${refParser.displayedBranch()}`);
             }
             return acc
           }, [])
