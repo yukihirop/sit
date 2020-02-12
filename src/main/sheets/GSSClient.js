@@ -7,7 +7,7 @@ const SitSetting = require('../SitSetting');
 
 const _createSheetId = (uri, baseURL) => {
   // https://teratail.com/questions/116620
-  const regExp = new RegExp(`${baseURL}(.*?)/.*?`);
+  const regExp = new RegExp(`${baseURL}/(.*?)/.*?`);
   const sheetId = uri.match(regExp)[1];
   return sheetId;
 }
