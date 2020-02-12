@@ -13,8 +13,7 @@ class GSS {
   constructor(opts = {}) {
     const defaultOpts = {
       type: 'GoogleSpreadSheet',
-      baseURL: 'https://docs.google.com/spreadsheets/d/',
-      worksheetIndex: 0
+      baseURL: 'https://docs.google.com/spreadsheets/d'
     };
     const gopts = Object.assign({}, defaultOpts, opts);
 

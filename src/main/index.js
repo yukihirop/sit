@@ -11,9 +11,7 @@ const {
 
 function sit(opts) {
   const defaultOpts = {
-    type: 'GoogleSpreadSheet',
-    baseURL: 'https://docs.google.com/spreadsheets/d/',
-    worksheetIndex: 0
+    type: 'GoogleSpreadSheet'
   };
 
   let gopts = Object.assign({}, defaultOpts, opts);
@@ -219,7 +217,7 @@ remote: done.`);
           }).catch(err => {
             console.error(`fatal: Couldn't find remote ref 'master'`);
           });
-        }).catch(err => {
+        }).catch(_err => {
           console.error(`fatal: repository '${url}' not found`);
         });
       } else {
