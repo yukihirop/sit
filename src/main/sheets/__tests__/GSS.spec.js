@@ -1,7 +1,6 @@
 'use strict';
 
 const GSS = require('@sheets/GSS')
-const Client = require('@sheets/GSSClient')
 
 describe('GSS', () => {
   const model = new GSS()
@@ -12,8 +11,18 @@ describe('GSS', () => {
 
   describe('#loadInfo', () => {
     it('should return correctly', (done) => {
-      model.loadInfo('origin', 'refs/remotes', (result) => {
-        expect(result["spreadsheetId"]).toEqual('1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k')
+      model.loadInfo('origin', (doc, sheets) => {
+        expect(doc).not.toBeNull()
+        expect(sheets).not.toBeNull()
+        done()
+      })
+    })
+  })
+
+  describe('#getSheetNames', () => {
+    it('should return correctly', (done) => {
+      model.getSheetNames('origin', (result) => {
+        expect(result).not.toBeNull()
         done()
       })
     })

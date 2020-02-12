@@ -69,30 +69,33 @@ From ${repo.remoteRepo(repoName)}
 
       } else {
         sheet.getRows(repoName, "refs/remotes", ['branch', 'sha1']).then(data => {
-          const remoteRefs = csv2JSON(data.slice(1));
-          const remoteBranches = Object.keys(remoteRefs);
+          sheet.getSheetNames(repoName, remoteBranches => {
+            const remoteRefs = csv2JSON(data.slice(1));
 
-          repo.fetch(repoName, null, { prune, remoteBranches, remoteRefs }, (repoName, addedBranches) => {
-            const promises = addedBranches.map(branch => {
-              sheet.getRows(repoName, branch)
-                .then(data => {
-                  repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
-                })
-                .catch(err => {
-                  console.error(`fatal: Couldn't find remote ref '${branch}'`);
-                });
+            repo.fetch(repoName, null, { prune, remoteBranches, remoteRefs }, (repoName, addedBranches) => {
+              const promises = addedBranches.map(branch => {
+                sheet.getRows(repoName, branch)
+                  .then(data => {
+                    repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
+                  })
+                  .catch(_err => {
+                    console.log(_err)
+                    console.error(`fatal: Couldn't find remote ref '${branch}'`);
+                  });
+              })
+
+              Promise.all(promises)
             })
-
-            Promise.all(promises)
+              .then(msg => {
+                if (msg.length >= 1) {
+                  msg.unshift(`From ${repo.remoteRepo(repoName)}`)
+                  console.log(msg.join('\n'));
+                }
+              })
           })
-            .then(msg => {
-              if (msg.length >= 1) {
-                msg.unshift(`From ${repo.remoteRepo(repoName)}`)
-                console.log(msg.join('\n'));
-              }
-            })
 
         }).catch(err => {
+          console.log(err)
           console.error(`fatal: Couldn't find remote ref '${branch}'`);
         });
       }
