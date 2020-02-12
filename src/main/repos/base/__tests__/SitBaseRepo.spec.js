@@ -32,8 +32,16 @@ describe('SitBaseRepo', () => {
   });
 
   describe('#repoName', () => {
-    it('should return correclty', () => {
-      expect(model.remoteRepo('origin')).toEqual('https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0');
+    describe('when repoName exist', () => {
+      it('should return correclty', () => {
+        expect(model.remoteRepo('origin')).toEqual('https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0');
+      })
+    })
+
+    describe('when repoName do not exist', () => {
+      it('should return correctly', () => {
+        expect(model.remoteRepo('typo_origin')).toEqual(null)
+      })
     })
   });
 

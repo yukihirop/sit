@@ -205,6 +205,15 @@ class SitRepo extends SitBaseRepo {
     let isRemote;
 
     if (repoName) {
+      if (!this.remoteRepo(repoName)) {
+        console.error(`\
+fatal: '${repoName}' does not appear to be a sit repository
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights and the repository exists.`);
+        return
+      }
+
       if (name) {
         isRemote = true
       } else {

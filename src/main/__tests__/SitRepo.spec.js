@@ -324,7 +324,7 @@ describe('SitRepo', () => {
         })
       })
 
-      // 
+      //
       describe('when currentBranch is not checkout branch', () => {
         it('should return correctly', () => {
           const mockObj = new SitBlob(model, '1,2,3', 3)
@@ -358,7 +358,7 @@ describe('SitRepo', () => {
         expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
         expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/test", null, "a7092c2cd3447d0f953e46b8cf81dd59e6745222", "branch: Created from refs/remotes/origin/test"])
 
-        // checkout test
+        // checkout test (2 times)
 
         expect(mockModel__objectFind).toHaveBeenCalledTimes(1)
         expect(mockModel__objectFind.mock.calls[0]).toEqual(["test"])
@@ -376,22 +376,38 @@ describe('SitRepo', () => {
         })
       })
 
-      describe('hwn checkout branch is new branch', () => {
-        console.log = jest.fn()
-        const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
-        const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-        model.checkout(null, null, { branch: 'new_branch' })
+      describe('when checkout branch is new branch', () => {
+        it('should return correctly', () => {
+          console.log = jest.fn()
+          const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
+          const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
+          model.checkout(null, null, { branch: 'new_branch' })
 
-        expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
-        expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["HEAD", "ref: refs/heads/new_branch", false])
-        expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/heads/new_branch", "953b3794394d6b48d8690bc5e53aa2ffe2133035", false])
+          expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
+          expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["HEAD", "ref: refs/heads/new_branch", false])
+          expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/heads/new_branch", "953b3794394d6b48d8690bc5e53aa2ffe2133035", false])
 
-        expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "checkout: moving from master to new_branch"])
-        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/new_branch", null, "953b3794394d6b48d8690bc5e53aa2ffe2133035", "branch: Created from HEAD"])
+          expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
+          expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "checkout: moving from master to new_branch"])
+          expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/new_branch", null, "953b3794394d6b48d8690bc5e53aa2ffe2133035", "branch: Created from HEAD"])
 
-        expect(console.log).toHaveBeenCalledTimes(1)
-        expect(console.log.mock.calls[0]).toEqual(["Switched to a new branch 'new_branch'"])
+          expect(console.log).toHaveBeenCalledTimes(1)
+          expect(console.log.mock.calls[0]).toEqual(["Switched to a new branch 'new_branch'"])
+        })
+      })
+
+      describe('when repoName do not exist', () => {
+        it('should return correctly', () => {
+          console.error = jest.fn()
+          model.checkout('typo_origin', 'test')
+
+          expect(console.error).toHaveBeenCalledTimes(1)
+          expect(console.error.mock.calls[0][0]).toEqual(`\
+fatal: 'typo_origin' does not appear to be a sit repository
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights and the repository exists.`)
+        })
       })
     })
   })

@@ -34,7 +34,12 @@ class SitBaseRepo extends SitBase {
   }
 
   remoteRepo(repoName) {
-    return SitConfig.config('local').remote[repoName].url;
+    const repoData = SitConfig.config('local').remote[repoName]
+    if (repoData) {
+      return repoData.url
+    } else {
+      return null
+    }
   }
 
   _refCSVData(branch, repoName) {
