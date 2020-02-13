@@ -7,7 +7,7 @@ jest.mock('@main/SitSetting', () => (
       local: '.sit'
     },
     dist: {
-      path: './test/dist',
+      path: '../dist',
       sheetName: 'test_data.csv'
     }
   }

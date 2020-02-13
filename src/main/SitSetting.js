@@ -4,14 +4,16 @@ const {
   yamlSafeLoad,
   absolutePath,
   isExistFile,
-  pathJoin
+  pathJoin,
+  currentPath,
+  pathRelative
 } = require('./utils/file');
 
-const findSitSettting = (path, required = true) => {
+const findSitSettting = (path = process.env.SIT_SETTING_DIR || '.', required = false) => {
   const apath = absolutePath(path)
   const configPath = `${apath}/.sitsetting`
   if (isExistFile(configPath)) {
-    return configPath
+    return pathRelative(currentPath, configPath)
   } else {
     const parent = pathJoin(apath, '..')
     if (parent === apath) {
@@ -26,7 +28,7 @@ const findSitSettting = (path, required = true) => {
   }
 }
 
-const settingPath = findSitSettting(process.env.SIT_SETTING_DIR || '.')
+const settingPath = findSitSettting() || './.sitsetting'
 const SitSetting = yamlSafeLoad(settingPath)
 SitSetting._internal_ = {}
 SitSetting._internal_.settingPath = settingPath

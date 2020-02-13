@@ -15,12 +15,9 @@ const {
   recursive,
   mTimeMs,
   rmDirSync,
-  fileBasename
-} = require('./utils/file');
-
-const {
+  fileBasename,
   pathRelative
-} = require('./utils/path')
+} = require('./utils/file');
 
 const {
   colorize

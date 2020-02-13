@@ -12,7 +12,9 @@ const {
   deleteSyncFile,
   iniParse,
   fileCopySync,
-  absolutePath
+  absolutePath,
+  pathJoin,
+  pathDirname
 } = require('../../utils/file');
 
 const SitSetting = require('../../SitSetting')
@@ -31,7 +33,7 @@ const SitBlob = require('../objects/SitBlob')
 class SitBaseRepo extends SitBase {
   constructor(opts) {
     super(opts);
-    this.distFilePath = `${SitSetting.dist.path}/${SitSetting.dist.sheetName}`;
+    this.distFilePath = pathJoin(pathDirname(SitSetting._internal_.settingPath), `${SitSetting.dist.path}/${SitSetting.dist.sheetName}`);
   }
 
   remoteRepo(repoName) {

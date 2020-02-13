@@ -213,6 +213,10 @@ const pathDirname = (file) => {
   return path.dirname(file)
 }
 
+const pathRelative = (from, to) => {
+  return path.relative(from, to)
+}
+
 module.exports = {
   isExistFile,
   isDir,
@@ -240,5 +244,7 @@ module.exports = {
   iniParse,
   iniStringify,
   pathJoin,
-  pathDirname
+  pathDirname,
+  pathRelative,
+  currentPath
 }

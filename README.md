@@ -108,8 +108,16 @@ sheet:
       rowCount: 10000
       colCount: 20
 repo:
-  local: ./.sit
+  local: .sit
 dist:
   path: ./dist
   sheetName: "master_data.csv"
 ```
+
+## environments variables
+
+|name|content|default|
+|----|-------|-------|
+|SIT_DIR||`.`|
+|SIT_SETTING_DIR||`.`|
+

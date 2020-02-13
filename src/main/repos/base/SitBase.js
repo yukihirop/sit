@@ -3,7 +3,9 @@
 const {
   absolutePath,
   isExistFile,
-  pathJoin
+  pathJoin,
+  pathRelative,
+  currentPath
 } = require('../../utils/file');
 
 const SitSetting = require('../../SitSetting');
@@ -15,7 +17,7 @@ const HOME_DIR = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME
 class SitBase {
   constructor() {
     this.localRepoName = SitSetting.repo.local
-    this.localRepo = `${process.env.SIT_DIR}/${this.localRepoName}` || this.findLocalRepo();
+    this.localRepo = this.findLocalRepo() || `./${this.localRepoName}`;
     this.homeDir = HOME_DIR;
   }
 
@@ -27,11 +29,11 @@ class SitBase {
     return HOME_DIR;
   }
 
-  findLocalRepo(path = '.', required = true) {
+  findLocalRepo(path = process.env.SIT_DIR || '.', required = false) {
     const apath = absolutePath(path)
     const repoPath = `${apath}/${this.localRepoName}`
     if (isExistFile(repoPath)) {
-      return repoPath
+      return pathRelative(currentPath, repoPath)
     } else {
       const parent = pathJoin(apath, '..')
       if (parent === apath) {

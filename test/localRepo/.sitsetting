@@ -21,5 +21,5 @@ sheet:
 repo:
   local: .sit
 dist:
-  path: ./dist
+  path: ../dist
   sheetName: "master_data.csv"

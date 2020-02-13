@@ -46,7 +46,7 @@ describe('Clasp', () => {
         expect(appendFile.mock.calls[0]).toEqual([`${currentPath}/.claspignore`, "!.sit/scripts/clasp/**/*.js"])
 
         expect(console.log).toHaveBeenCalledTimes(1)
-        expect(console.log.mock.calls[0]).toEqual(["update files: ./test/localRepo/.sit/scripts/clasp"])
+        expect(console.log.mock.calls[0]).toEqual(["update files: test/localRepo/.sit/scripts/clasp"])
       })
 
       describe('when clasp scripts do not exist', () => {
@@ -59,21 +59,21 @@ describe('Clasp', () => {
           model.update()
 
           expect(console.log).toHaveBeenCalledTimes(1)
-          expect(console.log.mock.calls[0]).toEqual(["create files: ./test/localRepo/.sit/scripts/clasp"])
+          expect(console.log.mock.calls[0]).toEqual(["create files: test/localRepo/.sit/scripts/clasp"])
         })
       })
     })
 
     describe('when localRepo do not exit', () => {
       it('should return correctly', () => {
-        model.localRepo = './test/do_not_exist/.sit'
+        model.localRepo = 'test/do_not_exist/.sit'
         console.error = jest.fn()
         isExistFile
           .mockReturnValueOnce(false)
         model.update()
 
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0]).toEqual(["Don't exists local repo: ./test/do_not_exist/.sit."])
+        expect(console.error.mock.calls[0]).toEqual(["Don't exists local repo: test/do_not_exist/.sit."])
       })
     })
   })

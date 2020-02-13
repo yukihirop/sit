@@ -20,7 +20,7 @@ describe('SitLogParser', () => {
     describe('when logFile do not exist', () => {
       it('should return correctly', () => {
         model = new SitLogParser('master', 'logs/refs/heads/hoge')
-        expect(() => { model.parseToCSV() }).toThrowError("Do not exist file: ./test/localRepo/.sit/logs/refs/heads/hoge")
+        expect(() => { model.parseToCSV() }).toThrowError("Do not exist file: test/localRepo/.sit/logs/refs/heads/hoge")
       })
     })
   })
