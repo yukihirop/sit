@@ -16,8 +16,8 @@ class SitBaseLogger extends SitBase {
     super()
     this.beforeSHA = beforeSHA
     this.afterSHA = afterSHA
-    this.localConfig = SitConfig.config('local');
-    this.globalConfig = SitConfig.config('global');
+    this.localConfig = new SitConfig('local').config;
+    this.globalConfig = new SitConfig('global').config;
   }
 
   write(file, message, mkdir) {

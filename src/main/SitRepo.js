@@ -670,7 +670,7 @@ Fast-forward
         config.updateSection(`remote.${repoName}`, null);
         break;
       case 'get-url':
-        console.log(SitConfig.config('local')['remote'][repoName]['url']);
+        console.log(config.config['remote'][repoName]['url']);
         break;
       default:
         console.log(`Do not support subcommand: '${subcommand}'`)

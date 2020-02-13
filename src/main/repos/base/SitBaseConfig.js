@@ -13,25 +13,14 @@ const {
 
 const SitSetting = require('../../SitSetting');
 const SitBase = require('./SitBase');
-
 const configPaths = { 'global': `${SitBase.homeDir()}/.sitconfig`, 'local': `${SitSetting.repo.local}/config` };
 
 class SitBaseConfig extends SitBase {
   constructor(type) {
     super();
     this.type = type;
-    this.config = SitBaseConfig.config(type);
     this.configPath = configPaths[type];
-  }
-
-  static config(type) {
-    const configPath = configPaths[type];
-
-    if (isExistFile(configPath)) {
-      return iniParse(configPath);
-    } else {
-      return {};
-    }
+    this.config = this._createConfig();
   }
 
   update(key, value) {
@@ -52,6 +41,15 @@ class SitBaseConfig extends SitBase {
       config = compact(config);
     }
     writeSyncFile(`${this.localRepo}/config`, iniStringify(config, null));
+  }
+
+  _createConfig() {
+    const configPath = this.configPath
+    if (isExistFile(configPath)) {
+      return iniParse(configPath);
+    } else {
+      return {};
+    }
   }
 
   _updateUserAttribute(attribute, value) {

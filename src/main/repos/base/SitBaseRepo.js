@@ -34,7 +34,7 @@ class SitBaseRepo extends SitBase {
   }
 
   remoteRepo(repoName) {
-    const repoData = SitConfig.config('local').remote[repoName]
+    const repoData = new SitConfig('local').config.remote[repoName]
     if (repoData) {
       return repoData.url
     } else {
