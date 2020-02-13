@@ -30,7 +30,7 @@ class GSS {
     let remoteURL;
 
     if (!this.url) {
-      remoteURL = SitConfig.config('local').remote[repoName].url
+      remoteURL = new SitConfig('local').config.remote[repoName].url
     } else {
       remoteURL = this.url
     }
