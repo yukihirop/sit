@@ -11,13 +11,14 @@ const {
   compact
 } = require('../../utils/object');
 
-const SitSetting = require('../../SitSetting');
 const SitBase = require('./SitBase');
-const configPaths = { 'global': `${SitBase.homeDir()}/.sitconfig`, 'local': `${SitSetting.repo.local}/config` };
 
 class SitBaseConfig extends SitBase {
   constructor(type) {
     super();
+
+    const configPaths = { 'global': `${SitBase.homeDir()}/.sitconfig`, 'local': `${this.localRepo}/config` };
+
     this.type = type;
     this.configPath = configPaths[type];
     this.config = this._createConfig();

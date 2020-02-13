@@ -14,6 +14,9 @@ function sit(opts) {
     type: 'GoogleSpreadSheet'
   };
 
+  process.env.SIT_DIR = (process.env.SIT_DIR === undefined) ? '.' : process.env.SIT_DIR
+  process.env.SIT_SETTING_DIR = (process.env.SIT_SETTING_DIR === undefined) ? '.' : process.env.SIT_SETTING_DIR
+
   let gopts = Object.assign({}, defaultOpts, opts);
 
   let Sheet = {}

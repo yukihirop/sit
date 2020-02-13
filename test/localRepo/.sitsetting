@@ -1,9 +1,8 @@
----
-version: "1.0.0"
+version: 1.0.0
 sheet:
   gss:
     auth:
-      credPath: ./creds.json
+      credPath: ./google-generated-creds.json
     openAPIV3Schema:
       type: object
       properties:
@@ -17,10 +16,10 @@ sheet:
           type: string
           description: キー
     defaultWorksheet:
-      rowCount: 10000
+      rowCount: 50
       colCount: 20
 repo:
   local: .sit
 dist:
-  path: ./dist
+  path: ../dist
   sheetName: "master_data.csv"

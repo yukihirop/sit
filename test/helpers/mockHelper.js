@@ -4,10 +4,10 @@ jest.mock('@main/SitSetting', () => (
   {
     ...(jest.requireActual('@main/SitSetting')),
     repo: {
-      local: './test/localRepo/.sit'
+      local: '.sit'
     },
     dist: {
-      path: './test/dist',
+      path: '../dist',
       sheetName: 'test_data.csv'
     }
   }

@@ -1,9 +1,7 @@
 const SitBaseRepo = require('@repos/base/SitBaseRepo');
 const SitBlob = require('@repos/objects/SitBlob');
-const {
-  writeSyncFile
-} = require('@utils/file');
-
+const SitLogParser = require('@repos/logs/SitLogParser');
+const SitRefParser = require('@repos/refs/SitRefParser');
 
 const mockSitLogger_write = jest.fn();
 jest.mock('@repos/logs/SitLogger', () => {
@@ -25,11 +23,17 @@ jest.mock('@utils/file', () => (
 // https://stackoverflow.com/questions/50421732/mocking-up-static-methods-in-jest
 describe('SitBaseRepo', () => {
   const model = new SitBaseRepo();
+  const oldLocalRepo = model.localRepo
 
   //　spyOn mock is not automatically released
   afterEach(() => {
     jest.restoreAllMocks()
+    model.localRepo = oldLocalRepo
   });
+
+  beforeEach(() => {
+    model.localRepo = './test/localRepo/.sit'
+  })
 
   describe('#repoName', () => {
     describe('when repoName exist', () => {
@@ -47,41 +51,83 @@ describe('SitBaseRepo', () => {
 
 
   describe('#_refCSVData', () => {
+    const mockSitRefParser_parseToCSV = jest.fn()
+
+    beforeEach(() => {
+      SitRefParser.prototype.parseToCSV = mockSitRefParser_parseToCSV
+    })
+
     describe('when repoName exists', () => {
       it('should return correctly', () => {
+        mockSitRefParser_parseToCSV.mockReturnValueOnce([
+          ['branch', 'sha1'],
+          ['master', '5b1cf86e97c6633e9a2dd85567e33d636dd3748a']
+        ])
+
         expect(model._refCSVData('master', 'origin')).toEqual([
           ['branch', 'sha1'],
           ['master', '5b1cf86e97c6633e9a2dd85567e33d636dd3748a']
         ])
+        expect(mockSitRefParser_parseToCSV).toHaveBeenCalledTimes(1)
+        expect(mockSitRefParser_parseToCSV.mock.calls[0]).toEqual([])
       })
     })
 
     describe('when repoName do not exists', () => {
       it('should return correctly', () => {
+        mockSitRefParser_parseToCSV.mockReturnValueOnce([
+          ['branch', 'sha1'],
+          ['master', '953b3794394d6b48d8690bc5e53aa2ffe2133035']
+        ])
+
         expect(model._refCSVData('master')).toEqual([
           ['branch', 'sha1'],
           ['master', '953b3794394d6b48d8690bc5e53aa2ffe2133035']
         ])
+        expect(mockSitRefParser_parseToCSV).toHaveBeenCalledTimes(1)
+        expect(mockSitRefParser_parseToCSV.mock.calls[0]).toEqual([])
       })
     })
   });
 
   describe('#_refLastLogCSVData', () => {
+    const mockSitLogParser_parseToCSV = jest.fn()
+
+    beforeEach(() => {
+      SitLogParser.prototype.parseToCSV = mockSitLogParser_parseToCSV
+    })
+
     describe('when repoName exists', () => {
       it('should return correctly', () => {
+        mockSitLogParser_parseToCSV.mockReturnValueOnce([
+          ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
+          ["master", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "update by push"]
+        ])
+
         expect(model._refLastLogCSVData('master', 'origin')).toEqual([
           ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
           ["master", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "update by push"]
         ])
+
+        expect(mockSitLogParser_parseToCSV).toHaveBeenCalledTimes(1)
+        expect(mockSitLogParser_parseToCSV.mock.calls[0]).toEqual([])
       })
     })
 
     describe('when repoName do not exists', () => {
       it('should return correctly', () => {
+        mockSitLogParser_parseToCSV.mockReturnValueOnce([
+          ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
+          ["master", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]
+        ])
+
         expect(model._refLastLogCSVData('master')).toEqual([
           ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
           ["master", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]
         ])
+
+        expect(mockSitLogParser_parseToCSV).toHaveBeenCalledTimes(1)
+        expect(mockSitLogParser_parseToCSV.mock.calls[0]).toEqual([])
       })
     })
   });

@@ -37,14 +37,14 @@ describe('SitRepo', () => {
   describe('#init', () => {
     describe('when localRepo exist', () => {
       it('should return correctly', () => {
-        model.localRepo = './test/localRepo/.sit'
+        model.localRepo = 'test/localRepo/.sit'
         expect(model.init()).toEqual(false)
       })
     })
 
     describe('when localRepo do not exist', () => {
       it('should return correctly', () => {
-        model.localRepo = './test/sandbox/.sit'
+        model.localRepo = 'test/sandbox/.sit'
         const mockModel__mkdirSyncRecursive = jest.spyOn(model, '_mkdirSyncRecursive').mockReturnValue(model)
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         expect(model.init()).toEqual(true)
@@ -69,7 +69,7 @@ describe('SitRepo', () => {
   describe('#rollback', () => {
     describe('when localRepo exist', () => {
       it('should return correctly', () => {
-        model.localRepo = './test/localRepo/.sit'
+        model.localRepo = 'test/localRepo/.sit'
         model.rollback()
         expect(rmDirSync).toHaveBeenCalledTimes(1)
       })
@@ -78,19 +78,19 @@ describe('SitRepo', () => {
     // https://stackoverflow.com/questions/49096093/how-do-i-test-a-jest-console-log
     describe('when localRepo do not exist', () => {
       it('should return correctly', () => {
-        model.localRepo = './test/sandbox/.sit'
+        model.localRepo = 'test/sandbox/.sit'
         console.log = jest.fn();
         model.rollback()
 
         expect(rmDirSync).not.toHaveBeenCalled()
-        expect(console.log.mock.calls[0][0]).toBe('Do not exist local repo: ./test/sandbox/.sit')
+        expect(console.log.mock.calls[0][0]).toBe('Do not exist local repo: test/sandbox/.sit')
       })
     })
   })
 
   describe('#clone', () => {
     it('should return correctly', () => {
-      model.localRepo = './test/sandbox/.sit'
+      model.localRepo = 'test/sandbox/.sit'
       const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
       const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
       const mockSitConfig_updateSection = jest.fn()
@@ -124,7 +124,7 @@ describe('SitRepo', () => {
       expect(mockModel__writeLog.mock.calls[2]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
 
       expect(writeSyncFile).toHaveBeenCalledTimes(1)
-      expect(writeSyncFile.mock.calls[0][0]).toBe('./test/dist/test_data.csv')
+      expect(writeSyncFile.mock.calls[0][0]).toBe('test/dist/test_data.csv')
       expect(writeSyncFile.mock.calls[0][1]).toBe('日本語,英語,キー\nこんにちは,hello,greeting.hello\nさようなら,good_bye,greeting.good_bye\n歓迎します,wellcome,greeting.welcome\nおやすみ,good night,greeting.good_night')
     })
   })
@@ -138,7 +138,7 @@ describe('SitRepo', () => {
 
     describe('when localRepo do not exist', () => {
       it('should return correctly', () => {
-        model.localRepo = './test/sandbox/.sit'
+        model.localRepo = 'test/sandbox/.sit'
         expect(model.isLocalRepo()).toEqual(false)
       })
     })
@@ -163,7 +163,7 @@ describe('SitRepo', () => {
 
       expect(model.afterHEADHash()).toEqual(sha1)
       expect(mockModel__add).toHaveBeenCalledTimes(1)
-      expect(mockModel__add.mock.calls[0][0]).toEqual('./test/dist/test_data.csv')
+      expect(mockModel__add.mock.calls[0][0]).toEqual('test/dist/test_data.csv')
       expect(mockModel__add.mock.calls[0][1]).toEqual({})
     })
   })
@@ -191,11 +191,11 @@ describe('SitRepo', () => {
     it('should return correctly', () => {
       const sha1 = '5b1cf86e97c6633e9a2dd85567e33d636dd3748a'
       const mockModel_hashObject = jest.spyOn(model, 'hashObject').mockReturnValue(sha1)
-      const path = './test/sit.js'
+      const path = 'test/sit.js'
 
       expect(model._add(path, {})).toEqual(sha1)
       expect(mockModel_hashObject).toHaveBeenCalledTimes(1)
-      expect(mockModel_hashObject.mock.calls[0][0]).toEqual("./test/sit.js")
+      expect(mockModel_hashObject.mock.calls[0][0]).toEqual("test/sit.js")
       expect(mockModel_hashObject.mock.calls[0][1]).toEqual({ "type": "blob", "write": true })
     })
   })
@@ -228,7 +228,7 @@ describe('SitRepo', () => {
   describe('#hashObject', () => {
     describe('when path exist', () => {
       it('should return correctly', () => {
-        const path = './test/dist/test_data.csv'
+        const path = 'test/dist/test_data.csv'
         const opts = { type: 'blob', write: false }
 
         expect(model.hashObject(path, opts)).toEqual('a7092c2cd3447d0f953e46b8cf81dd59e6745222')
@@ -253,7 +253,7 @@ describe('SitRepo', () => {
         model.branch()
 
         expect(recursive).toHaveBeenCalledTimes(1)
-        expect(recursive.mock.calls[0]).toEqual(["./test/localRepo/.sit/refs/heads"])
+        expect(recursive.mock.calls[0]).toEqual(["test/localRepo/.sit/refs/heads"])
       })
     })
 
@@ -263,7 +263,7 @@ describe('SitRepo', () => {
         model.branch({ all: true })
 
         expect(recursive).toHaveBeenCalledTimes(1)
-        expect(recursive.mock.calls[0]).toEqual(["./test/localRepo/.sit/refs"])
+        expect(recursive.mock.calls[0]).toEqual(["test/localRepo/.sit/refs"])
       })
     })
 
@@ -430,7 +430,7 @@ Please make sure you have the correct access rights and the repository exists.`)
         model.status()
 
         expect(console.log).toHaveBeenCalledTimes(1)
-        expect(console.log.mock.calls[0]).toEqual(["modified: ./test/dist/test_data.csv"])
+        expect(console.log.mock.calls[0]).toEqual(["modified: test/dist/test_data.csv"])
       })
     })
 
@@ -445,7 +445,7 @@ Please make sure you have the correct access rights and the repository exists.`)
         expect(mockModel__refResolve.mock.calls[0]).toEqual(["HEAD"])
 
         expect(mockModel_hashObject).toHaveBeenCalledTimes(1)
-        expect(mockModel_hashObject.mock.calls[0]).toEqual(["./test/dist/test_data.csv", { "type": "blob" }])
+        expect(mockModel_hashObject.mock.calls[0]).toEqual(["test/dist/test_data.csv", { "type": "blob" }])
 
         expect(console.log).toHaveBeenCalledTimes(1)
         expect(console.log.mock.calls[0]).toEqual(['On branch master\nnothing to commit'])
@@ -486,7 +486,7 @@ Please make sure you have the correct access rights and the repository exists.`)
         expect(mockModel__refResolve.mock.calls[0]).toEqual(["HEAD"])
 
         expect(mockModel__add).toHaveBeenCalledTimes(1)
-        expect(mockModel__add.mock.calls[0]).toEqual(["./test/dist/test_data.csv", { "message": "first commit" }])
+        expect(mockModel__add.mock.calls[0]).toEqual(["test/dist/test_data.csv", { "message": "first commit" }])
 
         expect(console.log).toHaveBeenCalledTimes(1)
         expect(console.log.mock.calls[0]).toEqual(['On branch master\nnothing to commit'])
@@ -550,8 +550,8 @@ Please make sure you have the correct access rights and the repository exists.`)
     describe('when branch is blank', () => {
       it('should return correctly', (done) => {
         recursive.mockReturnValueOnce(Promise.resolve(
-          ["./test/localRepo/.sit/refs/remotes/origin/master",
-            "./test/localRepo/.sit/refs/remotes/origin/test"
+          ["test/localRepo/.sit/refs/remotes/origin/master",
+            "test/localRepo/.sit/refs/remotes/origin/test"
           ])
         )
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
@@ -563,7 +563,7 @@ Please make sure you have the correct access rights and the repository exists.`)
           remoteBranches: ['test-1', 'test-2']
         }).then(() => {
           expect(recursive).toHaveBeenCalledTimes(1)
-          expect(recursive.mock.calls[0]).toEqual(["./test/localRepo/.sit/refs/remotes/origin"])
+          expect(recursive.mock.calls[0]).toEqual(["test/localRepo/.sit/refs/remotes/origin"])
           done()
         })
       })
@@ -591,8 +591,8 @@ Please make sure you have the correct access rights and the repository exists.`)
     describe('when fetch --prune', () => {
       it('should return correctly', (done) => {
         recursive.mockReturnValueOnce(Promise.resolve(
-          ["./test/localRepo/.sit/refs/remotes/origin/master",
-            "./test/localRepo/.sit/refs/remotes/origin/test"
+          ["test/localRepo/.sit/refs/remotes/origin/master",
+            "test/localRepo/.sit/refs/remotes/origin/test"
           ])
         )
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
@@ -606,7 +606,7 @@ Please make sure you have the correct access rights and the repository exists.`)
         }).then(() => {
 
           expect(recursive).toHaveBeenCalledTimes(1)
-          expect(recursive.mock.calls[0]).toEqual(["./test/localRepo/.sit/refs/remotes/origin"])
+          expect(recursive.mock.calls[0]).toEqual(["test/localRepo/.sit/refs/remotes/origin"])
           done()
         })
       })
@@ -657,7 +657,7 @@ Merge remote-tracking branch 'origin/test'
 #
 # It looks like you may be committing a merge.
 # If this is not correct, please remove the file
-# 	./test/localRepo/.sit/MERGE_HEAD
+# 	test/localRepo/.sit/MERGE_HEAD
 # and try again.
 
 
@@ -668,12 +668,12 @@ Merge remote-tracking branch 'origin/test'
 # All conflicts fixed but you are still merging.
 #
 # Changes for commit:
-#	modified:	./test/dist/test_data.csv
+#	modified:	test/dist/test_data.csv
 #
 `)
 
         expect(editor.open).toHaveBeenCalledTimes(1)
-        expect(editor.open.mock.calls[0][0]).toEqual("./test/localRepo/.sit/COMMIT_EDITMSG")
+        expect(editor.open.mock.calls[0][0]).toEqual("test/localRepo/.sit/COMMIT_EDITMSG")
       })
     })
 

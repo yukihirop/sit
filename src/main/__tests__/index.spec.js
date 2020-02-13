@@ -169,7 +169,7 @@ Please make sure you have the correct access rights and the repository exists.`]
         sit().Repo.init()
 
         expect(console.log).toHaveBeenCalledTimes(1)
-        expect(console.log.mock.calls[0]).toEqual(["already exist local repo: ./test/localRepo/.sit"])
+        expect(console.log.mock.calls[0]).toEqual(["already exist local repo: test/localRepo/.sit"])
       })
     })
 
@@ -180,7 +180,7 @@ Please make sure you have the correct access rights and the repository exists.`]
       sit().Repo.init()
 
       expect(console.log).toHaveBeenCalledTimes(1)
-      expect(console.log.mock.calls[0]).toEqual(["created local repo: ./test/localRepo/.sit"])
+      expect(console.log.mock.calls[0]).toEqual(["created local repo: test/localRepo/.sit"])
     })
   })
 
@@ -194,7 +194,7 @@ Please make sure you have the correct access rights and the repository exists.`]
         sit().Repo.checkLocalRepo()
 
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0]).toEqual(["fatal: not a sit repository (or any of the parent directories): ./test/localRepo/.sit"])
+        expect(console.error.mock.calls[0]).toEqual(["fatal: not a sit repository (or any of the parent directories): test/localRepo/.sit"])
       })
     })
   })
@@ -218,10 +218,10 @@ Please make sure you have the correct access rights and the repository exists.`]
     it('should return correclty', () => {
       const mockSitRepo_hashObject = jest.fn()
       SitRepo.prototype.hashObject = mockSitRepo_hashObject
-      sit().Repo.hashObject('./test/dist/test_data.csv')
+      sit().Repo.hashObject('test/dist/test_data.csv')
 
       expect(mockSitRepo_hashObject).toHaveBeenCalledTimes(1)
-      expect(mockSitRepo_hashObject.mock.calls[0]).toEqual(["./test/dist/test_data.csv", {}])
+      expect(mockSitRepo_hashObject.mock.calls[0]).toEqual(["test/dist/test_data.csv", {}])
     })
   })
 

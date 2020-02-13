@@ -205,6 +205,18 @@ const iniStringify = (config, data) => {
   return ini.stringify(config, data);
 }
 
+const pathJoin = (to, from) => {
+  return path.join(to, from)
+}
+
+const pathDirname = (file) => {
+  return path.dirname(file)
+}
+
+const pathRelative = (from, to) => {
+  return path.relative(from, to)
+}
+
 module.exports = {
   isExistFile,
   isDir,
@@ -230,5 +242,9 @@ module.exports = {
   mTimeMs,
   rmDirSync,
   iniParse,
-  iniStringify
+  iniStringify,
+  pathJoin,
+  pathDirname,
+  pathRelative,
+  currentPath
 }
