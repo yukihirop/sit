@@ -209,6 +209,10 @@ const pathJoin = (to, from) => {
   return path.join(to, from)
 }
 
+const pathDirname = (file) => {
+  return path.dirname(file)
+}
+
 module.exports = {
   isExistFile,
   isDir,
@@ -235,5 +239,6 @@ module.exports = {
   rmDirSync,
   iniParse,
   iniStringify,
-  pathJoin
+  pathJoin,
+  pathDirname
 }

@@ -5,6 +5,11 @@ const { GoogleSpreadsheet } = require('../monkey_patches/google-spreadsheet');
 const { jsonSafeLoad } = require('../utils/file');
 const SitSetting = require('../SitSetting');
 
+const {
+  pathJoin,
+  pathDirname
+} = require('../utils/file');
+
 const _createSheetId = (uri, baseURL) => {
   // https://teratail.com/questions/116620
   const regExp = new RegExp(`${baseURL}/(.*?)/.*?`);
@@ -18,7 +23,8 @@ function GSSClient(uri, opts) {
   const doc = new GoogleSpreadsheet(sheetId);
 
   const credPath = SitSetting.sheet.gss.auth.credPath
-    , creds = jsonSafeLoad(credPath);
+    , settingPath = SitSetting._internal_.settingPath
+    , creds = jsonSafeLoad(pathJoin(pathDirname(settingPath), credPath));
 
   return new Promise((resolve, reject) => {
     doc.useServiceAccountAuth(creds).then(() => {

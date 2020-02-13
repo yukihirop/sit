@@ -26,6 +26,9 @@ const findSitSettting = (path, required = true) => {
   }
 }
 
+const settingPath = findSitSettting(process.env.SIT_SETTING_DIR || '.')
+const SitSetting = yamlSafeLoad(settingPath)
+SitSetting._internal_ = {}
+SitSetting._internal_.settingPath = settingPath
 
-
-module.exports = yamlSafeLoad(findSitSettting(process.env.SIT_SETTING_DIR || '.'))
+module.exports = SitSetting
