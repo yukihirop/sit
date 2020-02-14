@@ -74,7 +74,7 @@ class SitBaseRepo extends SitBase {
 
   _HEAD() {
     let { err, data } = fileSafeLoad(this.__repoFile(false, 'HEAD'));
-    if (err) return console.error(err.message)
+    if (err) die(err.message)
     data = data.trim();
 
     if (data.startsWith("ref: ")) {
@@ -377,7 +377,7 @@ class SitBaseRepo extends SitBase {
 
     if (isExistFile(fullRefPath)) {
       let { err, data } = fileSafeLoad(fullRefPath, false);
-      if (err) return console.error(err.message)
+      if (err) die(err.message)
       data = data.trim();
 
       if (data.startsWith("ref: ")) {
@@ -394,7 +394,7 @@ class SitBaseRepo extends SitBase {
     if (name === 'HEAD') {
       const fullRefPath = this.__repoFile(false, name);
       let { err, data } = fileSafeLoad(fullRefPath, false);
-      if (err) return console.error(err.message)
+      if (err) die(err.message)
       data = data.trim();
 
       if (data.startsWith("ref: ")) {

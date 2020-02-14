@@ -1,5 +1,7 @@
 'use strict';
 
+require('./utils/global')
+
 const {
   appendFile,
   rootAbsolutePath,
@@ -40,7 +42,7 @@ class Clasp {
         console.log(`create files: ${this.claspPath}`);
       }
     } else {
-      console.error(`Don't exists local repo: ${this.localRepo}.`);
+      die(`Don't exists local repo: ${this.localRepo}.`);
     }
   }
 

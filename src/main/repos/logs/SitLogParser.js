@@ -19,7 +19,7 @@ class SitLogParser extends SitBase {
   parseToCSV() {
     if (isExistFile(this.logFile)) {
       const { err, data } = fileSafeLoad(this.logFile);
-      if (err) return console.error(err.message)
+      if (err) die(err.message)
       const lines = data.trim().split('\n');
       let result = [];
 

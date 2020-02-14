@@ -1,5 +1,7 @@
 'use strict';
 
+require('./utils/global')
+
 const AppSheet = require('./Sheet');
 const AppRepo = require('./SitRepo');
 const AppClasp = require('./Clasp');
@@ -31,12 +33,11 @@ function sit(opts) {
     const { prune, verbose } = opts;
 
     if (!repo.remoteRepo(repoName)) {
-      console.error(`\
+      die(`\
 fatal: '${repoName}' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`);
-      return
     } else {
       if (branch) {
         sheet.getRows(repoName, branch)
@@ -64,13 +65,11 @@ From ${repo.remoteRepo(repoName)}
                 }
               })
               .catch(err => {
-                console.error(err.message);
-                return
+                die(err.message);
               });
           })
           .catch(_err => {
-            console.error(`fatal: Couldn't find remote ref '${branch}'`);
-            return
+            die(`fatal: Couldn't find remote ref '${branch}'`);
           });
 
       } else {
@@ -87,8 +86,7 @@ From ${repo.remoteRepo(repoName)}
                     repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
                   })
                   .catch(_err => {
-                    console.error(`fatal: Couldn't find remote ref '${branch}'`);
-                    return
+                    die(`fatal: Couldn't find remote ref '${branch}'`);
                   });
               })
 
@@ -103,9 +101,8 @@ From ${repo.remoteRepo(repoName)}
               })
           })
 
-        }).catch(err => {
-          console.error(`fatal: Couldn't find remote ref '${branch}'`);
-          return
+        }).catch(_err => {
+          die(`fatal: Couldn't find remote ref '${branch}'`);
         });
       }
     }
@@ -117,12 +114,11 @@ From ${repo.remoteRepo(repoName)}
     const HEADHash = repo._refResolve('HEAD');
 
     if (repo.remoteRepo(repoName) === undefined) {
-      console.error(`\
+      die(`\
 fatal: '${repoName}' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`);
-      return
     } else {
       if (branch) {
         // Fetch refs/remotes from sheet
@@ -137,7 +133,7 @@ Please make sure you have the correct access rights and the repository exists.`)
 
           const isPushableAboutREMOTEREADHash = (REMOTEHEADHash === repo._INITIAL_HASH()) ? true : (REMOTEHEADHash === remoteHash)
           if (!force && (remoteHash !== undefined) && !isPushableAboutREMOTEREADHash) {
-            console.error(`\
+            die(`\
 To ${repo.remoteRepo(repoName)}\n\
 ! [rejected]\t\t${branch} -> ${branch} (non-fast-forward)\n\
 error: failed to push some refs to '${repo.remoteRepo(repoName)}'\n\
@@ -145,7 +141,6 @@ hint: Updates wre rejected because the tip of your current branch is behind\n\
 hint: its remote counterpart. Integrate the remote changes (e.q.\n\
 hint: 'sit pull ...' before pushing again.\n\
 hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
-            return;
           }
 
           // Update local repo
@@ -177,13 +172,11 @@ To ${repo.remoteRepo(repoName)}\n\
               });
             });
           }).catch(err => {
-            console.error(err.message);
-            return
+            die(err.message);
           });
         });
       } else {
-        console.error("branch is required")
-        return
+        die("branch is required")
       }
     }
   }
@@ -199,8 +192,7 @@ To ${repo.remoteRepo(repoName)}\n\
           const remoteHash = json['master'];
 
           if (remoteHash === undefined) {
-            console.error(`This Spreadsheet may not be repository.\nPlease visit ${url}\nMake sure that this Spreadsheet is rpeository.`)
-            return
+            die(`This Spreadsheet may not be repository.\nPlease visit ${url}\nMake sure that this Spreadsheet is rpeository.`)
           }
 
           sheet.getRows(repoName, 'master').then(data => {
@@ -208,12 +200,12 @@ To ${repo.remoteRepo(repoName)}\n\
               // Initialize local repo
               let result = repo.init();
 
-              // Copy clasp scripts
-              clasp.update();
-
               if (!result) {
                 throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`)
               }
+
+              // Copy clasp scripts
+              clasp.update();
 
               let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
 
@@ -227,24 +219,19 @@ remote: done.`);
 
             } catch (err) {
               repo.rollback();
-              console.error(err.message);
-              return
+              die(err.message);
             }
           }).catch(_err => {
-            console.error(`fatal: Couldn't find remote ref 'master'`);
-            return
+            die(`fatal: Couldn't find remote ref 'master'`);
           });
         }).catch(_err => {
-          console.error(`fatal: repository '${url}' not found`);
-          return
+          die(`fatal: repository '${url}' not found`);
         });
       } else {
-        console.error('url is required')
-        return
+        die('url is required')
       }
     } else {
-      console.error('repository is required')
-      return
+      die('repository is required')
     }
   }
 
@@ -261,8 +248,7 @@ remote: done.`);
 
   Repo.checkLocalRepo = () => {
     if (!repo.isLocalRepo()) {
-      console.error(`fatal: not a sit repository (or any of the parent directories): ${repo.localRepo}`);
-      return
+      die(`fatal: not a sit repository (or any of the parent directories): ${repo.localRepo}`);
     };
   }
 
@@ -282,14 +268,12 @@ remote: done.`);
           console.log(result.serialize().toString());
           return
         } else {
-          console.error(`Do not support options ${opts}`)
-          return
+          die(`Do not support options ${opts}`)
         }
 
       })
       .catch(err => {
-        console.error(err.message);
-        return
+        die(err.message);
       });
   }
 
