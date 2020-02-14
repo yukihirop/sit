@@ -134,7 +134,8 @@ class SitRepo extends SitBaseRepo {
 
   hashObject(path, opts) {
     const { type, write } = opts;
-    const data = fileSafeLoad(path);
+    const { err, data } = fileSafeLoad(path);
+    if (err) return console.error(err.message)
     return this._objectHash(data, type, write);
   }
 
@@ -299,10 +300,11 @@ Please make sure you have the correct access rights and the repository exists.`)
 
     this.catFile(headHash).then(obj => {
       const headStream = obj.serialize().toString();
-      const currentStream = fileSafeLoad(this.distFilePath);
+      const { err, data } = fileSafeLoad(this.distFilePath);
 
-      if (headStream !== currentStream) {
-        let patch = jsdiff.createPatch(index, headStream, currentStream, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
+      if (err) return console.error(err.message)
+      if (headStream !== data) {
+        let patch = jsdiff.createPatch(index, headStream, data, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
         patch = patch
           .replace(/^[---].*\t/gm, '--- ')
           .replace(/^[+++].*\t/gm, '+++ ')
@@ -488,7 +490,10 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
       }
 
       // STEP 1: Update COMMIT_EDITMSG (MERGE_MSG + α)
-      let mergeMsg = fileSafeLoad(`${this.localRepo}/MERGE_MSG`);
+      const { err, data } = fileSafeLoad(`${this.localRepo}/MERGE_MSG`);
+      const mergeMsg = data
+      if (err) return console.error(err.message)
+
       let msg = `\
 # It looks like you may be committing a merge.\n\
 # If this is not correct, please remove the file\n\
@@ -520,7 +525,10 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
           let afterMTime = mTimeMs(path);
 
           if (beforeMTime !== afterMTime) {
-            const commitMsg = fileSafeLoad(`${this.localRepo}/MERGE_MSG`).split('\n')[0];
+            const { err, data } = fileSafeLoad(`${this.localRepo}/MERGE_MSG`).split('\n')[0];
+            const commitMsg = data
+            if (err) return console.error(err.message)
+
             const headHash = this._refResolve("HEAD");
             const calculateHash = this._add(this.distFilePath, {});
             const refBranch = this._HEAD();
