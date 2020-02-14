@@ -71,6 +71,8 @@ From ${repo.remoteRepo(repoName)}
           });
 
       } else {
+        if (!repo._isExistFile(`refs/remotes/${repoName}`)) return
+
         sheet.getRows(repoName, "refs/remotes", ['branch', 'sha1']).then(data => {
           sheet.getSheetNames(repoName, remoteBranches => {
             const remoteRefs = csv2JSON(data.slice(1));
@@ -82,7 +84,6 @@ From ${repo.remoteRepo(repoName)}
                     repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
                   })
                   .catch(_err => {
-                    console.log(_err)
                     console.error(`fatal: Couldn't find remote ref '${branch}'`);
                   });
               })

@@ -39,6 +39,23 @@ fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`])
       })
+
+      describe('when fetch --prune origin', () => {
+        const old_isExistFile = SitRepo.prototype._isExistFile
+
+        afterEach(() => {
+          SitRepo.prototype._isExistFile = old_isExistFile
+        })
+
+        it('should return correctly', () => {
+          const mockSitRepoBase__isExistFile = jest.fn()
+          SitRepo.prototype._isExistFile = mockSitRepoBase__isExistFile
+          mockSitRepoBase__isExistFile.mockReturnValueOnce(false)
+
+          const result = sit().Repo.fetch('origin', null, { prune: true })
+          expect(result).toEqual(undefined)
+        })
+      })
     })
 
     describe('when remoteRepo exist', () => {
