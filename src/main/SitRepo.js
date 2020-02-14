@@ -56,6 +56,7 @@ class SitRepo extends SitBaseRepo {
       rmDirSync(localRepo);
     } else {
       console.log(`Do not exist local repo: ${localRepo}`);
+      return
     }
   }
 
@@ -150,10 +151,12 @@ class SitRepo extends SitBaseRepo {
     if (deleteBranch) {
       if (deleteBranch === currentBranch) {
         console.error(`error: Cannot delete branch '${deleteBranch}' checked out`);
+        return
       } else {
         this._objectFind(deleteBranch).then((sha) => {
           if (!sha) {
             console.error(`error: branch '${deleteBranch}' not found.`)
+            return
           }
 
           // STEP 1: Delete logs/refs/heads/<deleteBranch>
@@ -163,6 +166,7 @@ class SitRepo extends SitBaseRepo {
             ._deleteSyncFile(`refs/heads/${deleteBranch}`);
 
           console.log(`Deleted branch ${deleteBranch} ( was ${deleteHash.slice(0, 7)})`);
+          return
         });
       }
 
@@ -189,10 +193,11 @@ class SitRepo extends SitBaseRepo {
             return acc
           }, [])
           console.log(result.join('\n'));
+          return
         })
         .catch(err => {
           console.error(err.message);
-          process.exit(1);
+          return
         });
     }
   }
@@ -225,6 +230,7 @@ Please make sure you have the correct access rights and the repository exists.`)
     if (!branch && !isRemote) {
       if (name === currentBranch) {
         console.log(`Already on '${name}'`);
+        return
       } else if (name) {
         this._objectFind(name)
           .then(sha => {
@@ -240,11 +246,12 @@ Please make sure you have the correct access rights and the repository exists.`)
                 })
 
               console.log(`Switched to branch '${name}'`);
+              return
             }
           })
           .catch(err => {
             console.error(err.message);
-            process.exit(1)
+            return
           })
       }
       // checkout local from remote
@@ -266,6 +273,7 @@ Please make sure you have the correct access rights and the repository exists.`)
 
       if (isExistFile(fullCurrentRefPath)) {
         console.error(`fatal: A branch named '${branch}' already exists.`);
+        return
       } else {
 
         // STEP 1: Update HEAD
@@ -278,6 +286,7 @@ Please make sure you have the correct access rights and the repository exists.`)
           ._writeLog(`logs/refs/heads/${branch}`, null, currentHash, "branch: Created from HEAD");
 
         console.log(`Switched to a new branch '${branch}'`);
+        return
       }
     }
   }
@@ -301,6 +310,7 @@ Please make sure you have the correct access rights and the repository exists.`)
           .replace(/^\+.*/gm, colorize('$&', 'added'))
           .replace(/^@@.+@@/gm, colorize('$&', 'section'));
         console.log(patch);
+        return
       }
     });
   }
@@ -314,11 +324,13 @@ Please make sure you have the correct access rights and the repository exists.`)
 
     if (currentHash !== calculateHash) {
       console.log(`modified: ${this.distFilePath}`);
+      return
     } else {
       console.log(`\
 On branch ${currentBranch}\n\
 nothing to commit`
       );
+      return
     }
   }
 
@@ -353,11 +365,14 @@ nothing to commit`
       // STEP 8: display info
       // TODO: display insertions(+), deletions(-) info
       console.log(`[${branch} ${afterHEADHash.slice(0, 7)}] ${message}`);
+      return
 
     } else if (isExistMessage && !isChangeHash) {
       console.log(`On branch ${branch}\nnothing to commit`);
+      return
     } else {
       console.error('Need message to commit');
+      return
     }
   }
 
@@ -566,6 +581,7 @@ fatal: Existing because of an unresolved conflict.`);
 
       } else {
         console.error('fatal: There is no merge to abort (MERGE_HEAD missing).');
+        return
       }
     }
 
@@ -578,6 +594,7 @@ Please, commit your changes before you merge.`);
         return;
       } else {
         console.log("Already up to date.");
+        return
       }
     }
 
@@ -613,6 +630,7 @@ Please, commit your changes before you merge.`);
 Two-way-merging ${this.distFilePath}
 CONFLICT (content): Merge conflict in ${this.distFilePath}
 two-way-merge failed; fix conflicts and then commit the result.`);
+              return
 
             } else {
               const headBranch = this._branchResolve('HEAD');
@@ -634,6 +652,7 @@ Updating ${headHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\n
 Fast-forward
   ${this.distFilePath}
   1 file changed`)
+              return
             }
           });
         });
@@ -650,8 +669,8 @@ Fast-forward
       const url = this.remoteRepo(repoName);
       opener(url);
     } catch (err) {
-      console.error(err);
-      process.exit(1);
+      console.error(err.message);
+      return
     }
   }
 

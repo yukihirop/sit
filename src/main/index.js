@@ -53,21 +53,24 @@ Please make sure you have the correct access rights and the repository exists.`)
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD`)
+                  return
                 } else {
                   console.log(`\
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD\n\
   ${beforeHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`)
+                  return
                 }
               })
               .catch(err => {
                 console.error(err.message);
-                process.exit(1);
+                return
               });
           })
-          .catch(err => {
+          .catch(_err => {
             console.error(`fatal: Couldn't find remote ref '${branch}'`);
+            return
           });
 
       } else {
@@ -85,6 +88,7 @@ From ${repo.remoteRepo(repoName)}
                   })
                   .catch(_err => {
                     console.error(`fatal: Couldn't find remote ref '${branch}'`);
+                    return
                   });
               })
 
@@ -94,13 +98,14 @@ From ${repo.remoteRepo(repoName)}
                 if (msg.length >= 1) {
                   msg.unshift(`From ${repo.remoteRepo(repoName)}`)
                   console.log(msg.join('\n'));
+                  return
                 }
               })
           })
 
         }).catch(err => {
-          console.log(err)
           console.error(`fatal: Couldn't find remote ref '${branch}'`);
+          return
         });
       }
     }
@@ -168,15 +173,17 @@ remote:     ${repo.remoteRepo(repoName)}\n\
 remote:\n\
 To ${repo.remoteRepo(repoName)}\n\
 \t${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
+                return
               });
             });
           }).catch(err => {
             console.error(err.message);
-            process.exit(1);
+            return
           });
         });
       } else {
         console.error("branch is required")
+        return
       }
     }
   }
@@ -193,6 +200,7 @@ To ${repo.remoteRepo(repoName)}\n\
 
           if (remoteHash === undefined) {
             console.error(`This Spreadsheet may not be repository.\nPlease visit ${url}\nMake sure that this Spreadsheet is rpeository.`)
+            return
           }
 
           sheet.getRows(repoName, 'master').then(data => {
@@ -220,18 +228,23 @@ remote: done.`);
             } catch (err) {
               repo.rollback();
               console.error(err.message);
+              return
             }
-          }).catch(err => {
+          }).catch(_err => {
             console.error(`fatal: Couldn't find remote ref 'master'`);
+            return
           });
         }).catch(_err => {
           console.error(`fatal: repository '${url}' not found`);
+          return
         });
       } else {
         console.error('url is required')
+        return
       }
     } else {
       console.error('repository is required')
+      return
     }
   }
 
@@ -239,14 +252,17 @@ remote: done.`);
     const result = repo.init();
     if (result) {
       console.log(`created local repo: ${repo.localRepo}`);
+      return
     } else {
       console.log(`already exist local repo: ${repo.localRepo}`);
+      return
     }
   }
 
   Repo.checkLocalRepo = () => {
     if (!repo.isLocalRepo()) {
       console.error(`fatal: not a sit repository (or any of the parent directories): ${repo.localRepo}`);
+      return
     };
   }
 
@@ -258,17 +274,22 @@ remote: done.`);
 
         if (type) {
           console.log(result.fmt);
+          return
         } else if (size) {
           console.log(result.size);
+          return
         } else if (prettyPrint) {
           console.log(result.serialize().toString());
+          return
         } else {
           console.error(`Do not support options ${opts}`)
+          return
         }
 
       })
       .catch(err => {
         console.error(err.message);
+        return
       });
   }
 
