@@ -18,7 +18,9 @@ const {
   mTimeMs,
   rmDirSync,
   fileBasename,
-  pathRelative
+  pathRelative,
+  pathDirname,
+  mkdirSyncRecursive
 } = require('./utils/file');
 
 const {
@@ -82,6 +84,10 @@ class SitRepo extends SitBaseRepo {
       ._writeLog("logs/HEAD", this._INITIAL_HASH(), masterHash, `clone: from ${url}`);
 
     // STEP 7: Update dist file instead of Update index
+    const distDir = pathDirname(this.distFilePath)
+    if (!isExistFile(distDir)) {
+      mkdirSyncRecursive(distDir)
+    }
     writeSyncFile(this.distFilePath, masterData);
   }
 
