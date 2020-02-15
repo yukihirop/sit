@@ -1,5 +1,7 @@
 'use strict';
 
+require('./utils/global')
+
 const AppSheet = require('./Sheet');
 const AppRepo = require('./SitRepo');
 const AppClasp = require('./Clasp');
@@ -31,12 +33,11 @@ function sit(opts) {
     const { prune, verbose } = opts;
 
     if (!repo.remoteRepo(repoName)) {
-      console.error(`\
+      die(`\
 fatal: '${repoName}' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`);
-      return
     } else {
       if (branch) {
         sheet.getRows(repoName, branch)
@@ -53,24 +54,27 @@ Please make sure you have the correct access rights and the repository exists.`)
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD`)
+                  return
                 } else {
                   console.log(`\
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD\n\
   ${beforeHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`)
+                  return
                 }
               })
               .catch(err => {
-                console.error(err.message);
-                process.exit(1);
+                die(err.message);
               });
           })
-          .catch(err => {
-            console.error(`fatal: Couldn't find remote ref '${branch}'`);
+          .catch(_err => {
+            die(`fatal: Couldn't find remote ref '${branch}'`);
           });
 
       } else {
+        if (!repo._isExistFile(`refs/remotes/${repoName}`)) return
+
         sheet.getRows(repoName, "refs/remotes", ['branch', 'sha1']).then(data => {
           sheet.getSheetNames(repoName, remoteBranches => {
             const remoteRefs = csv2JSON(data.slice(1));
@@ -82,8 +86,7 @@ From ${repo.remoteRepo(repoName)}
                     repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
                   })
                   .catch(_err => {
-                    console.log(_err)
-                    console.error(`fatal: Couldn't find remote ref '${branch}'`);
+                    die(`fatal: Couldn't find remote ref '${branch}'`);
                   });
               })
 
@@ -93,13 +96,13 @@ From ${repo.remoteRepo(repoName)}
                 if (msg.length >= 1) {
                   msg.unshift(`From ${repo.remoteRepo(repoName)}`)
                   console.log(msg.join('\n'));
+                  return
                 }
               })
           })
 
-        }).catch(err => {
-          console.log(err)
-          console.error(`fatal: Couldn't find remote ref '${branch}'`);
+        }).catch(_err => {
+          die(`fatal: Couldn't find remote ref '${branch}'`);
         });
       }
     }
@@ -111,12 +114,11 @@ From ${repo.remoteRepo(repoName)}
     const HEADHash = repo._refResolve('HEAD');
 
     if (repo.remoteRepo(repoName) === undefined) {
-      console.error(`\
+      die(`\
 fatal: '${repoName}' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`);
-      return
     } else {
       if (branch) {
         // Fetch refs/remotes from sheet
@@ -131,7 +133,7 @@ Please make sure you have the correct access rights and the repository exists.`)
 
           const isPushableAboutREMOTEREADHash = (REMOTEHEADHash === repo._INITIAL_HASH()) ? true : (REMOTEHEADHash === remoteHash)
           if (!force && (remoteHash !== undefined) && !isPushableAboutREMOTEREADHash) {
-            console.error(`\
+            die(`\
 To ${repo.remoteRepo(repoName)}\n\
 ! [rejected]\t\t${branch} -> ${branch} (non-fast-forward)\n\
 error: failed to push some refs to '${repo.remoteRepo(repoName)}'\n\
@@ -139,7 +141,6 @@ hint: Updates wre rejected because the tip of your current branch is behind\n\
 hint: its remote counterpart. Integrate the remote changes (e.q.\n\
 hint: 'sit pull ...' before pushing again.\n\
 hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
-            return;
           }
 
           // Update local repo
@@ -167,15 +168,15 @@ remote:     ${repo.remoteRepo(repoName)}\n\
 remote:\n\
 To ${repo.remoteRepo(repoName)}\n\
 \t${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
+                return
               });
             });
           }).catch(err => {
-            console.error(err.message);
-            process.exit(1);
+            die(err.message);
           });
         });
       } else {
-        console.error("branch is required")
+        die("branch is required")
       }
     }
   }
@@ -191,7 +192,7 @@ To ${repo.remoteRepo(repoName)}\n\
           const remoteHash = json['master'];
 
           if (remoteHash === undefined) {
-            console.error(`This Spreadsheet may not be repository.\nPlease visit ${url}\nMake sure that this Spreadsheet is rpeository.`)
+            die(`This Spreadsheet may not be repository.\nPlease visit ${url}\nMake sure that this Spreadsheet is rpeository.`)
           }
 
           sheet.getRows(repoName, 'master').then(data => {
@@ -199,12 +200,12 @@ To ${repo.remoteRepo(repoName)}\n\
               // Initialize local repo
               let result = repo.init();
 
-              // Copy clasp scripts
-              clasp.update();
-
               if (!result) {
                 throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`)
               }
+
+              // Copy clasp scripts
+              clasp.update();
 
               let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
 
@@ -218,19 +219,19 @@ remote: done.`);
 
             } catch (err) {
               repo.rollback();
-              console.error(err.message);
+              die(err.message);
             }
-          }).catch(err => {
-            console.error(`fatal: Couldn't find remote ref 'master'`);
+          }).catch(_err => {
+            die(`fatal: Couldn't find remote ref 'master'`);
           });
         }).catch(_err => {
-          console.error(`fatal: repository '${url}' not found`);
+          die(`fatal: repository '${url}' not found`);
         });
       } else {
-        console.error('url is required')
+        die('url is required')
       }
     } else {
-      console.error('repository is required')
+      die('repository is required')
     }
   }
 
@@ -238,14 +239,16 @@ remote: done.`);
     const result = repo.init();
     if (result) {
       console.log(`created local repo: ${repo.localRepo}`);
+      return
     } else {
       console.log(`already exist local repo: ${repo.localRepo}`);
+      return
     }
   }
 
   Repo.checkLocalRepo = () => {
     if (!repo.isLocalRepo()) {
-      console.error(`fatal: not a sit repository (or any of the parent directories): ${repo.localRepo}`);
+      die(`fatal: not a sit repository (or any of the parent directories): ${repo.localRepo}`);
     };
   }
 
@@ -257,17 +260,20 @@ remote: done.`);
 
         if (type) {
           console.log(result.fmt);
+          return
         } else if (size) {
           console.log(result.size);
+          return
         } else if (prettyPrint) {
           console.log(result.serialize().toString());
+          return
         } else {
-          console.error(`Do not support options ${opts}`)
+          die(`Do not support options ${opts}`)
         }
 
       })
       .catch(err => {
-        console.error(err.message);
+        die(err.message);
       });
   }
 

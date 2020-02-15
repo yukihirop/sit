@@ -1,5 +1,7 @@
 'use strict';
 
+require('./utils/global');
+
 const jsdiff = require('diff')
   , chokidar = require('chokidar')
   , opener = require('opener');
@@ -56,6 +58,7 @@ class SitRepo extends SitBaseRepo {
       rmDirSync(localRepo);
     } else {
       console.log(`Do not exist local repo: ${localRepo}`);
+      return
     }
   }
 
@@ -133,7 +136,8 @@ class SitRepo extends SitBaseRepo {
 
   hashObject(path, opts) {
     const { type, write } = opts;
-    const data = fileSafeLoad(path);
+    const { err, data } = fileSafeLoad(path);
+    if (err) die(err.message)
     return this._objectHash(data, type, write);
   }
 
@@ -149,11 +153,11 @@ class SitRepo extends SitBaseRepo {
 
     if (deleteBranch) {
       if (deleteBranch === currentBranch) {
-        console.error(`error: Cannot delete branch '${deleteBranch}' checked out`);
+        die(`error: Cannot delete branch '${deleteBranch}' checked out`);
       } else {
         this._objectFind(deleteBranch).then((sha) => {
           if (!sha) {
-            console.error(`error: branch '${deleteBranch}' not found.`)
+            die(`error: branch '${deleteBranch}' not found.`)
           }
 
           // STEP 1: Delete logs/refs/heads/<deleteBranch>
@@ -163,6 +167,7 @@ class SitRepo extends SitBaseRepo {
             ._deleteSyncFile(`refs/heads/${deleteBranch}`);
 
           console.log(`Deleted branch ${deleteBranch} ( was ${deleteHash.slice(0, 7)})`);
+          return
         });
       }
 
@@ -189,10 +194,10 @@ class SitRepo extends SitBaseRepo {
             return acc
           }, [])
           console.log(result.join('\n'));
+          return
         })
         .catch(err => {
-          console.error(err.message);
-          process.exit(1);
+          die(err.message);
         });
     }
   }
@@ -205,12 +210,11 @@ class SitRepo extends SitBaseRepo {
 
     if (repoName) {
       if (!this.remoteRepo(repoName)) {
-        console.error(`\
+        die(`\
 fatal: '${repoName}' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`);
-        return
       }
 
       if (name) {
@@ -225,6 +229,7 @@ Please make sure you have the correct access rights and the repository exists.`)
     if (!branch && !isRemote) {
       if (name === currentBranch) {
         console.log(`Already on '${name}'`);
+        return
       } else if (name) {
         this._objectFind(name)
           .then(sha => {
@@ -240,11 +245,11 @@ Please make sure you have the correct access rights and the repository exists.`)
                 })
 
               console.log(`Switched to branch '${name}'`);
+              return
             }
           })
           .catch(err => {
-            console.error(err.message);
-            process.exit(1)
+            die(err.message);
           })
       }
       // checkout local from remote
@@ -265,7 +270,7 @@ Please make sure you have the correct access rights and the repository exists.`)
       const fullCurrentRefPath = this._getPath(`refs/heads/${branch}`);
 
       if (isExistFile(fullCurrentRefPath)) {
-        console.error(`fatal: A branch named '${branch}' already exists.`);
+        die(`fatal: A branch named '${branch}' already exists.`);
       } else {
 
         // STEP 1: Update HEAD
@@ -278,6 +283,7 @@ Please make sure you have the correct access rights and the repository exists.`)
           ._writeLog(`logs/refs/heads/${branch}`, null, currentHash, "branch: Created from HEAD");
 
         console.log(`Switched to a new branch '${branch}'`);
+        return
       }
     }
   }
@@ -290,10 +296,13 @@ Please make sure you have the correct access rights and the repository exists.`)
 
     this.catFile(headHash).then(obj => {
       const headStream = obj.serialize().toString();
-      const currentStream = fileSafeLoad(this.distFilePath);
+      const { err, data } = fileSafeLoad(this.distFilePath);
 
-      if (headStream !== currentStream) {
-        let patch = jsdiff.createPatch(index, headStream, currentStream, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
+      if (err) {
+        die(err.message)
+      }
+      if (headStream !== data) {
+        let patch = jsdiff.createPatch(index, headStream, data, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
         patch = patch
           .replace(/^[---].*\t/gm, '--- ')
           .replace(/^[+++].*\t/gm, '+++ ')
@@ -301,6 +310,7 @@ Please make sure you have the correct access rights and the repository exists.`)
           .replace(/^\+.*/gm, colorize('$&', 'added'))
           .replace(/^@@.+@@/gm, colorize('$&', 'section'));
         console.log(patch);
+        return
       }
     });
   }
@@ -314,11 +324,13 @@ Please make sure you have the correct access rights and the repository exists.`)
 
     if (currentHash !== calculateHash) {
       console.log(`modified: ${this.distFilePath}`);
+      return
     } else {
       console.log(`\
 On branch ${currentBranch}\n\
 nothing to commit`
       );
+      return
     }
   }
 
@@ -353,11 +365,13 @@ nothing to commit`
       // STEP 8: display info
       // TODO: display insertions(+), deletions(-) info
       console.log(`[${branch} ${afterHEADHash.slice(0, 7)}] ${message}`);
+      return
 
     } else if (isExistMessage && !isChangeHash) {
       console.log(`On branch ${branch}\nnothing to commit`);
+      return
     } else {
-      console.error('Need message to commit');
+      die('Need message to commit');
     }
   }
 
@@ -468,12 +482,14 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
     if (isContinue) {
 
       if (!this._isExistFile('MERGE_HEAD')) {
-        console.error('fatal: There is no merge in progress (MERGE_HEAD missing)');
-        return;
+        die('fatal: There is no merge in progress (MERGE_HEAD missing)');
       }
 
       // STEP 1: Update COMMIT_EDITMSG (MERGE_MSG + α)
-      let mergeMsg = fileSafeLoad(`${this.localRepo}/MERGE_MSG`);
+      const { err, data } = fileSafeLoad(`${this.localRepo}/MERGE_MSG`);
+      const mergeMsg = data
+      if (err) die(err.message)
+
       let msg = `\
 # It looks like you may be committing a merge.\n\
 # If this is not correct, please remove the file\n\
@@ -505,7 +521,10 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
           let afterMTime = mTimeMs(path);
 
           if (beforeMTime !== afterMTime) {
-            const commitMsg = fileSafeLoad(`${this.localRepo}/MERGE_MSG`).split('\n')[0];
+            const { err, data } = fileSafeLoad(`${this.localRepo}/MERGE_MSG`).split('\n')[0];
+            const commitMsg = data
+            if (err) die(err.message)
+
             const headHash = this._refResolve("HEAD");
             const calculateHash = this._add(this.distFilePath, {});
             const refBranch = this._HEAD();
@@ -539,12 +558,11 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
       });
 
     } else if (this._isExistFile('MERGE_HEAD') && !stat && !abort && branch) {
-      console.error(`\
+      die(`\
 error: Merging is not possible because you have unmerged files.\n\
 hint: Fix them up in the work tree, and then use 'sit merge --continue'\n\
 hint: as appropriate to mark resolution and make a commit.\n\
 fatal: Existing because of an unresolved conflict.`);
-      return;
     }
 
     // --abort
@@ -565,19 +583,19 @@ fatal: Existing because of an unresolved conflict.`);
           });
 
       } else {
-        console.error('fatal: There is no merge to abort (MERGE_HEAD missing).');
+        die('fatal: There is no merge to abort (MERGE_HEAD missing).');
       }
     }
 
     // --stat
     if (stat) {
       if (this._isExistFile('MERGE_HEAD')) {
-        console.error(`\
+        die(`\
 fatal: You have not concluded your merge (MERGE_HEAD exists)
 Please, commit your changes before you merge.`);
-        return;
       } else {
         console.log("Already up to date.");
+        return
       }
     }
 
@@ -613,6 +631,7 @@ Please, commit your changes before you merge.`);
 Two-way-merging ${this.distFilePath}
 CONFLICT (content): Merge conflict in ${this.distFilePath}
 two-way-merge failed; fix conflicts and then commit the result.`);
+              return
 
             } else {
               const headBranch = this._branchResolve('HEAD');
@@ -634,6 +653,7 @@ Updating ${headHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\n
 Fast-forward
   ${this.distFilePath}
   1 file changed`)
+              return
             }
           });
         });
@@ -650,8 +670,7 @@ Fast-forward
       const url = this.remoteRepo(repoName);
       opener(url);
     } catch (err) {
-      console.error(err);
-      process.exit(1);
+      die(err.message);
     }
   }
 

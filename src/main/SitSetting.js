@@ -29,7 +29,12 @@ const findSitSettting = (path = process.env.SIT_SETTING_DIR || '.', required = f
 }
 
 const settingPath = findSitSettting() || './.sitsetting'
-const SitSetting = yamlSafeLoad(settingPath)
+let SitSetting = {}
+
+if (isExistFile(settingPath)) {
+  SitSetting = yamlSafeLoad(settingPath)
+}
+
 SitSetting._internal_ = {}
 SitSetting._internal_.settingPath = settingPath
 

@@ -125,12 +125,21 @@ const appendFile = (file, data) => {
 
 const fileSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {
   let loadPath = file;
+  let data, err;
 
   if (isRelative) {
     loadPath = path.resolve(currentPath, file);
   }
 
-  return fs.readFileSync(loadPath, encoding);
+  if (isExistFile(loadPath)) {
+    data = fs.readFileSync(loadPath, encoding)
+    err = null
+  } else {
+    data = null
+    err = new Error(`Do not exist file: ${loadPath}`);
+  }
+
+  return { err, data };
 }
 
 const fileUnzip = (file, isRelative = true, callback) => {

@@ -1,5 +1,7 @@
 'use strict';
 
+require('../../utils/global')
+
 const {
   absolutePath,
   isExistFile,

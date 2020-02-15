@@ -73,7 +73,8 @@ class SitBaseRepo extends SitBase {
   }
 
   _HEAD() {
-    let data = fileSafeLoad(this.__repoFile(false, 'HEAD'));
+    let { err, data } = fileSafeLoad(this.__repoFile(false, 'HEAD'));
+    if (err) die(err.message)
     data = data.trim();
 
     if (data.startsWith("ref: ")) {
@@ -375,7 +376,8 @@ class SitBaseRepo extends SitBase {
     const fullRefPath = this.__repoFile(false, ref);
 
     if (isExistFile(fullRefPath)) {
-      let data = fileSafeLoad(fullRefPath, false);
+      let { err, data } = fileSafeLoad(fullRefPath, false);
+      if (err) die(err.message)
       data = data.trim();
 
       if (data.startsWith("ref: ")) {
@@ -391,7 +393,8 @@ class SitBaseRepo extends SitBase {
   _branchResolve(name) {
     if (name === 'HEAD') {
       const fullRefPath = this.__repoFile(false, name);
-      let data = fileSafeLoad(fullRefPath, false);
+      let { err, data } = fileSafeLoad(fullRefPath, false);
+      if (err) die(err.message)
       data = data.trim();
 
       if (data.startsWith("ref: ")) {

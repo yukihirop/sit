@@ -64,16 +64,22 @@ describe('Clasp', () => {
       })
     })
 
+    // https://stackoverflow.com/questions/50379916/how-to-mock-test-a-node-js-cli-with-jest
     describe('when localRepo do not exit', () => {
       it('should return correctly', () => {
         model.localRepo = 'test/do_not_exist/.sit'
         console.error = jest.fn()
         isExistFile
           .mockReturnValueOnce(false)
-        model.update()
+        jest.spyOn(process, 'exit').mockImplementation(() => {
+          throw new Error('process.exit() was called.')
+        });
 
+        expect(() => model.update()).toThrow('process.exit() was called.');
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0]).toEqual(["Don't exists local repo: test/do_not_exist/.sit."])
+        // must be calls[0] but bug
+        expect(console.error.mock.calls[0][0]).toEqual(["Don't exists local repo: test/do_not_exist/.sit."])
+        expect(process.exit).toHaveBeenCalledWith(1);
       })
     })
   })

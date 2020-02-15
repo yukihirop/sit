@@ -245,8 +245,8 @@ describe('SitRepo', () => {
     })
   })
 
+  // (node:48137) UnhandledPromiseRejectionWarning: Error: process.exit() was called.
   describe('#branch', () => {
-    // fail... why?
     describe("when do not specify nothiing", () => {
       it('should return correctly', () => {
         recursive.mockReturnValueOnce(Promise.resolve(['files']))
@@ -271,9 +271,12 @@ describe('SitRepo', () => {
       describe("when 'deleteBranch' is 'currentBranch'", () => {
         it('should return correctly', () => {
           console.error = jest.fn()
+          jest.spyOn(process, 'exit').mockImplementation(() => {
+            throw new Error('process.exit() was called.')
+          });
 
-          model.branch({ deleteBranch: 'master' })
-          expect(console.error.mock.calls[0]).toEqual(["error: Cannot delete branch 'master' checked out"])
+          expect(() => model.branch({ deleteBranch: 'master' })).toThrow('process.exit() was called.')
+          expect(console.error.mock.calls[0][0]).toEqual(["error: Cannot delete branch 'master' checked out"])
           expect(console.error).toHaveBeenCalledTimes(1)
         })
       })
@@ -282,7 +285,7 @@ describe('SitRepo', () => {
       // https://github.com/facebook/jest/issues/6671
       describe("when 'deleteBranch' is not 'currentBranch' (success)", () => {
         it('should return correctly', () => {
-          const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValue(Promise.resolve('success'))
+          const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValueOnce(Promise.resolve('success'))
           jest.spyOn(model, '_deleteSyncFile').mockReturnValue(model)
           model.branch({ deleteBranch: 'develop' })
 
@@ -290,12 +293,20 @@ describe('SitRepo', () => {
         })
       })
 
+      // (node:48137) UnhandledPromiseRejectionWarning: Error: process.exit() was called.
       describe("wheen 'deleteBranch' is not 'currentBranch' (failure)", () => {
         it('should return correctly', () => {
-          const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValue(Promise.resolve())
+          const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValueOnce(Promise.resolve(null))
           jest.spyOn(model, '_deleteSyncFile').mockReturnValue(model)
-          model.branch({ deleteBranch: 'donotexist' })
+          console.error = jest.fn()
+          jest.spyOn(process, 'exit').mockImplementation(() => {
+            throw new Error('process.exit() was called.')
+          });
 
+          model.branch({ deleteBranch: 'donotexist' })
+          // https://github.com/facebook/jest/issues/6671#issuecomment-404171584
+          // Mock information of processing in promise cannot be taken
+          // expect(() => model.branch({ deleteBranch: 'donotexist' })).toThrow('process.exit() was called.')
           expect(mockModel__objectFind).toHaveBeenCalledTimes(1)
         })
       })
@@ -303,10 +314,13 @@ describe('SitRepo', () => {
       describe("when 'deleteBranch' is 'currentBranch' (failure)", () => {
         it('should return correctly', () => {
           console.error = jest.fn()
-          model.branch({ deleteBranch: 'master' })
+          jest.spyOn(process, 'exit').mockImplementation(() => {
+            throw new Error('process.exit() was called.')
+          });
 
+          expect(() => model.branch({ deleteBranch: 'master' })).toThrow('process.exit() was called.')
           expect(console.error).toHaveBeenCalledTimes(1)
-          expect(console.error.mock.calls[0]).toEqual(["error: Cannot delete branch 'master' checked out"])
+          expect(console.error.mock.calls[0][0]).toEqual(["error: Cannot delete branch 'master' checked out"])
         })
       })
     })
@@ -369,10 +383,13 @@ describe('SitRepo', () => {
       describe('when checkout branch is already exists', () => {
         it('should return correctly', () => {
           console.error = jest.fn()
-          model.checkout(null, null, { branch: 'develop' })
+          jest.spyOn(process, 'exit').mockImplementation(() => {
+            throw new Error('process.exit() was called.')
+          });
 
+          expect(() => model.checkout(null, null, { branch: 'develop' })).toThrow('process.exit() was called.')
           expect(console.error).toHaveBeenCalledTimes(1)
-          expect(console.error.mock.calls[0]).toEqual(["fatal: A branch named 'develop' already exists."])
+          expect(console.error.mock.calls[0][0]).toEqual(["fatal: A branch named 'develop' already exists."])
         })
       })
 
@@ -399,14 +416,17 @@ describe('SitRepo', () => {
       describe('when repoName do not exist', () => {
         it('should return correctly', () => {
           console.error = jest.fn()
-          model.checkout('typo_origin', 'test')
+          jest.spyOn(process, 'exit').mockImplementation(() => {
+            throw new Error('process.exit() was called.')
+          });
 
+          expect(() => model.checkout('typo_origin', 'test')).toThrow('process.exit() was called.')
           expect(console.error).toHaveBeenCalledTimes(1)
-          expect(console.error.mock.calls[0][0]).toEqual(`\
+          expect(console.error.mock.calls[0][0]).toEqual([`\
 fatal: 'typo_origin' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
-Please make sure you have the correct access rights and the repository exists.`)
+Please make sure you have the correct access rights and the repository exists.`])
         })
       })
     })
@@ -496,10 +516,13 @@ Please make sure you have the correct access rights and the repository exists.`)
     describe('when commit message is blank', () => {
       it('should return correctly', () => {
         console.error = jest.fn()
-        model.commit()
+        jest.spyOn(process, 'exit').mockImplementation(() => {
+          throw new Error('process.exit() was called.')
+        });
 
+        expect(() => model.commit()).toThrow('process.exit() was called.')
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0]).toEqual(["Need message to commit"])
+        expect(console.error.mock.calls[0][0]).toEqual(["Need message to commit"])
       })
     })
   })
@@ -627,14 +650,18 @@ Please make sure you have the correct access rights and the repository exists.`)
     describe('when merge --continue when MERGE_HEAD is missing', () => {
       it('should return correctly', () => {
         console.error = jest.fn()
+        jest.spyOn(process, 'exit').mockImplementation(() => {
+          throw new Error('process.exit() was called.')
+        });
         const mockModel__isExistFile = jest.spyOn(model, '_isExistFile').mockReturnValue(false)
-        model.merge(null, null, { continue: true })
+
+        expect(() => model.merge(null, null, { continue: true })).toThrow('process.exit() was called.')
 
         expect(mockModel__isExistFile).toHaveBeenCalledTimes(1)
         expect(mockModel__isExistFile.mock.calls[0]).toEqual(["MERGE_HEAD"])
 
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0]).toEqual(["fatal: There is no merge in progress (MERGE_HEAD missing)"])
+        expect(console.error.mock.calls[0][0]).toEqual(["fatal: There is no merge in progress (MERGE_HEAD missing)"])
       })
     })
 
@@ -680,10 +707,13 @@ Merge remote-tracking branch 'origin/test'
     describe('when merge origin test', () => {
       it('should return correctly', () => {
         console.error = jest.fn()
-        model.merge('origin', 'master')
+        jest.spyOn(process, 'exit').mockImplementation(() => {
+          throw new Error('process.exit() was called.')
+        });
 
+        expect(() => model.merge('origin', 'master')).toThrow('process.exit() was called.')
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0]).toEqual([`\
+        expect(console.error.mock.calls[0][0]).toEqual([`\
 error: Merging is not possible because you have unmerged files.
 hint: Fix them up in the work tree, and then use 'sit merge --continue'
 hint: as appropriate to mark resolution and make a commit.
@@ -715,10 +745,13 @@ fatal: Existing because of an unresolved conflict.`])
     describe('when merge --stat when MERGE_HEAD exist', () => {
       it('should return correctly', () => {
         console.error = jest.fn()
-        model.merge(null, null, { stat: true })
+        jest.spyOn(process, 'exit').mockImplementation(() => {
+          throw new Error('process.exit() was called.')
+        });
 
+        expect(() => model.merge(null, null, { stat: true })).toThrow('process.exit() was called.')
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0]).toEqual([`\
+        expect(console.error.mock.calls[0][0]).toEqual([`\
 fatal: You have not concluded your merge (MERGE_HEAD exists)
 Please, commit your changes before you merge.`])
       })

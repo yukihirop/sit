@@ -20,8 +20,9 @@ class SitRefParser extends SitBase {
   }
 
   parseToCSV() {
-    const loadData = fileSafeLoad(this.refFile).trim();
-    const sha = loadData;
+    const { err, data } = fileSafeLoad(this.refFile);
+    if (err) die(err.message)
+    const sha = data.trim();
     return [
       REF_REMOTE_HEADER,
       [this.branch, sha]
