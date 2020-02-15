@@ -78,7 +78,7 @@ describe('Clasp', () => {
         expect(() => model.update()).toThrow('process.exit() was called.');
         expect(console.error).toHaveBeenCalledTimes(1)
         // must be calls[0] but bug
-        expect(console.error.mock.calls[0][0]).toEqual(["Don't exists local repo: test/do_not_exist/.sit."])
+        expect(console.error.mock.calls[0]).toEqual(["Don't exists local repo: test/do_not_exist/.sit."])
         expect(process.exit).toHaveBeenCalledWith(1);
       })
     })

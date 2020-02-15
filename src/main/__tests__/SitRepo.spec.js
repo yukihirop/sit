@@ -276,7 +276,7 @@ describe('SitRepo', () => {
           });
 
           expect(() => model.branch({ deleteBranch: 'master' })).toThrow('process.exit() was called.')
-          expect(console.error.mock.calls[0][0]).toEqual(["error: Cannot delete branch 'master' checked out"])
+          expect(console.error.mock.calls[0]).toEqual(["error: Cannot delete branch 'master' checked out"])
           expect(console.error).toHaveBeenCalledTimes(1)
         })
       })
@@ -320,7 +320,7 @@ describe('SitRepo', () => {
 
           expect(() => model.branch({ deleteBranch: 'master' })).toThrow('process.exit() was called.')
           expect(console.error).toHaveBeenCalledTimes(1)
-          expect(console.error.mock.calls[0][0]).toEqual(["error: Cannot delete branch 'master' checked out"])
+          expect(console.error.mock.calls[0]).toEqual(["error: Cannot delete branch 'master' checked out"])
         })
       })
     })
@@ -389,7 +389,7 @@ describe('SitRepo', () => {
 
           expect(() => model.checkout(null, null, { branch: 'develop' })).toThrow('process.exit() was called.')
           expect(console.error).toHaveBeenCalledTimes(1)
-          expect(console.error.mock.calls[0][0]).toEqual(["fatal: A branch named 'develop' already exists."])
+          expect(console.error.mock.calls[0]).toEqual(["fatal: A branch named 'develop' already exists."])
         })
       })
 
@@ -422,7 +422,7 @@ describe('SitRepo', () => {
 
           expect(() => model.checkout('typo_origin', 'test')).toThrow('process.exit() was called.')
           expect(console.error).toHaveBeenCalledTimes(1)
-          expect(console.error.mock.calls[0][0]).toEqual([`\
+          expect(console.error.mock.calls[0]).toEqual([`\
 fatal: 'typo_origin' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
@@ -522,7 +522,7 @@ Please make sure you have the correct access rights and the repository exists.`]
 
         expect(() => model.commit()).toThrow('process.exit() was called.')
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0][0]).toEqual(["Need message to commit"])
+        expect(console.error.mock.calls[0]).toEqual(["Need message to commit"])
       })
     })
   })
@@ -661,7 +661,7 @@ Please make sure you have the correct access rights and the repository exists.`]
         expect(mockModel__isExistFile.mock.calls[0]).toEqual(["MERGE_HEAD"])
 
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0][0]).toEqual(["fatal: There is no merge in progress (MERGE_HEAD missing)"])
+        expect(console.error.mock.calls[0]).toEqual(["fatal: There is no merge in progress (MERGE_HEAD missing)"])
       })
     })
 
@@ -713,7 +713,7 @@ Merge remote-tracking branch 'origin/test'
 
         expect(() => model.merge('origin', 'master')).toThrow('process.exit() was called.')
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0][0]).toEqual([`\
+        expect(console.error.mock.calls[0]).toEqual([`\
 error: Merging is not possible because you have unmerged files.
 hint: Fix them up in the work tree, and then use 'sit merge --continue'
 hint: as appropriate to mark resolution and make a commit.
@@ -751,7 +751,7 @@ fatal: Existing because of an unresolved conflict.`])
 
         expect(() => model.merge(null, null, { stat: true })).toThrow('process.exit() was called.')
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0][0]).toEqual([`\
+        expect(console.error.mock.calls[0]).toEqual([`\
 fatal: You have not concluded your merge (MERGE_HEAD exists)
 Please, commit your changes before you merge.`])
       })
