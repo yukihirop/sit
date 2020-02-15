@@ -41,7 +41,7 @@ describe('sit', () => {
         expect(() => sit().Repo.fetch('typo_origin', 'master')).toThrow('process.exit() was called.');
         expect(console.error).toHaveBeenCalledTimes(1)
         // must be calls[0] but bug
-        expect(console.error.mock.calls[0][0]).toEqual([`\
+        expect(console.error.mock.calls[0]).toEqual([`\
 fatal: 'typo_origin' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
@@ -113,7 +113,7 @@ Please make sure you have the correct access rights and the repository exists.`]
 
         expect(() => sit().Repo.push('origin', 'master')).toThrow('process.exit() was called.')
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0][0]).toEqual([`\
+        expect(console.error.mock.calls[0]).toEqual([`\
 fatal: 'origin' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
@@ -152,7 +152,7 @@ Please make sure you have the correct access rights and the repository exists.`]
 
           expect(() => sit().Repo.push('origin', null)).toThrow('process.exit() was called.')
           expect(console.error).toHaveBeenCalledTimes(1)
-          expect(console.error.mock.calls[0][0]).toEqual(["branch is required"])
+          expect(console.error.mock.calls[0]).toEqual(["branch is required"])
         })
       })
     })
@@ -184,7 +184,7 @@ Please make sure you have the correct access rights and the repository exists.`]
 
             // do not called by bug.
             // expect(console.error).toHaveBeenCalledTimes(1)
-            // expect(console.error.mock.calls[0][0]).toEqual("fatal: destination path 'test/dist/test_data.csv' already exists and is not an empty directory")
+            // expect(console.error.mock.calls[0]).toEqual("fatal: destination path 'test/dist/test_data.csv' already exists and is not an empty directory")
           })
         })
 
@@ -227,7 +227,7 @@ Please make sure you have the correct access rights and the repository exists.`]
 
           expect(() => sit().Repo.clone('origin', null)).toThrow('process.exit() was called.')
           expect(console.error).toHaveBeenCalledTimes(1)
-          expect(console.error.mock.calls[0][0]).toEqual(["url is required"])
+          expect(console.error.mock.calls[0]).toEqual(["url is required"])
         })
       })
     })
@@ -241,7 +241,7 @@ Please make sure you have the correct access rights and the repository exists.`]
         expect(() => sit().Repo.clone(null, 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0')).toThrow('process.exit() was called.')
 
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0][0]).toEqual(["repository is required"])
+        expect(console.error.mock.calls[0]).toEqual(["repository is required"])
       })
     })
   })
@@ -283,7 +283,7 @@ Please make sure you have the correct access rights and the repository exists.`]
 
         expect(() => sit().Repo.checkLocalRepo()).toThrow('process.exit() was called.')
         expect(console.error).toHaveBeenCalledTimes(1)
-        expect(console.error.mock.calls[0][0]).toEqual(["fatal: not a sit repository (or any of the parent directories): test/localRepo/.sit"])
+        expect(console.error.mock.calls[0]).toEqual(["fatal: not a sit repository (or any of the parent directories): test/localRepo/.sit"])
       })
     })
   })
@@ -417,25 +417,25 @@ Please make sure you have the correct access rights and the repository exists.`]
     })
   })
 
-    describe('Repo.remote', () => {
-      it('should return correctly', () => {
-        const mockSitRepo_remote = jest.fn()
-        SitRepo.prototype.remote = mockSitRepo_remote
-        sit().Repo.remote('add', 'origin', 'https://test.co.jp')
+  describe('Repo.remote', () => {
+    it('should return correctly', () => {
+      const mockSitRepo_remote = jest.fn()
+      SitRepo.prototype.remote = mockSitRepo_remote
+      sit().Repo.remote('add', 'origin', 'https://test.co.jp')
 
-        expect(mockSitRepo_remote).toHaveBeenCalledTimes(1)
-        expect(mockSitRepo_remote.mock.calls[0]).toEqual(["add", "origin", "https://test.co.jp", {}])
-      })
+      expect(mockSitRepo_remote).toHaveBeenCalledTimes(1)
+      expect(mockSitRepo_remote.mock.calls[0]).toEqual(["add", "origin", "https://test.co.jp", {}])
     })
+  })
 
-    describe('Clasp.update', () => {
-      it('should return correctly', () => {
-        const mockClasp_update = jest.fn()
-        Clasp.prototype.update = mockClasp_update
-        sit().Clasp.update()
+  describe('Clasp.update', () => {
+    it('should return correctly', () => {
+      const mockClasp_update = jest.fn()
+      Clasp.prototype.update = mockClasp_update
+      sit().Clasp.update()
 
-        expect(mockClasp_update).toHaveBeenCalledTimes(1)
-        expect(mockClasp_update.mock.calls[0]).toEqual([])
-      })
+      expect(mockClasp_update).toHaveBeenCalledTimes(1)
+      expect(mockClasp_update.mock.calls[0]).toEqual([])
     })
+  })
 })
