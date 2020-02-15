@@ -9,7 +9,8 @@ const opener = require('opener');
 const {
   writeSyncFile,
   rmDirSync,
-  recursive
+  recursive,
+  mkdirSyncRecursive
 } = require('@utils/file');
 
 // https://stackoverflow.com/questions/39755439/how-to-mock-imported-named-function-in-jest-when-module-is-unmocked
@@ -18,7 +19,8 @@ jest.mock('@utils/file', () => (
     ...(jest.requireActual('@utils/file')),
     writeSyncFile: jest.fn(),
     rmDirSync: jest.fn(),
-    recursive: jest.fn()
+    recursive: jest.fn(),
+    mkdirSyncRecursive: jest.fn()
   }
 ));
 
@@ -28,10 +30,12 @@ jest.mock('opener');
 describe('SitRepo', () => {
   const model = new SitRepo()
   const oldLocalRepo = model.localRepo
+  const oldDistFilePath = model.distFilePath
 
   afterEach(() => {
     jest.restoreAllMocks()
     model.localRepo = oldLocalRepo
+    model.distFilePath = oldDistFilePath
   })
 
   describe('#init', () => {
@@ -89,43 +93,67 @@ describe('SitRepo', () => {
   })
 
   describe('#clone', () => {
-    it('should return correctly', () => {
-      model.localRepo = 'test/sandbox/.sit'
-      const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
-      const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-      const mockSitConfig_updateSection = jest.fn()
-      SitConfig.prototype.updateSection = mockSitConfig_updateSection
+    describe('when distDir exist', () => {
+      it('should return correctly', () => {
+        model.localRepo = 'test/sandbox/.sit'
+        const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
+        const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
+        const mockSitConfig_updateSection = jest.fn()
+        SitConfig.prototype.updateSection = mockSitConfig_updateSection
 
-      model.clone(
-        'origin',
-        'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0',
-        '953b3794394d6b48d8690bc5e53aa2ffe2133035',
-        '日本語,英語,キー\nこんにちは,hello,greeting.hello\nさようなら,good_bye,greeting.good_bye\n歓迎します,wellcome,greeting.welcome\nおやすみ,good night,greeting.good_night',
-        { type: 'GoogleSpreadSheet' }
-      )
-      expect(mockSitConfig_updateSection).toHaveBeenCalledTimes(2)
-      expect(mockSitConfig_updateSection.mock.calls[0][0]).toBe('remote.origin')
-      expect(mockSitConfig_updateSection.mock.calls[0][1]).toEqual({ "fetch": "+refs/heads/*:refs/remotes/origin/*", "type": "GoogleSpreadSheet", "url": "https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0" })
-      expect(mockSitConfig_updateSection.mock.calls[1][0]).toBe('branch.master')
-      expect(mockSitConfig_updateSection.mock.calls[1][1]).toEqual({ "merge": "refs/heads/master", "remote": "origin" })
+        model.clone(
+          'origin',
+          'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0',
+          '953b3794394d6b48d8690bc5e53aa2ffe2133035',
+          '日本語,英語,キー\nこんにちは,hello,greeting.hello\nさようなら,good_bye,greeting.good_bye\n歓迎します,wellcome,greeting.welcome\nおやすみ,good night,greeting.good_night',
+          { type: 'GoogleSpreadSheet' }
+        )
+        expect(mockSitConfig_updateSection).toHaveBeenCalledTimes(2)
+        expect(mockSitConfig_updateSection.mock.calls[0][0]).toBe('remote.origin')
+        expect(mockSitConfig_updateSection.mock.calls[0][1]).toEqual({ "fetch": "+refs/heads/*:refs/remotes/origin/*", "type": "GoogleSpreadSheet", "url": "https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0" })
+        expect(mockSitConfig_updateSection.mock.calls[1][0]).toBe('branch.master')
+        expect(mockSitConfig_updateSection.mock.calls[1][1]).toEqual({ "merge": "refs/heads/master", "remote": "origin" })
 
-      expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
-      expect(mockModel__writeSyncFile.mock.calls[0][0]).toBe('refs/heads/master')
-      expect(mockModel__writeSyncFile.mock.calls[0][1]).toBe('953b3794394d6b48d8690bc5e53aa2ffe2133035')
-      expect(mockModel__writeSyncFile.mock.calls[1][0]).toBe('refs/remotes/origin/HEAD')
-      expect(mockModel__writeSyncFile.mock.calls[1][1]).toBe('ref: refs/remotes/origin/master')
+        expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
+        expect(mockModel__writeSyncFile.mock.calls[0][0]).toBe('refs/heads/master')
+        expect(mockModel__writeSyncFile.mock.calls[0][1]).toBe('953b3794394d6b48d8690bc5e53aa2ffe2133035')
+        expect(mockModel__writeSyncFile.mock.calls[1][0]).toBe('refs/remotes/origin/HEAD')
+        expect(mockModel__writeSyncFile.mock.calls[1][1]).toBe('ref: refs/remotes/origin/master')
 
-      expect(mockModel__writeLog).toHaveBeenCalledTimes(3)
-      expect(mockModel__writeLog.mock.calls[0][0]).toBe('logs/refs/heads/master')
-      expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/master", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
-      expect(mockModel__writeLog.mock.calls[1][0]).toBe('logs/refs/remotes/origin/HEAD')
-      expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/remotes/origin/HEAD", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
-      expect(mockModel__writeLog.mock.calls[2][0]).toBe('logs/HEAD')
-      expect(mockModel__writeLog.mock.calls[2]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+        expect(mockModel__writeLog).toHaveBeenCalledTimes(3)
+        expect(mockModel__writeLog.mock.calls[0][0]).toBe('logs/refs/heads/master')
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/master", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+        expect(mockModel__writeLog.mock.calls[1][0]).toBe('logs/refs/remotes/origin/HEAD')
+        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/remotes/origin/HEAD", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+        expect(mockModel__writeLog.mock.calls[2][0]).toBe('logs/HEAD')
+        expect(mockModel__writeLog.mock.calls[2]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
 
-      expect(writeSyncFile).toHaveBeenCalledTimes(1)
-      expect(writeSyncFile.mock.calls[0][0]).toBe('test/dist/test_data.csv')
-      expect(writeSyncFile.mock.calls[0][1]).toBe('日本語,英語,キー\nこんにちは,hello,greeting.hello\nさようなら,good_bye,greeting.good_bye\n歓迎します,wellcome,greeting.welcome\nおやすみ,good night,greeting.good_night')
+        expect(writeSyncFile).toHaveBeenCalledTimes(1)
+        expect(writeSyncFile.mock.calls[0][0]).toBe('test/dist/test_data.csv')
+        expect(writeSyncFile.mock.calls[0][1]).toBe('日本語,英語,キー\nこんにちは,hello,greeting.hello\nさようなら,good_bye,greeting.good_bye\n歓迎します,wellcome,greeting.welcome\nおやすみ,good night,greeting.good_night')
+      })
+    })
+
+    describe('when distDir do not exist', () => {
+      it('should return correctly', () => {
+        model.localRepo = 'test/sandbox/.sit'
+        model.distFilePath = 'do_not_exist/test_data.csv'
+
+        jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
+        jest.spyOn(model, '_writeLog').mockReturnValue(model)
+        const mockSitConfig_updateSection = jest.fn()
+        SitConfig.prototype.updateSection = mockSitConfig_updateSection
+
+        model.clone(
+          'origin',
+          'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0',
+          '953b3794394d6b48d8690bc5e53aa2ffe2133035',
+          '日本語,英語,キー\nこんにちは,hello,greeting.hello\nさようなら,good_bye,greeting.good_bye\n歓迎します,wellcome,greeting.welcome\nおやすみ,good night,greeting.good_night',
+          { type: 'GoogleSpreadSheet' }
+        )
+        expect(mkdirSyncRecursive).toHaveBeenCalledTimes(1)
+        expect(mkdirSyncRecursive.mock.calls[0][0]).toEqual('do_not_exist')
+      })
     })
   })
 
