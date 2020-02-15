@@ -4,13 +4,13 @@ function onOpen(e) {
   findOrCreateSheet(REMOTE_LOG_REF, true)
 
   // logs/refs/remotes
-  var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var wh = sheet.getSheetByName(REMOTE_LOG_REF);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet();
+  const wh = sheet.getSheetByName(REMOTE_LOG_REF);
   insertOrUpdate(wh, REMOTE_LOG_REF_HEADER);
 
   // refs/remotes
-  var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var wh = sheet.getSheetByName(REMOTE_REF);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet();
+  const wh = sheet.getSheetByName(REMOTE_REF);
   insertOrUpdate(wh, REMOTE_REF_HEADER);
 
   getShownSheetNames().forEach(function (branch) {
