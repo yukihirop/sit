@@ -4,6 +4,13 @@ function getByteLength(str) {
   return encodeURI(str).replace(/%../g, "*").length;
 }
 
+function deleteDefaultSheet() {
+  const ss = SpreadsheetApp.getActive();
+  const jaSheet = ss.getSheetByName(JA_DEFAULT_SHEET_NAME);
+  const enSheet = ss.getSheetByName(EN_DEFAULT_SHEET_NAME);
+  if (jaSheet) ss.deleteSheet(jaSheet);
+  if (enSheet) ss.deleteSheet(enSheet);
+}
 
 function findOrCreateSheet(sheetName, hidden) {
   const findSh = SpreadsheetApp.getActive().getSheetByName(sheetName);
@@ -13,7 +20,8 @@ function findOrCreateSheet(sheetName, hidden) {
   } else {
     const sh = SpreadsheetApp.getActiveSpreadsheet();
     const ish = sh.insertSheet(sheetName);
-    ish.protect();
+    // Cause of timeout
+    // ish.protect();
 
     if (hidden) {
       ish.hideSheet();
