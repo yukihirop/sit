@@ -34,7 +34,9 @@ const SitConfig = require('./repos/SitConfig');
 const SitRefParser = require('./repos/refs/SitRefParser');
 
 class SitRepo extends SitBaseRepo {
-  init() {
+  init(opts = {}) {
+    const { data } = opts;
+
     if (isExistFile(this.localRepo)) {
       return false
     } else {
@@ -48,6 +50,9 @@ class SitRepo extends SitBaseRepo {
         ._writeSyncFile("config", "", true);
 
       writeSyncFile(`${this.homeDir}/.sitconfig`, "", true);
+
+      // Create distFile
+      this._createDistFile(data)
 
       return true
     }
@@ -84,11 +89,7 @@ class SitRepo extends SitBaseRepo {
       ._writeLog("logs/HEAD", this._INITIAL_HASH(), masterHash, `clone: from ${url}`);
 
     // STEP 7: Update dist file instead of Update index
-    const distDir = pathDirname(this.distFilePath)
-    if (!isExistFile(distDir)) {
-      mkdirSyncRecursive(distDir)
-    }
-    writeSyncFile(this.distFilePath, masterData);
+    this._createDistFile(masterData, true)
   }
 
   isLocalRepo() {

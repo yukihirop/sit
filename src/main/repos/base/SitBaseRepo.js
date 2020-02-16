@@ -45,6 +45,20 @@ class SitBaseRepo extends SitBase {
     }
   }
 
+  _createDistFile(data, write = false) {
+    // STEP 7: Update dist file instead of Update index
+    const distDir = pathDirname(this.distFilePath)
+    if (!isExistFile(distDir)) {
+      mkdirSyncRecursive(distDir)
+    }
+    if (!isExistFile(this.distFilePath)) {
+      writeSyncFile(this.distFilePath, data);
+    }
+    if (write) {
+      writeSyncFile(this.distFilePath, data)
+    }
+  }
+
   _refCSVData(branch, repoName) {
     let refPath
 

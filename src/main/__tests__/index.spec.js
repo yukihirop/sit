@@ -13,12 +13,14 @@ const mockSitRepo_rollback = jest.fn()
 const mockGSS_getRows = jest.fn()
 const mockGSS_pushRows = jest.fn()
 const mockGSS_getSheetNames = jest.fn()
+const mockGSS_header = jest.fn()
 jest.mock('@main/sheets/GSS', () => {
   return jest.fn().mockImplementation(() => {
     return {
       getRows: mockGSS_getRows,
       pushRows: mockGSS_pushRows,
-      getSheetNames: mockGSS_getSheetNames
+      getSheetNames: mockGSS_getSheetNames,
+      header: mockGSS_header
     }
   })
 });
@@ -251,6 +253,7 @@ Please make sure you have the correct access rights and the repository exists.`]
       it('should return correctly', () => {
         SitRepo.prototype.init = mockSitRepo_init
         mockSitRepo_init.mockReturnValueOnce(false)
+        mockGSS_header.mockReturnValueOnce(['日本語', '英語', 'キー'])
         console.log = jest.fn()
         sit().Repo.init()
 
@@ -262,11 +265,13 @@ Please make sure you have the correct access rights and the repository exists.`]
     describe('when localRepo do not exist', () => {
       SitRepo.prototype.init = mockSitRepo_init
       mockSitRepo_init.mockReturnValueOnce(true)
+      mockGSS_header.mockReturnValueOnce(['日本語', '英語', 'キー'])
       console.log = jest.fn()
       sit().Repo.init()
 
-      expect(console.log).toHaveBeenCalledTimes(1)
+      expect(console.log).toHaveBeenCalledTimes(2)
       expect(console.log.mock.calls[0]).toEqual(["created local repo: test/localRepo/.sit"])
+      expect(console.log.mock.calls[1]).toEqual(["created dist file: test/dist/test_data.csv"])
     })
   })
 

@@ -51,7 +51,10 @@ describe('SitRepo', () => {
         model.localRepo = 'test/sandbox/.sit'
         const mockModel__mkdirSyncRecursive = jest.spyOn(model, '_mkdirSyncRecursive').mockReturnValue(model)
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
-        expect(model.init()).toEqual(true)
+        const mockModel__createDistFile = jest.spyOn(model, '_createDistFile').mockReturnValueOnce(true)
+        const data = ['日本語', '英語', 'キー']
+        expect(model.init({ data })).toEqual(true)
+
         expect(mockModel__mkdirSyncRecursive).toHaveBeenCalledTimes(6)
         expect(mockModel__mkdirSyncRecursive.mock.calls[0]).toEqual([])
         expect(mockModel__mkdirSyncRecursive.mock.calls[1]).toEqual(['refs/heads'])
@@ -66,6 +69,9 @@ describe('SitRepo', () => {
 
         expect(writeSyncFile).toHaveBeenCalledTimes(1)
         expect(writeSyncFile.mock.calls[0]).toEqual(["./test/homeDir/.sitconfig", "", true])
+
+        expect(mockModel__createDistFile).toHaveBeenCalledTimes(1)
+        expect(mockModel__createDistFile.mock.calls[0]).toEqual([["日本語", "英語", "キー"]])
       })
     })
   })
@@ -98,6 +104,7 @@ describe('SitRepo', () => {
         model.localRepo = 'test/sandbox/.sit'
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
+        const mockModel__createDistFile = jest.spyOn(model, '_createDistFile').mockReturnValueOnce(true)
         const mockSitConfig_updateSection = jest.fn()
         SitConfig.prototype.updateSection = mockSitConfig_updateSection
 
@@ -105,7 +112,10 @@ describe('SitRepo', () => {
           'origin',
           'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0',
           '953b3794394d6b48d8690bc5e53aa2ffe2133035',
-          '日本語,英語,キー\nこんにちは,hello,greeting.hello\nさようなら,good_bye,greeting.good_bye\n歓迎します,wellcome,greeting.welcome\nおやすみ,good night,greeting.good_night',
+          [
+            ['日本語', '英語', 'キー'],
+            ['こんにちは', 'hello', 'greetiing.hello']
+          ],
           { type: 'GoogleSpreadSheet' }
         )
         expect(mockSitConfig_updateSection).toHaveBeenCalledTimes(2)
@@ -128,9 +138,12 @@ describe('SitRepo', () => {
         expect(mockModel__writeLog.mock.calls[2][0]).toBe('logs/HEAD')
         expect(mockModel__writeLog.mock.calls[2]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
 
-        expect(writeSyncFile).toHaveBeenCalledTimes(1)
-        expect(writeSyncFile.mock.calls[0][0]).toBe('test/dist/test_data.csv')
-        expect(writeSyncFile.mock.calls[0][1]).toBe('日本語,英語,キー\nこんにちは,hello,greeting.hello\nさようなら,good_bye,greeting.good_bye\n歓迎します,wellcome,greeting.welcome\nおやすみ,good night,greeting.good_night')
+        expect(mockModel__createDistFile).toHaveBeenCalledTimes(1)
+        expect(mockModel__createDistFile.mock.calls[0][0]).toEqual([
+          ['日本語', '英語', 'キー'],
+          ['こんにちは', 'hello', 'greetiing.hello']
+        ])
+        expect(mockModel__createDistFile.mock.calls[0][1]).toEqual(true)
       })
     })
 
