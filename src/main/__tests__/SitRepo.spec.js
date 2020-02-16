@@ -432,22 +432,38 @@ describe('SitRepo', () => {
       })
 
       describe('when checkout branch is new branch', () => {
-        it('should return correctly', () => {
-          console.log = jest.fn()
-          const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
-          const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-          model.checkout(null, null, { branch: 'new_branch' })
+        describe('when branch name is valid', () => {
+          it('should return correctly', () => {
+            console.log = jest.fn()
+            const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
+            const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
 
-          expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
-          expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["HEAD", "ref: refs/heads/new_branch", false])
-          expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/heads/new_branch", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", false])
+            model.checkout(null, null, { branch: 'new_branch' })
 
-          expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
-          expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "checkout: moving from master to new_branch"])
-          expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/new_branch", null, "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "branch: Created from HEAD"])
+            expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
+            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["HEAD", "ref: refs/heads/new_branch", false])
+            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/heads/new_branch", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", false])
 
-          expect(console.log).toHaveBeenCalledTimes(1)
-          expect(console.log.mock.calls[0]).toEqual(["Switched to a new branch 'new_branch'"])
+            expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
+            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "checkout: moving from master to new_branch"])
+            expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/new_branch", null, "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "branch: Created from HEAD"])
+
+            expect(console.log).toHaveBeenCalledTimes(1)
+            expect(console.log.mock.calls[0]).toEqual(["Switched to a new branch 'new_branch'"])
+          })
+        })
+
+        describe('when branch name is invalid', () => {
+          it('should return correctly', () => {
+            console.error = jest.fn()
+            jest.spyOn(process, 'exit').mockImplementation(() => {
+              throw new Error('process.exit() was called.')
+            });
+
+            expect(() => model.checkout(null, null, { branch: '[pr] master...develop' })).toThrow('process.exit() was called.')
+            expect(console.error).toHaveBeenCalledTimes(1)
+            expect(console.error.mock.calls[0]).toEqual(["fatal: '[pr] master...develop' is not a valid branch name."])
+          })
         })
       })
 
