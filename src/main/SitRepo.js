@@ -18,9 +18,7 @@ const {
   mTimeMs,
   rmDirSync,
   fileBasename,
-  pathRelative,
-  pathDirname,
-  mkdirSyncRecursive
+  pathRelative
 } = require('./utils/file');
 
 const {
@@ -32,6 +30,7 @@ const editor = require('./utils/editor');
 const SitBaseRepo = require('./repos/base/SitBaseRepo');
 const SitConfig = require('./repos/SitConfig');
 const SitRefParser = require('./repos/refs/SitRefParser');
+const SitRepoValidator = require('./repos/validators/SitRepoValidator');
 
 class SitRepo extends SitBaseRepo {
   init(opts = {}) {
@@ -274,6 +273,13 @@ Please make sure you have the correct access rights and the repository exists.`)
         .checkout(null, name);
 
     } else if (branch) {
+      const validator = new SitRepoValidator()
+
+      if (!validator.isBranch(branch)) {
+        const err = validator.errors[0]
+        die(err.message)
+      }
+
       const fullCurrentRefPath = this._getPath(`refs/heads/${branch}`);
 
       if (isExistFile(fullCurrentRefPath)) {
