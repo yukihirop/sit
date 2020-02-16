@@ -24,10 +24,13 @@ function calcBranchHash(branch) {
   // MEMO: [[1,2,3],[,,]] => [[1,2,3]]
   values = values.filter(function (value) { return value.filter(function (item) { return item }).length > 0 });
 
-  const result = values.reduce(function (acc, value) {
-    return acc = acc + value.join(',') + '\n';
-  }, '');
-  const store = 'blob' + ' ' + getByteLength(result) + '\0' + result;
+  /*
+  * ***********************************************************************************
+  * GAS scripts cannot use null-terminated strings(\0). I can't help but escape and use
+  * ***********************************************************************************
+  */
+  const result = values.join('\n')
+  const store = 'blob' + ' ' + getByteLength(result) + '\\0' + result;
   return toSHA1(store);
 }
 
