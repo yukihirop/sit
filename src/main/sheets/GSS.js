@@ -59,7 +59,7 @@ class GSS {
 
         let acc = await pacc
 
-        if (isEqual(sheet.headerValues, this._header())) {
+        if (isEqual(sheet.headerValues, this.header())) {
           acc.push(sheet._rawProperties.title)
         }
         return acc
@@ -70,7 +70,7 @@ class GSS {
     })
   }
 
-  getRows(repoName, sheetName, header = this._header()) {
+  getRows(repoName, sheetName, header = this.header()) {
     return new Promise((resolve, reject) => {
       this.loadInfo(repoName, (_, sheets) => {
         const sheet = sheets.filter(sheet => sheet._rawProperties.title == sheetName)[0]
@@ -141,7 +141,16 @@ class GSS {
     });
   }
 
-  _rows2CSV(rows, header = this._header()) {
+  header() {
+    const sheetSchema = SitSetting.sheet.gss.openAPIV3Schema.properties;
+    const keys = Object.keys(sheetSchema)
+    const result = keys.map(key => {
+      return sheetSchema[key]['description']
+    });
+    return result;
+  }
+
+  _rows2CSV(rows, header = this.header()) {
     let result = [];
 
     rows.forEach(row => {
@@ -190,15 +199,6 @@ class GSS {
     }
 
     await sheet.saveUpdatedCells();
-  }
-
-  _header() {
-    const sheetSchema = SitSetting.sheet.gss.openAPIV3Schema.properties;
-    const keys = Object.keys(sheetSchema)
-    const result = keys.map(key => {
-      return sheetSchema[key]['description']
-    });
-    return result;
   }
 }
 

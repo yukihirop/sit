@@ -210,7 +210,7 @@ To ${repo.remoteRepo(repoName)}\n\
               let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
 
               // Update local repo
-              repo.clone(repoName, url, sha, data.join('\n'), opts);
+              repo.clone(repoName, url, sha, data, opts);
 
               console.log(`\
 Cloning into ... '${repo.distFilePath}'\n\
@@ -236,9 +236,11 @@ remote: done.`);
   }
 
   Repo.init = () => {
-    const result = repo.init();
+    const data = sheet.header()
+    const result = repo.init({ data });
     if (result) {
       console.log(`created local repo: ${repo.localRepo}`);
+      console.log(`created dist file: ${repo.distFilePath}`);
       return
     } else {
       console.log(`already exist local repo: ${repo.localRepo}`);
