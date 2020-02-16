@@ -1,44 +1,47 @@
 function appendRef(remoteRef, branch) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var wh = sheet.getSheetByName(remoteRef);
-  var txtHash = calcBranchHash(branch);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet();
+  const wh = sheet.getSheetByName(remoteRef);
+  const txtHash = calcBranchHash(branch);
   insertOrUpdate(wh, [branch, txtHash]);
 }
 
 function deleteRef(remoteRef, branch) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var wh = sheet.getSheetByName(remoteRef);
-  var row = getRow(branch, 'A', wh);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet();
+  const wh = sheet.getSheetByName(remoteRef);
+  const row = getRow(branch, 'A', wh);
   wh.deleteRows(row, 1);
 }
 
 function calcBranchHash(branch) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var origRange = sheet.getSheetByName(branch).getDataRange();
-  var values = origRange.getValues();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet();
+  const origRange = sheet.getSheetByName(branch).getDataRange();
+  let values = origRange.getValues();
 
-  var header = values[0].filter(function (item) { return (item !== '' && item !== undefined) });
-  var headerCount = header.length;
+  const header = values[0].filter(function (item) { return (item !== '' && item !== undefined) });
+  const headerCount = header.length;
 
   values = values.map(function (item) { return item.slice(0, headerCount) });
   // MEMO: [[1,2,3],[,,]] => [[1,2,3]]
   values = values.filter(function (value) { return value.filter(function (item) { return item }).length > 0 });
 
-  var result = values.reduce(function (acc, value) {
-    return acc = acc + value.join(',') + '\n';
-  }, '');
-  var store = 'blob' + ' ' + getByteLength(result) + '\0' + result;
+  /*
+  * ***********************************************************************************
+  * GAS scripts cannot use null-terminated strings(\0). I can't help but escape and use
+  * ***********************************************************************************
+  */
+  const result = values.join('\n')
+  const store = 'blob' + ' ' + getByteLength(result) + '\\0' + result;
   return toSHA1(store);
 }
 
 // https://blog.mosuke.tech/entry/2018/12/20/slideshare-api-by-gas/
 // https://blog.keinos.com/20170525_2324
 function toSHA1(text) {
-  var rawHash = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_1, text, Utilities.Charset.UTF_8);
-  var txtHash = "";
+  const rawHash = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_1, text, Utilities.Charset.UTF_8);
+  let txtHash = "";
 
   for (i = 0; i < rawHash.length; i++) {
-    var hashVal = rawHash[i];
+    let hashVal = rawHash[i];
     if (hashVal < 0) {
       hashVal += 256;
     }

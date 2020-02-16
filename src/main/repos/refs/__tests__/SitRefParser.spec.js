@@ -14,7 +14,7 @@ describe('SitRefParser', () => {
         model = new SitRefParser('master', 'refs/heads/master')
         expect(model.parseToCSV()).toEqual([
           ["branch", "sha1"],
-          ["master", "953b3794394d6b48d8690bc5e53aa2ffe2133035"]
+          ["master", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14"]
         ])
       })
     })

@@ -2,15 +2,18 @@ function onOpen(e) {
   findOrCreateSheet(MASTER_BRANCH, false)
   findOrCreateSheet(REMOTE_REF, true)
   findOrCreateSheet(REMOTE_LOG_REF, true)
+  deleteDefaultSheet()
+
+  let sheet, wh;
 
   // logs/refs/remotes
-  var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var wh = sheet.getSheetByName(REMOTE_LOG_REF);
+  sheet = SpreadsheetApp.getActiveSpreadsheet();
+  wh = sheet.getSheetByName(REMOTE_LOG_REF);
   insertOrUpdate(wh, REMOTE_LOG_REF_HEADER);
 
   // refs/remotes
-  var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var wh = sheet.getSheetByName(REMOTE_REF);
+  sheet = SpreadsheetApp.getActiveSpreadsheet();
+  wh = sheet.getSheetByName(REMOTE_REF);
   insertOrUpdate(wh, REMOTE_REF_HEADER);
 
   getShownSheetNames().forEach(function (branch) {

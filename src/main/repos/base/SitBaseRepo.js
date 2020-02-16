@@ -225,9 +225,14 @@ class SitBaseRepo extends SitBase {
     return this._objectWrite(obj, write);
   }
 
+  /*
+  * ***********************************************************************************
+  * GAS scripts cannot use null-terminated strings(\0). I can't help but escape and use
+  * ***********************************************************************************
+  */
   _objectWrite(obj, write) {
     const data = obj.serialize();
-    const header = `${obj.fmt} ${Buffer.byteLength(data)}\0`;
+    const header = `${obj.fmt} ${Buffer.byteLength(data)}\\0`;
     const store = header + data;
     const shasum = crypto.createHash('sha1');
 
@@ -265,11 +270,16 @@ class SitBaseRepo extends SitBase {
         const fmt = binary.slice(0, x);
 
         // Read and validate object size
-        const y = binary.indexOf('\0', x);
+        /*
+        * ***********************************************************************************
+        * GAS scripts cannot use null-terminated strings(\0). I can't help but escape and use
+        * ***********************************************************************************
+        */
+        const y = binary.indexOf('\\0', x);
         const size = parseInt(binary.slice(x, y));
-        const data = binary.slice(y + 1);
+        const data = binary.slice(y + 2);
 
-        if (size != (binary.length - y - 1)) {
+        if (size != (binary.length - y - 2)) {
           const err = new Error(`Malformed object ${sha}: bad length.`)
           reject(err);
         }

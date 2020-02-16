@@ -42,7 +42,7 @@ Please make sure you have the correct access rights and the repository exists.`)
       if (branch) {
         sheet.getRows(repoName, branch)
           .then(data => {
-            const remoteHash = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
+            const remoteHash = repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
 
             repo.fetch(repoName, branch, { prune, remoteHash })
               .then(result => {
@@ -83,7 +83,7 @@ From ${repo.remoteRepo(repoName)}
               const promises = addedBranches.map(branch => {
                 sheet.getRows(repoName, branch)
                   .then(data => {
-                    repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
+                    repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
                   })
                   .catch(_err => {
                     die(`fatal: Couldn't find remote ref '${branch}'`);
@@ -207,7 +207,7 @@ To ${repo.remoteRepo(repoName)}\n\
               // Copy clasp scripts
               clasp.update();
 
-              let sha = repo.hashObjectFromData(`${data.join('\n')}\n`, { type: 'blob', write: true });
+              let sha = repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
 
               // Update local repo
               repo.clone(repoName, url, sha, data, opts);
