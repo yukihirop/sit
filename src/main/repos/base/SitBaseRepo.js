@@ -21,10 +21,12 @@ const SitSetting = require('../../SitSetting')
   , SitConfig = require('../SitConfig');
 
 const recursive = require('recursive-readdir')
-  , crypto = require('crypto');
+  , crypto = require('crypto')
+  , moment = require('moment');
 
 const SitBlob = require('../objects/SitBlob')
   , SitTree = require('../objects/SitTree')
+  , SitCommit = require('../objects/SitCommit')
   , SitLogger = require('../logs/SitLogger')
   , SitBase = require('../base/SitBase')
   , SitLogParser = require('../logs/SitLogParser')
@@ -34,6 +36,8 @@ class SitBaseRepo extends SitBase {
   constructor(opts) {
     super(opts);
     this.distFilePath = pathJoin(pathDirname(SitSetting._internal_.settingPath), `${SitSetting.dist.path}/${SitSetting.dist.sheetName}`);
+    this.localConfig = new SitConfig('local').config;
+    this.globalConfig = new SitConfig('global').config;
   }
 
   remoteRepo(repoName) {
@@ -43,6 +47,88 @@ class SitBaseRepo extends SitBase {
     } else {
       return null
     }
+  }
+
+  username() {
+    const localConfig = this.localConfig;
+    const globalConfig = this.globalConfig;
+    const defaultName = 'anonymous';
+    let result;
+
+    if (localConfig.user) {
+      if (localConfig.user.name) {
+        result = localConfig.user.name;
+      } else {
+        if (globalConfig.user) {
+          if (globalConfig.user.name) {
+            result = globalConfig.user.name;
+          } else {
+            result = defaultName;
+          }
+        } else {
+          result = defaultName
+        }
+      }
+    } else {
+      if (globalConfig.user) {
+        if (globalConfig.user.name) {
+          result = globalConfig.user.name;
+        } else {
+          result = defaultName;
+        }
+      } else {
+        result = defaultName;
+      }
+    }
+
+    return result;
+  }
+
+  email() {
+    const localConfig = this.localConfig;
+    const globalConfig = this.globalConfig;
+    const defaultEmail = 'anonymous@example.com';
+    let result;
+
+    if (localConfig.user) {
+      if (localConfig.user.email) {
+        result = localConfig.user.email;
+      } else {
+        if (globalConfig.user) {
+          if (globalConfig.user.email) {
+            result = globalConfig.user.email;
+          } else {
+            result = defaultEmail;
+          }
+        } else {
+          result = defaultEmail;
+        }
+      }
+    } else {
+      if (globalConfig.user) {
+        if (globalConfig.user.email) {
+          result = globalConfig.user.email;
+        } else {
+          result = defaultEmail;
+        }
+      } else {
+        result = defaultEmail;
+      }
+    }
+
+    return result;
+  }
+
+  _refBlob(ref) {
+    let commitHash = this._refResolve(ref);
+    let blobHash = null;
+
+    const { err, obj } = this._objectRead(commitHash);
+    if (obj instanceof SitCommit) {
+      blobHash = obj.blobHash()
+    }
+
+    return { err, blobHash }
   }
 
   _createDistFile(data, write = false) {
@@ -143,6 +229,29 @@ class SitBaseRepo extends SitBase {
     return this;
   }
 
+  _createCommitMessage(blobHash, parentHash, message) {
+    let result = '';
+    const space = ' '
+      , author = this.username()
+      , email = this.email()
+      , committer = author
+      , timewithZone = `${moment().format('x')}${space}${moment().format('ZZ')}`;
+
+    result += `blob${space}${blobHash}\n`
+    result += `parent${space}${parentHash}\n`
+    result += `author${space}${author}${space}<${email}>${space}${timewithZone}\n`
+    result += `committer${space}${committer}${space}<${email}>${space}${timewithZone}\n`
+    result += '\n'
+    result += message
+
+    return result
+  }
+
+  _createCommit(blobHash, parentHash, message) {
+    const msg = this._createCommitMessage(blobHash, parentHash, message)
+    return this._objectHash(msg, 'commit', true)
+  }
+
   _twoWayMerge(toData, fromData, toName, fromName, callback) {
     const toMark = '<<<<<<<';
     const sepalate = '=======';
@@ -218,6 +327,9 @@ class SitBaseRepo extends SitBase {
       case 'blob':
         obj = new SitBlob(this, data);
         break;
+      case 'commit':
+        obj = new SitCommit(this, data);
+        break;
       default:
         throw new Error(`Unknown type ${fmt}!`)
     }
@@ -292,6 +404,9 @@ class SitBaseRepo extends SitBase {
         break;
       case 'blob':
         klass = SitBlob;
+        break;
+      case 'commit':
+        klass = SitCommit;
         break;
       default:
         err = new Error(`Unknown type ${fmt}`);

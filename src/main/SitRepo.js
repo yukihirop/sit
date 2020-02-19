@@ -351,26 +351,25 @@ nothing to commit`
       , refBranch = this._HEAD()
       , branch = refBranch.split('/').slice(-1)[0]
       , beforeHEADHash = this._refResolve('HEAD')
-      , afterHEADHash = this._add(this.distFilePath, opts)
+      , blobHash = this._add(this.distFilePath, opts)
       , isExistMessage = (message !== '') && (message !== undefined)
+      // STEP 1: Create sit objects (commit)
+      , afterHEADHash = this._createCommit(blobHash, beforeHEADHash, message)
       , isChangeHash = beforeHEADHash !== afterHEADHash;
 
     if (isExistMessage && isChangeHash) {
-      // STEP 1: Update COMMIT_EDITMSG
-      // STEP 2: Update ORIG_HEAD
-      // STEP 3: Update HEAD
-      // STEP 4: Update logs/HEAD
-      // STEP 5: Update logs/refs/heads/<branch>
+      // STEP 2: Update COMMIT_EDITMSG
+      // STEP 3: Update ORIG_HEAD
+      // STEP 4: Update HEAD
+      // STEP 5: Update logs/HEAD
+      // STEP 6: Update logs/refs/heads/<branch>
       this._writeSyncFile('COMMIT_EDITMSG', message)
         ._writeSyncFile('ORIG_HEAD', beforeHEADHash)
         ._writeSyncFile(refBranch, afterHEADHash)
         ._writeLog("logs/HEAD", beforeHEADHash, afterHEADHash, `commit ${message}`)
-        ._writeLog(`logs/${refBranch}`, beforeHEADHash, afterHEADHash, `commit ${message}`);
+        ._writeLog(`logs/${refBranch}`, beforeHEADHash, afterHEADHash, `commit ${message}`)
 
-      // STEP 6: Update index
-      // Do not necessary
-
-      // STEP 7: Create sit objects (commit, tree)
+      // STEP 7: Update index
       // Do not necessary
 
       // STEP 8: display info

@@ -110,8 +110,8 @@ From ${repo.remoteRepo(repoName)}
 
   Repo.push = (repoName, branch, opts = {}) => {
     const { type, force } = opts;
-    const REMOTEHEADHash = repo._refResolve('REMOTE_HEAD');
-    const HEADHash = repo._refResolve('HEAD');
+    const REMOTEHEADBlobHash = repo._refResolve('REMOTE_HEAD');
+    const HEADBlobHash = repo._refBlob('HEAD');
 
     if (repo.remoteRepo(repoName) === undefined) {
       die(`\
@@ -126,12 +126,12 @@ Please make sure you have the correct access rights and the repository exists.`)
           const json = csv2JSON(data);
           const remoteHash = json[branch];
 
-          if (HEADHash === remoteHash) {
+          if (HEADBlobHash === remoteHash) {
             console.log('Everything up-to-date');
             return;
           }
 
-          const isPushableAboutREMOTEREADHash = (REMOTEHEADHash === repo._INITIAL_HASH()) ? true : (REMOTEHEADHash === remoteHash)
+          const isPushableAboutREMOTEREADHash = (REMOTEHEADBlobHash === repo._INITIAL_HASH()) ? true : (REMOTEHEADBlobHash === remoteHash)
           if (!force && (remoteHash !== undefined) && !isPushableAboutREMOTEREADHash) {
             die(`\
 To ${repo.remoteRepo(repoName)}\n\
@@ -144,7 +144,7 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
           }
 
           // Update local repo
-          repo.push(repoName, branch, { ...opts, HEADHash }).then(hashData => {
+          repo.push(repoName, branch, { ...opts, HEADBlobHash }).then(hashData => {
             const { beforeHash, afterHash } = hashData;
 
             if (!force && (remoteHash !== undefined) && (beforeHash === afterHash)) {

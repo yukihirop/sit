@@ -1,5 +1,6 @@
 const SitBaseRepo = require('@repos/base/SitBaseRepo');
 const SitBlob = require('@repos/objects/SitBlob');
+const SitCommit = require('@repos/objects/SitCommit')
 const SitLogParser = require('@repos/logs/SitLogParser');
 const SitRefParser = require('@repos/refs/SitRefParser');
 
@@ -19,6 +20,15 @@ jest.mock('@utils/file', () => (
     writeSyncFile: jest.fn()
   }
 ));
+
+const mockMoment_format = jest.fn()
+jest.mock('moment', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      format: mockMoment_format
+    }
+  })
+});
 
 // https://stackoverflow.com/questions/50421732/mocking-up-static-methods-in-jest
 describe('SitBaseRepo', () => {
@@ -49,6 +59,43 @@ describe('SitBaseRepo', () => {
     })
   });
 
+  // FIXME: mock global .sitconfig
+  describe('#username', () => {
+    it('should return correctly', () => {
+      expect(model.username()).toEqual('yukihirop')
+    })
+  })
+
+  // FIXME: mock global .sitconfig
+  describe('#email', () => {
+    it('should return correctly', () => {
+      expect(model.email()).toEqual('te108186@gmail.com')
+    })
+  })
+
+  describe('#_refBlob', () => {
+    const mockErr = null
+    const commitData = `\
+blob 5b1cf86e97c6633e9a2dd85567e33d636dd3748a
+parent e537175bbdf4cfeaf5e3f3c757e29ebb443b28aa
+author yukihirop <te108186@gmail.com> 1578060335 +0900
+committer yukihirop <te108186@gmail.com> 1578384538 +0900
+
+test data`
+    const obj = new SitCommit(model, commitData, 238)
+    const mockModel__objectRead = jest.spyOn(model, '_objectRead').mockReturnValueOnce({ mockErr, obj })
+    const mockObj_blobHash = jest.spyOn(obj, 'blobHash').mockReturnValueOnce('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
+    const { err, blobHash } = model._refBlob('HEAD')
+
+    expect(err).toEqual(undefined)
+    expect(blobHash).toEqual('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
+
+    expect(mockModel__objectRead).toHaveBeenCalledTimes(1)
+    expect(mockModel__objectRead.mock.calls[0]).toEqual(['0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'])
+
+    expect(mockObj_blobHash).toHaveBeenCalledTimes(1)
+    expect(mockObj_blobHash.mock.calls[0]).toEqual([])
+  })
 
   describe('#_refCSVData', () => {
     const mockSitRefParser_parseToCSV = jest.fn()
@@ -178,6 +225,58 @@ describe('SitBaseRepo', () => {
           }
         }
       })
+    })
+  })
+
+  describe('#_createCommitMessage', () => {
+    const blobHash = '953b3794394d6b48d8690bc5e53aa2ffe2133035';
+    const parentHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
+    const message = 'Update test data';
+    mockMoment_format.mockReturnValueOnce('1582125758897')
+      .mockReturnValueOnce('+0900')
+
+    it('should return correctly', () => {
+      expect(model._createCommitMessage(blobHash, parentHash, message)).toEqual(`\
+blob 953b3794394d6b48d8690bc5e53aa2ffe2133035
+parent 0133e12ee3679cb5bd494cb50e4f5a5a896eeb14
+author yukihirop <te108186@gmail.com> 1582125758897 +0900
+committer yukihirop <te108186@gmail.com> 1582125758897 +0900
+
+Update test data`)
+    })
+  })
+
+  describe('#_createCommit', () => {
+    const blobHash = '953b3794394d6b48d8690bc5e53aa2ffe2133035';
+    const parentHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
+    const message = 'Update test data';
+    const mockCommitMsg = `\
+blob 953b3794394d6b48d8690bc5e53aa2ffe2133035
+parent 0133e12ee3679cb5bd494cb50e4f5a5a896eeb14
+author yukihirop <te108186@gmail.com> 1582125758897 +0900
+committer yukihirop <te108186@gmail.com> 1582125758897 +0900
+
+Update test data`
+
+    it('should return correctly', () => {
+      const mockModel__createCommitMessage = jest.spyOn(model, '_createCommitMessage').mockReturnValueOnce(mockCommitMsg)
+      const mockModel__objectHash = jest.spyOn(model, '_objectHash').mockReturnValueOnce('2fbb75b48757eea03a71c3dc522249599a5642de')
+
+      expect(model._createCommit(blobHash, parentHash, message)).toEqual(`2fbb75b48757eea03a71c3dc522249599a5642de`)
+
+      expect(mockModel__createCommitMessage).toHaveBeenCalledTimes(1)
+      expect(mockModel__createCommitMessage.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "Update test data"])
+
+      expect(mockModel__objectHash).toHaveBeenCalledTimes(1)
+      expect(mockModel__objectHash.mock.calls[0][0]).toEqual(`\
+blob 953b3794394d6b48d8690bc5e53aa2ffe2133035
+parent 0133e12ee3679cb5bd494cb50e4f5a5a896eeb14
+author yukihirop <te108186@gmail.com> 1582125758897 +0900
+committer yukihirop <te108186@gmail.com> 1582125758897 +0900
+
+Update test data`)
+      expect(mockModel__objectHash.mock.calls[0][1]).toEqual('commit')
+      expect(mockModel__objectHash.mock.calls[0][2]).toEqual(true)
     })
   })
 

@@ -27,6 +27,15 @@ jest.mock('@utils/file', () => (
 jest.mock('@utils/editor');
 jest.mock('opener');
 
+const mockMoment_format = jest.fn()
+jest.mock('moment', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      format: mockMoment_format
+    }
+  })
+});
+
 describe('SitRepo', () => {
   const model = new SitRepo()
   const oldLocalRepo = model.localRepo
@@ -528,12 +537,24 @@ Please make sure you have the correct access rights and the repository exists.`]
   })
 
   describe('#commit', () => {
+    const commitData = `\
+tree b18c9566daeb03818f64109ffcd9c8ad545b5f6e
+parent 0133e12ee3679cb5bd494cb50e4f5a5a896eeb14
+author yukihirop <te108186@gmail.com> 1582127655803 +0900
+committer yukihirop <te108186@gmail.com> 1582127655803 +0900
+
+first commit`
+
     describe('when can commit', () => {
       it('should return correctly', () => {
         console.log = jest.fn()
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
+        const mockModel__createCommit = jest.spyOn(model, '_createCommit').mockReturnValueOnce('b18c9566daeb03818f64109ffcd9c8ad545b5f6e')
         model.commit({ message: 'first commit' })
+
+        expect(mockModel__createCommit).toHaveBeenCalledTimes(1)
+        expect(mockModel__createCommit.mock.calls[0]).toEqual(["b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "first commit"])
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(3)
         expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["COMMIT_EDITMSG", "first commit"])
@@ -554,6 +575,7 @@ Please make sure you have the correct access rights and the repository exists.`]
         console.log = jest.fn()
         const mockModel__refResolve = jest.spyOn(model, '_refResolve').mockReturnValue('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
         const mockModel__add = jest.spyOn(model, '_add').mockReturnValue('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
+        const mockModel__createCommit = jest.spyOn(model, '_createCommit').mockReturnValueOnce('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
         model.commit({ message: 'first commit' })
 
         expect(mockModel__refResolve).toHaveBeenCalledTimes(1)
@@ -561,6 +583,9 @@ Please make sure you have the correct access rights and the repository exists.`]
 
         expect(mockModel__add).toHaveBeenCalledTimes(1)
         expect(mockModel__add.mock.calls[0]).toEqual(["test/dist/test_data.csv", { "message": "first commit" }])
+
+        expect(mockModel__createCommit).toHaveBeenCalledTimes(1)
+        expect(mockModel__createCommit.mock.calls[0]).toEqual(["0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "first commit"])
 
         expect(console.log).toHaveBeenCalledTimes(1)
         expect(console.log.mock.calls[0]).toEqual(['On branch master\nnothing to commit'])
