@@ -255,47 +255,50 @@ class SitBaseRepo extends SitBase {
     // TODO:
     // Add SHA1 validation
     let path = this.__repoFile(false, "objects", sha.slice(0, 2), sha.slice(2));
+    let err = null;
+    let obj = null;
 
-    return new Promise((resolve, reject) => {
-      if (!isExistFile(path)) reject(new Error(`Do not exists path: ${path}`));
+    if (!isExistFile(path)) {
+      err = new Error(`Do not exists path: ${path}`);
+      return { err, obj }
+    }
 
-      const binary = fileUnzipSync(path, false)
+    const binary = fileUnzipSync(path, false)
 
-      // Read object type
-      const x = binary.indexOf(' ');
-      const fmt = binary.slice(0, x);
+    // Read object type
+    const x = binary.indexOf(' ');
+    const fmt = binary.slice(0, x);
 
-      // Read and validate object size
-      /*
-      * ***********************************************************************************
-      * GAS scripts cannot use null-terminated strings(\0). I can't help but escape and use
-      * ***********************************************************************************
-      */
-      const y = binary.indexOf('\\0', x);
-      const size = parseInt(binary.slice(x, y));
-      const data = binary.slice(y + 2);
+    // Read and validate object size
+    /*
+    * ***********************************************************************************
+    * GAS scripts cannot use null-terminated strings(\0). I can't help but escape and use
+    * ***********************************************************************************
+    */
+    const y = binary.indexOf('\\0', x);
+    const size = parseInt(binary.slice(x, y));
+    const data = binary.slice(y + 2);
 
-      if (size != (binary.length - y - 2)) {
-        const err = new Error(`Malformed object ${sha}: bad length.`)
-        reject(err);
-      }
+    if (size != (binary.length - y - 2)) {
+      err = new Error(`Malformed object ${sha}: bad length.`)
+    }
 
-      // Pick constructor
-      let klass;
-      switch (fmt.toString()) {
-        case 'tree':
-          klass = SitTree;
-          break;
-        case 'blob':
-          klass = SitBlob;
-          break;
-        default:
-          const err = new Error(`Unknown type ${fmt}`);
-          reject(err);
-      }
+    // Pick constructor
+    let klass;
+    switch (fmt.toString()) {
+      case 'tree':
+        klass = SitTree;
+        break;
+      case 'blob':
+        klass = SitBlob;
+        break;
+      default:
+        err = new Error(`Unknown type ${fmt}`);
+    }
 
-      resolve(new klass(this, data, size))
-    })
+    obj = new klass(this, data, size)
+
+    return { err, obj }
   }
 
   _objectFind(name, follow = true) {

@@ -245,24 +245,22 @@ describe('SitBaseRepo', () => {
   describe('#_objectRead', () => {
     describe('when sha exists', () => {
       const sha1 = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14';
-      it('should return correctly', (done) => {
-        model._objectRead(sha1).then(obj => {
-          expect(obj.serialize().toString()).toEqual(`\
+      it('should return correctly', () => {
+        const { err, obj } = model._objectRead(sha1)
+        expect(obj.serialize().toString()).toEqual(`\
 日本語,英語,キー
 こんにちは,hello,greeting.hello
 `)
-          done()
-        })
+        expect(err).toBeNull()
       })
     })
 
     describe('when sha do not exists', () => {
       const gocha = 'not_exists'
-      it('should return correctly', (done) => {
-        model._objectRead(gocha).catch(err => {
-          expect(err.message).toEqual('Do not exists path: undefined')
-          done()
-        })
+      it('should return correctly', () => {
+        const { err, obj } = model._objectRead(gocha)
+        expect(obj).toBeNull()
+        expect(err.message).toEqual('Do not exists path: undefined')
       })
     })
   })
