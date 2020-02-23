@@ -6,8 +6,8 @@ const {
   writeSyncFile,
   mkdirSyncRecursive,
   fileSafeLoad,
-  fileUnzip,
-  fileDeflate,
+  fileUnzipSync,
+  fileDeflateSync,
   fileBasename,
   deleteSyncFile,
   iniParse,
@@ -241,10 +241,7 @@ class SitBaseRepo extends SitBase {
 
     if (write) {
       const fullPath = this.__repoFile(write, "objects", sha.slice(0, 2), sha.slice(2));
-      fileDeflate(store, (err, buffer) => {
-        if (err) throw err;
-        writeSyncFile(fullPath, buffer);
-      });
+      writeSyncFile(fullPath, fileDeflateSync(store));
     }
 
     return sha;
@@ -262,44 +259,42 @@ class SitBaseRepo extends SitBase {
     return new Promise((resolve, reject) => {
       if (!isExistFile(path)) reject(new Error(`Do not exists path: ${path}`));
 
-      fileUnzip(path, false, (err, binary) => {
-        if (err) reject(err);
+      const binary = fileUnzipSync(path, false)
 
-        // Read object type
-        const x = binary.indexOf(' ');
-        const fmt = binary.slice(0, x);
+      // Read object type
+      const x = binary.indexOf(' ');
+      const fmt = binary.slice(0, x);
 
-        // Read and validate object size
-        /*
-        * ***********************************************************************************
-        * GAS scripts cannot use null-terminated strings(\0). I can't help but escape and use
-        * ***********************************************************************************
-        */
-        const y = binary.indexOf('\\0', x);
-        const size = parseInt(binary.slice(x, y));
-        const data = binary.slice(y + 2);
+      // Read and validate object size
+      /*
+      * ***********************************************************************************
+      * GAS scripts cannot use null-terminated strings(\0). I can't help but escape and use
+      * ***********************************************************************************
+      */
+      const y = binary.indexOf('\\0', x);
+      const size = parseInt(binary.slice(x, y));
+      const data = binary.slice(y + 2);
 
-        if (size != (binary.length - y - 2)) {
-          const err = new Error(`Malformed object ${sha}: bad length.`)
+      if (size != (binary.length - y - 2)) {
+        const err = new Error(`Malformed object ${sha}: bad length.`)
+        reject(err);
+      }
+
+      // Pick constructor
+      let klass;
+      switch (fmt.toString()) {
+        case 'tree':
+          klass = SitTree;
+          break;
+        case 'blob':
+          klass = SitBlob;
+          break;
+        default:
+          const err = new Error(`Unknown type ${fmt}`);
           reject(err);
-        }
+      }
 
-        // Pick constructor
-        let klass;
-        switch (fmt.toString()) {
-          case 'tree':
-            klass = SitTree;
-            break;
-          case 'blob':
-            klass = SitBlob;
-            break;
-          default:
-            const err = new Error(`Unknown type ${fmt}`);
-            reject(err);
-        }
-
-        resolve(new klass(this, data, size))
-      });
+      resolve(new klass(this, data, size))
     })
   }
 

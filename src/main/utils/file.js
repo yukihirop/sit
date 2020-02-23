@@ -142,7 +142,7 @@ const fileSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {
   return { err, data };
 }
 
-const fileUnzip = (file, isRelative = true, callback) => {
+const fileUnzipSync = (file, isRelative = true) => {
   let loadPath = file;
 
   if (isRelative) {
@@ -151,15 +151,11 @@ const fileUnzip = (file, isRelative = true, callback) => {
 
   const content = fs.readFileSync(loadPath);
 
-  zlib.unzip(content, (err, binary) => {
-    callback(err, binary);
-  });
+  return zlib.unzipSync(Buffer.from(content, 'base64'))
 }
 
-const fileDeflate = (data, callback) => {
-  zlib.deflate(data, (err, buffer) => {
-    callback(err, buffer);
-  });
+const fileDeflateSync = (data) => {
+  return zlib.deflateSync(data)
 }
 
 const fileBasename = (file) => {
@@ -242,8 +238,8 @@ module.exports = {
   csvSafeLoad,
   appendFile,
   fileSafeLoad,
-  fileUnzip,
-  fileDeflate,
+  fileUnzipSync,
+  fileDeflateSync,
   fileBasename,
   fileCopySync,
   recursive,
