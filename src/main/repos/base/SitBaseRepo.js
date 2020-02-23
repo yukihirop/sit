@@ -281,6 +281,7 @@ class SitBaseRepo extends SitBase {
 
     if (size != (binary.length - y - 2)) {
       err = new Error(`Malformed object ${sha}: bad length.`)
+      return { err, obj }
     }
 
     // Pick constructor
