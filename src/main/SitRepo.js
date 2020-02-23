@@ -130,11 +130,9 @@ class SitRepo extends SitBaseRepo {
     return new Promise((resolve, reject) => {
       this._objectFind(name)
         .then(sha => {
-          this._objectRead(sha)
-            .then(obj => {
-              resolve(obj);
-            })
-            .catch(err => reject(err));
+          const { err, obj } = this._objectRead(sha)
+          if (err) reject(err)
+          resolve(obj)
         })
         .catch(err => reject(err));
     })
