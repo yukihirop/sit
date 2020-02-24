@@ -214,6 +214,17 @@ class SitRepo extends SitBaseRepo {
     const currentHash = this._refResolve('HEAD');
     let isRemote;
 
+    if (repoName && name) {
+      isRemote = true
+    } else if (!repoName && name) {
+      isRemote = false
+    } else if (repoName && !name) {
+      isRemote = false
+      // May be repoName mean branch
+      name = repoName
+      repoName = null
+    }
+
     if (repoName) {
       if (!this.remoteRepo(repoName)) {
         die(`\
@@ -221,13 +232,6 @@ fatal: '${repoName}' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`);
-      }
-
-      if (name) {
-        isRemote = true
-      } else {
-        isRemote = false
-        name = repoName
       }
     }
 
@@ -244,9 +248,12 @@ Please make sure you have the correct access rights and the repository exists.`)
               // STEP 1: Update HEAD
               // STEP 2: Append logs/HEAD
               // STEP 3: Update dist file instead of Update index
+              const { err, blobHash } = this._refBlobFromCommitHash(sha)
+              if (err) die(err.message)
+
               this._writeSyncFile(`HEAD`, `ref: refs/heads/${name}`, false)
                 ._writeLog("logs/HEAD", currentHash, sha, `checkout: moving from ${currentBranch} to ${name}`)
-                .catFile(sha).then(obj => {
+                .catFile(blobHash).then(obj => {
                   writeSyncFile(this.distFilePath, obj.serialize().toString());
                 })
 

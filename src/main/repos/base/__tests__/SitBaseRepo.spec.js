@@ -97,6 +97,32 @@ test data`
     expect(mockObj_blobHash.mock.calls[0]).toEqual([])
   })
 
+  describe('#_refBlobFromCommitHash', () => {
+    it('should return correctly', () => {
+      const mockErr = null
+      const commitData = `\
+blob 5b1cf86e97c6633e9a2dd85567e33d636dd3748a
+parent e537175bbdf4cfeaf5e3f3c757e29ebb443b28aa
+author yukihirop <te108186@gmail.com> 1578060335 +0900
+committer yukihirop <te108186@gmail.com> 1578384538 +0900
+
+test data`
+      const obj = new SitCommit(model, commitData, 238)
+      const mockModel__objectRead = jest.spyOn(model, '_objectRead').mockReturnValueOnce({ mockErr, obj })
+      const mockObj_blobHash = jest.spyOn(obj, 'blobHash').mockReturnValueOnce('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
+      const { err, blobHash } = model._refBlobFromCommitHash('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
+
+      expect(err).toEqual(undefined)
+      expect(blobHash).toEqual('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
+
+      expect(mockModel__objectRead).toHaveBeenCalledTimes(1)
+      expect(mockModel__objectRead.mock.calls[0]).toEqual([`0133e12ee3679cb5bd494cb50e4f5a5a896eeb14`])
+
+      expect(mockObj_blobHash).toHaveBeenCalledTimes(1)
+      expect(mockObj_blobHash.mock.calls[0]).toEqual([])
+    })
+  })
+
   describe('#_refCSVData', () => {
     const mockSitRefParser_parseToCSV = jest.fn()
 

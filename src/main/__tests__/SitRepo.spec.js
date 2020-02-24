@@ -3,6 +3,7 @@
 const SitRepo = require('../SitRepo')
 const SitConfig = require('@repos/SitConfig')
 const SitBlob = require('@repos/objects/SitBlob');
+const SitCommit = require('@repos/objects/SitCommit');
 const editor = require('@utils/editor');
 const opener = require('opener');
 
@@ -393,13 +394,22 @@ describe('SitRepo', () => {
         })
       })
 
-      //
       describe('when currentBranch is not checkout branch', () => {
         it('should return correctly', () => {
-          const mockObj = new SitBlob(model, '1,2,3', 3)
+          const err = null
+          const blobHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
+          const commitData = `\
+blob ${blobHash}
+parent 0000000000000000000000000000000000000000
+author yukihirop <te108186@gmail.com> 1582125758897 +0900
+committer GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900
+
+Merge from GoogleSpreadSheet/develop`
+          const mockObj = new SitCommit(model, commitData, 238)
           const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValue(Promise.resolve('success'))
           jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
           jest.spyOn(model, '_writeLog').mockReturnValue(model)
+          jest.spyOn(model, '_refBlobFromCommitHash').mockReturnValueOnce({ err, blobHash })
           jest.spyOn(model, 'catFile').mockReturnValue(Promise.resolve(mockObj))
           model.checkout(null, 'develop', {})
 

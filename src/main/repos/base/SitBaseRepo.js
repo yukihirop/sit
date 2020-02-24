@@ -131,6 +131,17 @@ class SitBaseRepo extends SitBase {
     return { err, blobHash }
   }
 
+  _refBlobFromCommitHash(commitHash) {
+    let blobHash = null;
+
+    const { err, obj } = this._objectRead(commitHash);
+    if (obj instanceof SitCommit) {
+      blobHash = obj.blobHash()
+    }
+
+    return { err, blobHash }
+  }
+
   _createDistFile(data, write = false) {
     // STEP 7: Update dist file instead of Update index
     const distDir = pathDirname(this.distFilePath)
