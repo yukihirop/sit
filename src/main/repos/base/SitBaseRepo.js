@@ -252,6 +252,31 @@ class SitBaseRepo extends SitBase {
     return this._objectHash(msg, 'commit', true)
   }
 
+  _createMergeCommitMessage(blobHash, parentHash, branch, type) {
+    let result = '';
+    const space = ' '
+      , author = this.username()
+      , author_email = this.email()
+      , committer = type
+      , committer_email = `noreply@${type.toLowerCase()}.com`
+      , timewithZone = `${moment().format('x')}${space}${moment().format('ZZ')}`
+      , mergeMessage = `Merge from ${type}/${branch}`;
+
+    result += `blob${space}${blobHash}\n`
+    result += `parent${space}${parentHash}\n`
+    result += `author${space}${author}${space}<${author_email}>${space}${timewithZone}\n`
+    result += `committer${space}${committer}${space}<${committer_email}>${space}${timewithZone}\n`
+    result += `\n`
+    result += mergeMessage
+
+    return result
+  }
+
+  _createMergeCommit(blobHash, parentHash, branch, type) {
+    const msg = this._createMergeCommitMessage(blobHash, parentHash, branch, type)
+    return this._objectHash(msg, 'commit', true)
+  }
+
   _twoWayMerge(toData, fromData, toName, fromName, callback) {
     const toMark = '<<<<<<<';
     const sepalate = '=======';

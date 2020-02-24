@@ -280,6 +280,60 @@ Update test data`)
     })
   })
 
+  describe('#_createMergeCommitMessage', () => {
+    const blobHash = '953b3794394d6b48d8690bc5e53aa2ffe2133035';
+    const parentHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
+    const branch = 'master';
+    const type = 'GoogleSpreadSheet';
+    mockMoment_format.mockReturnValueOnce('1582125758897')
+      .mockReturnValueOnce('+0900')
+
+    it('should return correctly', () => {
+      expect(model._createMergeCommitMessage(blobHash, parentHash, branch, type)).toEqual(`\
+blob 953b3794394d6b48d8690bc5e53aa2ffe2133035
+parent 0133e12ee3679cb5bd494cb50e4f5a5a896eeb14
+author yukihirop <te108186@gmail.com> 1582125758897 +0900
+committer GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900
+
+Merge from GoogleSpreadSheet/master`)
+    })
+  })
+
+  describe('#_createMergeCommit', () => {
+    const blobHash = '953b3794394d6b48d8690bc5e53aa2ffe2133035';
+    const parentHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
+    const branch = 'master';
+    const type = 'GoogleSpreadSheet';
+    const mockCommitMsg = `\
+blob 953b3794394d6b48d8690bc5e53aa2ffe2133035
+parent 0133e12ee3679cb5bd494cb50e4f5a5a896eeb14
+author yukihirop <te108186@gmail.com> 1582125758897 +0900
+committer GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900
+
+Merge from GoogleSpreadSheet/master`
+
+    it('should return corrctly', () => {
+      const mockModel__createMergeCommitMessage = jest.spyOn(model, '_createMergeCommitMessage').mockReturnValueOnce(mockCommitMsg)
+      const mockModel__objectHash = jest.spyOn(model, '_objectHash').mockReturnValueOnce('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+
+      expect(model._createMergeCommit(blobHash, parentHash, branch, type)).toEqual('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+
+      expect(mockModel__createMergeCommitMessage).toHaveBeenCalledTimes(1)
+      expect(mockModel__createMergeCommitMessage.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "master", "GoogleSpreadSheet"])
+
+      expect(mockModel__objectHash).toHaveBeenCalledTimes(1)
+      expect(mockModel__objectHash.mock.calls[0][0]).toEqual(`\
+blob 953b3794394d6b48d8690bc5e53aa2ffe2133035
+parent 0133e12ee3679cb5bd494cb50e4f5a5a896eeb14
+author yukihirop <te108186@gmail.com> 1582125758897 +0900
+committer GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900
+
+Merge from GoogleSpreadSheet/master`)
+      expect(mockModel__objectHash.mock.calls[0][1]).toEqual('commit')
+      expect(mockModel__objectHash.mock.calls[0][2]).toEqual(true)
+    })
+  })
+
   describe('#_twoWayMerge', () => {
     const toData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     const fromData = [1, 2, 2, 2, 3, 4, 7, 8, 9, 10]
