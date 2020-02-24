@@ -482,7 +482,7 @@ error: failed to push some refs to '${repoName}'`))
 
   merge(repoName, branch, opts = {}) {
     const isContinue = opts.continue;
-    const { stat, abort } = opts;
+    const { stat, abort, type } = opts;
 
     if (!stat && !isContinue && !abort && branch !== this.currentBranch()) {
       console.log(`\
@@ -538,8 +538,9 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
             const commitMsg = data
             if (err) die(err.message)
 
-            const headHash = this._refResolve("HEAD");
+            const HEADHash = this._refResolve("HEAD");
             const calculateHash = this._add(this.distFilePath, {});
+            const mergeCommitHash = this._createMergeCommit(calculateHash, HEADHash, branch, type)
             const refBranch = this._HEAD();
             const remoteHead = this._refResolve("MERGE_HEAD");
 
@@ -553,8 +554,8 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
             // STEP 11: Delete MERGE_HEAD
             this._writeLog("logs/HEAD", this.beforeHEADHash(), this.afterHEADHash(), `commit (merge): ${commitMsg} into ${this.currentBranch()}`)
               ._writeLog(`logs/refs/heads/${this.currentBranch()}`, this.beforeHEADHash(), this.afterHEADHash(), `commit (merge): ${commitMsg} into ${this.currentBranch()}`)
-              ._writeSyncFile('ORIG_HEAD', headHash)
-              ._writeSyncFile(refBranch, calculateHash)
+              ._writeSyncFile('ORIG_HEAD', HEADHash)
+              ._writeSyncFile(refBranch, mergeCommitHash)
               ._writeSyncFile("REMOTE_HEAD", remoteHead)
               ._deleteSyncFile('MERGE_MODE')
               ._deleteSyncFile('MERGE_MSG')
