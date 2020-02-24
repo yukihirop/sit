@@ -30,7 +30,7 @@ function sit(opts) {
     , clasp = new AppClasp(gopts);
 
   Repo.fetch = (repoName, branch, opts = {}) => {
-    const { prune, verbose } = opts;
+    const { prune, verbose, type } = opts;
 
     if (!repo.remoteRepo(repoName)) {
       die(`\
@@ -44,7 +44,7 @@ Please make sure you have the correct access rights and the repository exists.`)
           .then(data => {
             const remoteHash = repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
 
-            repo.fetch(repoName, branch, { prune, remoteHash })
+            repo.fetch(repoName, branch, { prune, remoteHash, type })
               .then(result => {
                 if (!verbose) return;
 
@@ -79,7 +79,7 @@ From ${repo.remoteRepo(repoName)}
           sheet.getSheetNames(repoName, remoteBranches => {
             const remoteRefs = csv2JSON(data.slice(1));
 
-            repo.fetch(repoName, null, { prune, remoteBranches, remoteRefs }, (repoName, addedBranches) => {
+            repo.fetch(repoName, null, { prune, remoteBranches, remoteRefs, type }, (repoName, addedBranches) => {
               const promises = addedBranches.map(branch => {
                 sheet.getRows(repoName, branch)
                   .then(data => {

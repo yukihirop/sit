@@ -145,7 +145,7 @@ program
     const { type, prune, verbose } = options;
     sit({
       type: type
-    }).Repo.fetch(repository, branch, { prune, verbose })
+    }).Repo.fetch(repository, branch, { type, prune, verbose })
   });
 
 program

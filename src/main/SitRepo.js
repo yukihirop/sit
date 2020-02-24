@@ -415,7 +415,7 @@ error: failed to push some refs to '${repoName}'`))
   }
 
   fetch(repoName, branch, opts = {}, handler = () => { }) {
-    const { prune, remoteHash, remoteRefs, remoteBranches } = opts
+    const { type, prune, remoteHash, remoteRefs, remoteBranches } = opts
 
     return new Promise((resolve, reject) => {
       if (repoName) {
@@ -427,12 +427,13 @@ error: failed to push some refs to '${repoName}'`))
 
           // STEP 1: Update FETCH_HEAD
           // STEP 2: Update logs/refs/remotes/<repoName>/<branch>
-          // STEP3: Update refs/remotes/<repoName>/<branch>
-          this._writeSyncFile("FETCH_HEAD", `${remoteHash}\t\tbranch '${branch}' of ${repoName}`)
-            ._writeSyncFile(refPath, remoteHash)
-            ._writeLog(logPath, beforeHash, remoteHash, `fetch ${repoName} ${branch}: fast-forward`)
+          // STEP 3: Update refs/remotes/<repoName>/<branch>
+          const afterHash = this._createMergeCommit(remoteHash, beforeHash, branch, type)
+          this._writeSyncFile("FETCH_HEAD", `${afterHash}\t\tbranch '${branch}' of ${repoName}`)
+            ._writeSyncFile(refPath, afterHash)
+            ._writeLog(logPath, beforeHash, afterHash, `fetch ${repoName} ${branch}: fast-forward`)
 
-          resolve({ beforeHash, remoteHash, branchCount });
+          resolve({ beforeHash, afterHash, branchCount });
         } else {
           recursive(`${this.localRepo}/refs/remotes/${repoName}`)
             .then(files => {
@@ -447,7 +448,7 @@ error: failed to push some refs to '${repoName}'`))
                 switch (status) {
                   case 'added':
                     branches.forEach(b => {
-                      this.fetch(repoName, b, { prune: false, verbose: false, remoteHash: remoteRefs[b] });
+                      this.fetch(repoName, b, { type: type, prune: false, verbose: false, remoteHash: remoteRefs[b] });
                       added.push(b)
                       msg.push(`* [new branch]\t\t${b}\t\t-> ${repoName}/${b}`)
                     });

@@ -666,11 +666,13 @@ first commit`
         )
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         jest.spyOn(model, '_writeLog').mockReturnValue(model)
+        jest.spyOn(model, '_createMergeCommit').mockReturnValue('03/577e30b394d4cafbbec22cc1a78b91b3e7c20b')
 
         model.fetch('origin', null, {
           prune: false,
           remoteRefs: { 'test-1': 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', 'test-2': '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' },
-          remoteBranches: ['test-1', 'test-2']
+          remoteBranches: ['test-1', 'test-2'],
+          type: 'GoogleSpreadSheet'
         }).then(() => {
           expect(recursive).toHaveBeenCalledTimes(1)
           expect(recursive.mock.calls[0]).toEqual(["test/localRepo/.sit/refs/remotes/origin"])
@@ -683,16 +685,21 @@ first commit`
       it('should return correctly', (done) => {
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-        model.fetch('origin', 'test', { remoteHash: 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e' })
+        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValue('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+        model.fetch('origin', 'test', { remoteHash: 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', type: 'GoogleSpreadSheet' })
           .then(result => {
-            expect(result).toEqual({ "beforeHash": "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "branchCount": 1, "remoteHash": "b18c9566daeb03818f64109ffcd9c8ad545b5f6e" })
+            expect(result).toEqual({ "beforeHash": "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "branchCount": 1, "afterHash": "03577e30b394d4cafbbec22cc1a78b91b3e7c20b" })
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
-            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["FETCH_HEAD", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e		branch 'test' of origin"])
-            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/remotes/origin/test", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e"])
+            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["FETCH_HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b		branch 'test' of origin"])
+            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/remotes/origin/test", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b"])
 
             expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
-            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/test", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "fetch origin test: fast-forward"])
+            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/test", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "fetch origin test: fast-forward"])
+
+            expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1)
+            expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "test", "GoogleSpreadSheet"])
+
             done()
           })
       })
@@ -708,11 +715,13 @@ first commit`
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         jest.spyOn(model, '_writeLog').mockReturnValue(model)
         jest.spyOn(model, '_deleteSyncFile').mockReturnValue(model)
+        jest.spyOn(model, '_createMergeCommit').mockReturnValue('03/577e30b394d4cafbbec22cc1a78b91b3e7c20b')
 
         model.fetch('origin', null, {
           prune: true,
           remoteRefs: { 'test-1': 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', 'test-2': '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' },
-          remoteBranches: ['test-1', 'test-2']
+          remoteBranches: ['test-1', 'test-2'],
+          type: 'GoogleSpreadSheet'
         }).then(() => {
 
           expect(recursive).toHaveBeenCalledTimes(1)
