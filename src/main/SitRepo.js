@@ -110,8 +110,10 @@ class SitRepo extends SitBaseRepo {
   }
 
   _HEADCSVData(callback) {
-    const headHash = this._refResolve('HEAD');
-    this.catFile(headHash)
+    const { err, blobHash } = this._refBlob('HEAD');
+    if (err) die(err.message)
+
+    this.catFile(blobHash)
       .then(obj => {
         const stream = obj.serialize().toString()
         const csvData = stream.split('\n').map(line => { return line.split(',') })
@@ -310,11 +312,14 @@ Please make sure you have the correct access rights and the repository exists.`)
 
   diff(opts = {}) {
     opts = Object.assign(opts, { type: 'blob' });
-    const headHash = this._refResolve('HEAD');
-    const calculateHash = this.hashObject(this.distFilePath, opts);
-    const index = `${headHash.slice(0, 7)}..${calculateHash.slice(0, 7)}`;
 
-    this.catFile(headHash).then(obj => {
+    const { err, blobHash } = this._refBlob('HEAD');
+    if (err) die(err.message)
+
+    const calculateHash = this.hashObject(this.distFilePath, opts);
+    const index = `${blobHash.slice(0, 7)}..${calculateHash.slice(0, 7)}`;
+
+    this.catFile(blobHash).then(obj => {
       const headStream = obj.serialize().toString();
       const { err, data } = fileSafeLoad(this.distFilePath);
 
