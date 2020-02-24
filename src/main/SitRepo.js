@@ -76,18 +76,20 @@ class SitRepo extends SitBaseRepo {
     config.updateSection(`remote.${repoName}`, { type: type, url: url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` });
     config.updateSection(`branch.master`, { remote: 'origin', merge: 'refs/heads/master' });
 
-    // STEP 2: Update refs/heads/master
-    // STEP 3: Create refs/remotes/origin/HEAD
-    // STEP 4: Update logs/refs/heads/master
-    // STEP 5: Update logs/refs/remotes/origin/HEAD
-    // STEP 6: Update logs/HEAD
-    this._writeSyncFile("refs/heads/master", masterHash)
+    // STEP 2: Create Merge Commit Object
+    // STEP 3: Update refs/heads/master
+    // STEP 4: Create refs/remotes/origin/HEAD
+    // STEP 5: Update logs/refs/heads/master
+    // STEP 6: Update logs/refs/remotes/origin/HEAD
+    // STEP 7: Update logs/HEAD
+    const mergeCommitHash = this._createMergeCommit(masterHash, this._INITIAL_HASH(), 'master', type)
+    this._writeSyncFile("refs/heads/master", mergeCommitHash)
       ._writeSyncFile(`refs/remotes/${repoName}/HEAD`, `ref: refs/remotes/${repoName}/master`)
-      ._writeLog("logs/refs/heads/master", this._INITIAL_HASH(), masterHash, `clone: from ${url}`)
-      ._writeLog(`logs/refs/remotes/${repoName}/HEAD`, this._INITIAL_HASH(), masterHash, `clone: from ${url}`)
-      ._writeLog("logs/HEAD", this._INITIAL_HASH(), masterHash, `clone: from ${url}`);
+      ._writeLog("logs/refs/heads/master", this._INITIAL_HASH(), mergeCommitHash, `clone: from ${url}`)
+      ._writeLog(`logs/refs/remotes/${repoName}/HEAD`, this._INITIAL_HASH(), mergeCommitHash, `clone: from ${url}`)
+      ._writeLog("logs/HEAD", this._INITIAL_HASH(), mergeCommitHash, `clone: from ${url}`);
 
-    // STEP 7: Update dist file instead of Update index
+    // STEP 8: Update dist file instead of Update index
     this._createDistFile(masterData, true)
   }
 

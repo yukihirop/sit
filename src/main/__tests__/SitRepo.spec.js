@@ -114,6 +114,7 @@ describe('SitRepo', () => {
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
         const mockModel__createDistFile = jest.spyOn(model, '_createDistFile').mockReturnValueOnce(true)
+        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValueOnce('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
         const mockSitConfig_updateSection = jest.fn()
         SitConfig.prototype.updateSection = mockSitConfig_updateSection
 
@@ -135,17 +136,17 @@ describe('SitRepo', () => {
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
         expect(mockModel__writeSyncFile.mock.calls[0][0]).toBe('refs/heads/master')
-        expect(mockModel__writeSyncFile.mock.calls[0][1]).toBe('953b3794394d6b48d8690bc5e53aa2ffe2133035')
+        expect(mockModel__writeSyncFile.mock.calls[0][1]).toBe('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
         expect(mockModel__writeSyncFile.mock.calls[1][0]).toBe('refs/remotes/origin/HEAD')
         expect(mockModel__writeSyncFile.mock.calls[1][1]).toBe('ref: refs/remotes/origin/master')
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(3)
         expect(mockModel__writeLog.mock.calls[0][0]).toBe('logs/refs/heads/master')
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/master", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/master", "0000000000000000000000000000000000000000", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
         expect(mockModel__writeLog.mock.calls[1][0]).toBe('logs/refs/remotes/origin/HEAD')
-        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/remotes/origin/HEAD", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/remotes/origin/HEAD", "0000000000000000000000000000000000000000", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
         expect(mockModel__writeLog.mock.calls[2][0]).toBe('logs/HEAD')
-        expect(mockModel__writeLog.mock.calls[2]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+        expect(mockModel__writeLog.mock.calls[2]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
 
         expect(mockModel__createDistFile).toHaveBeenCalledTimes(1)
         expect(mockModel__createDistFile.mock.calls[0][0]).toEqual([
@@ -153,6 +154,9 @@ describe('SitRepo', () => {
           ['こんにちは', 'hello', 'greetiing.hello']
         ])
         expect(mockModel__createDistFile.mock.calls[0][1]).toEqual(true)
+
+        expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1)
+        expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035", "0000000000000000000000000000000000000000", "master", "GoogleSpreadSheet"])
       })
     })
 
@@ -164,6 +168,7 @@ describe('SitRepo', () => {
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         jest.spyOn(model, '_writeLog').mockReturnValue(model)
         const mockSitConfig_updateSection = jest.fn()
+        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValueOnce('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
         SitConfig.prototype.updateSection = mockSitConfig_updateSection
 
         model.clone(
@@ -175,6 +180,9 @@ describe('SitRepo', () => {
         )
         expect(mkdirSyncRecursive).toHaveBeenCalledTimes(1)
         expect(mkdirSyncRecursive.mock.calls[0][0]).toEqual('do_not_exist')
+
+        expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1)
+        expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035", "0000000000000000000000000000000000000000", "master", "GoogleSpreadSheet"])
       })
     })
   })
