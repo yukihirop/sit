@@ -191,7 +191,7 @@ class SitRepo extends SitBaseRepo {
           const result = files.reduce((acc, file) => {
             const refPath = pathRelative(this.localRepo, file)
             const branch = this._branchResolve(refPath);
-            const refParser = new SitRefParser(branch, refPath)
+            const refParser = new SitRefParser(this, branch, refPath)
 
             if (branch === currentBranch) {
               acc.push(`* ${refParser.displayedBranch()}`);

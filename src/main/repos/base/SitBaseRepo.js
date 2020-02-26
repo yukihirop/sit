@@ -123,6 +123,10 @@ class SitBaseRepo extends SitBase {
     let commitHash = this._refResolve(ref);
     let blobHash = null;
 
+    if (commitHash === this._INITIAL_HASH()) {
+      return this._INITIAL_HASH()
+    }
+
     const { err, obj } = this._objectRead(commitHash);
     if (err) die(err.message);
 
@@ -135,6 +139,10 @@ class SitBaseRepo extends SitBase {
 
   _refBlobFromCommitHash(commitHash) {
     let blobHash = null;
+
+    if (commitHash === this._INITIAL_HASH()) {
+      return this._INITIAL_HASH()
+    }
 
     const { err, obj } = this._objectRead(commitHash);
     if (err) die(err.message);
@@ -169,7 +177,7 @@ class SitBaseRepo extends SitBase {
       refPath = `refs/heads/${branch}`;
     }
 
-    const parser = new SitRefParser(branch, refPath);
+    const parser = new SitRefParser(this, branch, refPath);
     return parser.parseToCSV()
   }
 
@@ -182,7 +190,7 @@ class SitBaseRepo extends SitBase {
       logPath = `logs/refs/heads/${branch}`;
     }
 
-    const parser = new SitLogParser(branch, logPath);
+    const parser = new SitLogParser(this, branch, logPath);
     const logData = parser.parseToCSV()
     return [logData[0], logData.slice(-1)[0]]
   }
