@@ -165,7 +165,7 @@ class SitBaseRepo extends SitBase {
       refPath = `refs/heads/${branch}`;
     }
 
-    const parser = new SitRefParser(branch, refPath);
+    const parser = new SitRefParser(this, branch, refPath);
     return parser.parseToCSV()
   }
 

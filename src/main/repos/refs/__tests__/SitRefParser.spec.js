@@ -1,5 +1,6 @@
 'use strict';
 
+const SitBaseRepo = require('@repos/base/SitBaseRepo')
 const SitRefParser = require('@repos/refs/SitRefParser');
 const {
   colorize
@@ -7,11 +8,17 @@ const {
 
 describe('SitRefParser', () => {
   let model;
+  const repo = new SitBaseRepo
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
 
   describe('#parseToCSV', () => {
     describe('when refFile exist', () => {
       it('should return correctly', () => {
-        model = new SitRefParser('master', 'refs/heads/master')
+        jest.spyOn(repo, '_refBlobFromCommitHash').mockReturnValueOnce('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+        model = new SitRefParser(repo, 'master', 'refs/heads/master')
         expect(model.parseToCSV()).toEqual([
           ["branch", "sha1"],
           ["master", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b"]
@@ -23,14 +30,14 @@ describe('SitRefParser', () => {
   describe('#isRemote', () => {
     describe("refFile include 'refs/remotes'", () => {
       it('should return correctly', () => {
-        model = new SitRefParser('origin/develop', 'refs/remotes/origin/develop')
+        model = new SitRefParser(repo, 'origin/develop', 'refs/remotes/origin/develop')
         expect(model.isRemote()).toEqual(true)
       })
     })
 
     describe("refFile do not include 'refs/remotes'", () => {
       it('should return correctly', () => {
-        model = new SitRefParser('develop', 'refs/heads/develop')
+        model = new SitRefParser(repo, 'develop', 'refs/heads/develop')
         expect(model.isRemote()).toEqual(false)
       })
     })
@@ -39,14 +46,14 @@ describe('SitRefParser', () => {
   describe('#displayedBranch', () => {
     describe("refFile include 'refs/remotes'", () => {
       it('should return correctly', () => {
-        model = new SitRefParser('origin/develop', 'refs/remotes/origin/develop')
+        model = new SitRefParser(repo, 'origin/develop', 'refs/remotes/origin/develop')
         expect(model.displayedBranch()).toEqual(colorize("remotes/origin/develop", 'mark'))
       })
     })
 
     describe("refFile do not include 'refs/remotes'", () => {
       it('should return correctly', () => {
-        model = new SitRefParser('develop', 'refs/heads/develop')
+        model = new SitRefParser(repo, 'develop', 'refs/heads/develop')
         expect(model.displayedBranch()).toEqual('develop')
       })
     })
