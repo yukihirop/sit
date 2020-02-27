@@ -428,27 +428,43 @@ Merge from GoogleSpreadSheet/develop`
     })
 
     describe('when checkout from remote branch', () => {
-      it('should return correctly', () => {
-        const mockSitConfig_updateSection = jest.fn()
-        SitConfig.prototype.updateSection = mockSitConfig_updateSection
-        const mockModel__fileCopySync = jest.spyOn(model, '_fileCopySync').mockReturnValue(model)
-        const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-        const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValueOnce(Promise.resolve('b18c9566daeb03818f64109ffcd9c8ad545b5f6e'))
-        model.checkout('origin', 'test', {})
+      describe('when remote branch exists', () => {
+        it('should return correctly', () => {
+          const mockSitConfig_updateSection = jest.fn()
+          SitConfig.prototype.updateSection = mockSitConfig_updateSection
+          const mockModel__fileCopySync = jest.spyOn(model, '_fileCopySync').mockReturnValue(model)
+          const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
+          const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValueOnce(Promise.resolve('b18c9566daeb03818f64109ffcd9c8ad545b5f6e'))
+          model.checkout('origin', 'test', {})
 
-        expect(mockSitConfig_updateSection).toHaveBeenCalledTimes(1)
-        expect(mockSitConfig_updateSection.mock.calls[0]).toEqual(["branch.test", { "merge": "refs/heads/test", "remote": "origin" }])
+          expect(mockSitConfig_updateSection).toHaveBeenCalledTimes(1)
+          expect(mockSitConfig_updateSection.mock.calls[0]).toEqual(["branch.test", { "merge": "refs/heads/test", "remote": "origin" }])
 
-        expect(mockModel__fileCopySync).toHaveBeenCalledTimes(1)
-        expect(mockModel__fileCopySync.mock.calls[0]).toEqual(["refs/remotes/origin/test", "refs/heads/test"])
+          expect(mockModel__fileCopySync).toHaveBeenCalledTimes(1)
+          expect(mockModel__fileCopySync.mock.calls[0]).toEqual(["refs/remotes/origin/test", "refs/heads/test"])
 
-        expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/test", null, "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "branch: Created from refs/remotes/origin/test"])
+          expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
+          expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/test", null, "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "branch: Created from refs/remotes/origin/test"])
 
-        // checkout test (2 times)
+          // checkout test (2 times)
 
-        expect(mockModel__objectFind).toHaveBeenCalledTimes(1)
-        expect(mockModel__objectFind.mock.calls[0]).toEqual(["test"])
+          expect(mockModel__objectFind).toHaveBeenCalledTimes(1)
+          expect(mockModel__objectFind.mock.calls[0]).toEqual(["test"])
+        })
+      })
+
+      describe('when remote branch do not exists', () => {
+        it('should return correctly', () => {
+          const mockModel__isExistFile = jest.spyOn(model, '_isExistFile').mockReturnValueOnce(false)
+          console.error = jest.fn()
+          jest.spyOn(process, 'exit').mockImplementation(() => {
+            throw new Error('process.exit() was called.')
+          });
+
+          expect(() => model.checkout('origin', 'do_not_exist', {})).toThrow('process.exit() was called.')
+          expect(console.error).toHaveBeenCalledTimes(1)
+          expect(console.error.mock.calls[0]).toEqual(["error: pathspec 'do_not_exist' did not match any file(s) known to sit"])
+        })
       })
     })
 

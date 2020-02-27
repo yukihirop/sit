@@ -269,7 +269,14 @@ Please make sure you have the correct access rights and the repository exists.`)
       }
       // checkout local from remote
     } else if (!branch && isRemote) {
-      const branchHash = this._refResolve(`refs/remotes/${repoName}/${name}`);
+      const refRemotePath = `refs/remotes/${repoName}/${name}`
+
+      if (!this._isExistFile(refRemotePath)) {
+        const err = new Error(`error: pathspec '${name}' did not match any file(s) known to sit`)
+        die(err.message)
+      }
+
+      const branchHash = this._refResolve(refRemotePath);
 
       const config = new SitConfig('local');
       config.updateSection(`branch.${name}`, { remote: repoName, merge: `refs/heads/${name}` });
