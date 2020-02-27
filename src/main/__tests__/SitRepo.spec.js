@@ -295,7 +295,7 @@ describe('SitRepo', () => {
         const path = 'test/dist/test_data.csv'
         const opts = { type: 'blob', write: false }
 
-        expect(model.hashObject(path, opts)).toEqual('b18c9566daeb03818f64109ffcd9c8ad545b5f6e')
+        expect(model.hashObject(path, opts)).toEqual('1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16')
       })
     })
   })
@@ -305,7 +305,7 @@ describe('SitRepo', () => {
       const data = '日本語,英語,キー\nこんにちは,hello,greeting.hello\n'
       const opts = { type: 'blob', write: false }
 
-      expect(model.hashObjectFromData(data, opts)).toEqual('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
+      expect(model.hashObjectFromData(data, opts)).toEqual('b0122f0795b0be80d51a7ff6946f00bf0300e723')
     })
   })
 
@@ -586,7 +586,7 @@ first commit`
         model.commit({ message: 'first commit' })
 
         expect(mockModel__createCommit).toHaveBeenCalledTimes(1)
-        expect(mockModel__createCommit.mock.calls[0]).toEqual(["b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "first commit"])
+        expect(mockModel__createCommit.mock.calls[0]).toEqual(["1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "first commit"])
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(3)
         expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["COMMIT_EDITMSG", "first commit"])
