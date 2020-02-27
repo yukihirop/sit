@@ -146,12 +146,12 @@ class SitRepo extends SitBaseRepo {
     const { type, write } = opts;
     const { err, data } = fileSafeLoad(path);
     if (err) die(err.message)
-    return this._objectHash(data, type, write);
+    return this._objectHash(data.trim(), type, write);
   }
 
   hashObjectFromData(data, opts) {
     const { type, write } = opts;
-    return this._objectHash(data, type, write);
+    return this._objectHash(data.trim(), type, write);
   }
 
   branch(opts = {}) {
