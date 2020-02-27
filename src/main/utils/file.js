@@ -9,6 +9,7 @@ const fs = require('fs')
   , zlib = require('zlib')
   , recursive = require('recursive-readdir')
   , rmdir = require('rmdir')
+  , bufferReplace = require('buffer-replace')
   , ini = require('ini');
 
 const currentPath = fs.realpathSync('./');
@@ -251,5 +252,6 @@ module.exports = {
   pathJoin,
   pathDirname,
   pathRelative,
-  currentPath
+  currentPath,
+  bufferReplace
 }

@@ -3,6 +3,7 @@
 const SitRepo = require('../SitRepo')
 const SitConfig = require('@repos/SitConfig')
 const SitBlob = require('@repos/objects/SitBlob');
+const SitCommit = require('@repos/objects/SitCommit');
 const editor = require('@utils/editor');
 const opener = require('opener');
 
@@ -26,6 +27,15 @@ jest.mock('@utils/file', () => (
 
 jest.mock('@utils/editor');
 jest.mock('opener');
+
+const mockMoment_format = jest.fn()
+jest.mock('moment', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      format: mockMoment_format
+    }
+  })
+});
 
 describe('SitRepo', () => {
   const model = new SitRepo()
@@ -105,6 +115,7 @@ describe('SitRepo', () => {
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
         const mockModel__createDistFile = jest.spyOn(model, '_createDistFile').mockReturnValueOnce(true)
+        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValueOnce('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
         const mockSitConfig_updateSection = jest.fn()
         SitConfig.prototype.updateSection = mockSitConfig_updateSection
 
@@ -126,17 +137,17 @@ describe('SitRepo', () => {
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
         expect(mockModel__writeSyncFile.mock.calls[0][0]).toBe('refs/heads/master')
-        expect(mockModel__writeSyncFile.mock.calls[0][1]).toBe('953b3794394d6b48d8690bc5e53aa2ffe2133035')
+        expect(mockModel__writeSyncFile.mock.calls[0][1]).toBe('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
         expect(mockModel__writeSyncFile.mock.calls[1][0]).toBe('refs/remotes/origin/HEAD')
         expect(mockModel__writeSyncFile.mock.calls[1][1]).toBe('ref: refs/remotes/origin/master')
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(3)
         expect(mockModel__writeLog.mock.calls[0][0]).toBe('logs/refs/heads/master')
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/master", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/master", "0000000000000000000000000000000000000000", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
         expect(mockModel__writeLog.mock.calls[1][0]).toBe('logs/refs/remotes/origin/HEAD')
-        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/remotes/origin/HEAD", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/remotes/origin/HEAD", "0000000000000000000000000000000000000000", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
         expect(mockModel__writeLog.mock.calls[2][0]).toBe('logs/HEAD')
-        expect(mockModel__writeLog.mock.calls[2]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+        expect(mockModel__writeLog.mock.calls[2]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
 
         expect(mockModel__createDistFile).toHaveBeenCalledTimes(1)
         expect(mockModel__createDistFile.mock.calls[0][0]).toEqual([
@@ -144,6 +155,9 @@ describe('SitRepo', () => {
           ['こんにちは', 'hello', 'greetiing.hello']
         ])
         expect(mockModel__createDistFile.mock.calls[0][1]).toEqual(true)
+
+        expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1)
+        expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035", "0000000000000000000000000000000000000000", "master", "GoogleSpreadSheet"])
       })
     })
 
@@ -155,6 +169,7 @@ describe('SitRepo', () => {
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         jest.spyOn(model, '_writeLog').mockReturnValue(model)
         const mockSitConfig_updateSection = jest.fn()
+        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValueOnce('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
         SitConfig.prototype.updateSection = mockSitConfig_updateSection
 
         model.clone(
@@ -166,6 +181,9 @@ describe('SitRepo', () => {
         )
         expect(mkdirSyncRecursive).toHaveBeenCalledTimes(1)
         expect(mkdirSyncRecursive.mock.calls[0][0]).toEqual('do_not_exist')
+
+        expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1)
+        expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035", "0000000000000000000000000000000000000000", "master", "GoogleSpreadSheet"])
       })
     })
   })
@@ -193,7 +211,7 @@ describe('SitRepo', () => {
 
   describe('#beforeHEADHash', () => {
     it('should return correctly', () => {
-      expect(model.beforeHEADHash()).toEqual('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
+      expect(model.beforeHEADHash()).toEqual('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
     })
   })
 
@@ -211,7 +229,11 @@ describe('SitRepo', () => {
 
   describe('#_HEADCSVData', () => {
     describe('when HEAD exist', () => {
-      it('should return correctly', () => {
+      it('should return correctly', (done) => {
+        const err = null
+        const blobHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
+        const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValue({ err, blobHash })
+
         model._HEADCSVData(csvData => {
           expect(csvData).toEqual(
             [
@@ -220,6 +242,10 @@ describe('SitRepo', () => {
               [""]
             ]
           )
+
+          expect(mockModel__refBlob).toHaveBeenCalledTimes(1)
+          expect(mockModel__refBlob.mock.calls[0]).toEqual(['HEAD'])
+          done()
         })
       })
     })
@@ -376,14 +402,23 @@ describe('SitRepo', () => {
         })
       })
 
-      //
       describe('when currentBranch is not checkout branch', () => {
         it('should return correctly', () => {
-          const mockObj = new SitBlob(model, '1,2,3', 3)
-          const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValue(Promise.resolve('success'))
+          const err = null
+          const blobHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
+          const commitData = `\
+blob ${blobHash}
+parent 0000000000000000000000000000000000000000
+author yukihirop <te108186@gmail.com> 1582125758897 +0900
+committer GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900
+
+Merge from GoogleSpreadSheet/develop`
+          const mockObj = new SitCommit(model, commitData, 238)
+          const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValueOnce(Promise.resolve('success'))
           jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
           jest.spyOn(model, '_writeLog').mockReturnValue(model)
-          jest.spyOn(model, 'catFile').mockReturnValue(Promise.resolve(mockObj))
+          jest.spyOn(model, '_refBlobFromCommitHash').mockReturnValueOnce({ err, blobHash })
+          jest.spyOn(model, 'catFile').mockReturnValueOnce(Promise.resolve(mockObj))
           model.checkout(null, 'develop', {})
 
           expect(mockModel__objectFind).toHaveBeenCalledTimes(1)
@@ -398,7 +433,7 @@ describe('SitRepo', () => {
         SitConfig.prototype.updateSection = mockSitConfig_updateSection
         const mockModel__fileCopySync = jest.spyOn(model, '_fileCopySync').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-        const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValue(Promise.resolve('b18c9566daeb03818f64109ffcd9c8ad545b5f6e'))
+        const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValueOnce(Promise.resolve('b18c9566daeb03818f64109ffcd9c8ad545b5f6e'))
         model.checkout('origin', 'test', {})
 
         expect(mockSitConfig_updateSection).toHaveBeenCalledTimes(1)
@@ -442,11 +477,11 @@ describe('SitRepo', () => {
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
             expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["HEAD", "ref: refs/heads/new_branch", false])
-            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/heads/new_branch", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", false])
+            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/heads/new_branch", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", false])
 
             expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
-            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "checkout: moving from master to new_branch"])
-            expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/new_branch", null, "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "branch: Created from HEAD"])
+            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "checkout: moving from master to new_branch"])
+            expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/new_branch", null, "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "branch: Created from HEAD"])
 
             expect(console.log).toHaveBeenCalledTimes(1)
             expect(console.log.mock.calls[0]).toEqual(["Switched to a new branch 'new_branch'"])
@@ -489,8 +524,14 @@ Please make sure you have the correct access rights and the repository exists.`]
   describe('#diff', () => {
     it('should return correctly', () => {
       const mockObj = new SitBlob(model, '1,2,3', 3)
-      const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValue(Promise.resolve(mockObj))
+      const err = null
+      const blobHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
+      const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValue({ err, blobHash })
+      const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValueOnce(Promise.resolve(mockObj))
       model.diff()
+
+      expect(mockModel__refBlob).toHaveBeenCalledTimes(1)
+      expect(mockModel__refBlob.mock.calls[0]).toEqual(['HEAD'])
 
       expect(mockModel_catFile).toHaveBeenCalledTimes(1)
       expect(mockModel_catFile.mock.calls[0]).toEqual(["0133e12ee3679cb5bd494cb50e4f5a5a896eeb14"])
@@ -528,21 +569,33 @@ Please make sure you have the correct access rights and the repository exists.`]
   })
 
   describe('#commit', () => {
+    const commitData = `\
+tree b18c9566daeb03818f64109ffcd9c8ad545b5f6e
+parent 0133e12ee3679cb5bd494cb50e4f5a5a896eeb14
+author yukihirop <te108186@gmail.com> 1582127655803 +0900
+committer yukihirop <te108186@gmail.com> 1582127655803 +0900
+
+first commit`
+
     describe('when can commit', () => {
       it('should return correctly', () => {
         console.log = jest.fn()
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
+        const mockModel__createCommit = jest.spyOn(model, '_createCommit').mockReturnValueOnce('b18c9566daeb03818f64109ffcd9c8ad545b5f6e')
         model.commit({ message: 'first commit' })
+
+        expect(mockModel__createCommit).toHaveBeenCalledTimes(1)
+        expect(mockModel__createCommit.mock.calls[0]).toEqual(["b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "first commit"])
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(3)
         expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["COMMIT_EDITMSG", "first commit"])
-        expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["ORIG_HEAD", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14"])
+        expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["ORIG_HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b"])
         expect(mockModel__writeSyncFile.mock.calls[2]).toEqual(["refs/heads/master", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e"])
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "commit first commit"])
-        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/master", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "commit first commit"])
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "commit first commit"])
+        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/master", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "commit first commit"])
 
         expect(console.log).toHaveBeenCalledTimes(1)
         expect(console.log.mock.calls[0]).toEqual(["[master b18c956] first commit"])
@@ -554,6 +607,7 @@ Please make sure you have the correct access rights and the repository exists.`]
         console.log = jest.fn()
         const mockModel__refResolve = jest.spyOn(model, '_refResolve').mockReturnValue('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
         const mockModel__add = jest.spyOn(model, '_add').mockReturnValue('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
+        const mockModel__createCommit = jest.spyOn(model, '_createCommit').mockReturnValueOnce('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
         model.commit({ message: 'first commit' })
 
         expect(mockModel__refResolve).toHaveBeenCalledTimes(1)
@@ -561,6 +615,9 @@ Please make sure you have the correct access rights and the repository exists.`]
 
         expect(mockModel__add).toHaveBeenCalledTimes(1)
         expect(mockModel__add.mock.calls[0]).toEqual(["test/dist/test_data.csv", { "message": "first commit" }])
+
+        expect(mockModel__createCommit).toHaveBeenCalledTimes(1)
+        expect(mockModel__createCommit.mock.calls[0]).toEqual(["0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "first commit"])
 
         expect(console.log).toHaveBeenCalledTimes(1)
         expect(console.log.mock.calls[0]).toEqual(['On branch master\nnothing to commit'])
@@ -589,13 +646,13 @@ Please make sure you have the correct access rights and the repository exists.`]
 
         model.push('origin', 'develop', { HEADHash: '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' })
           .then(result => {
-            expect(result).toEqual({ "afterHash": "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "beforeHash": "0000000000000000000000000000000000000000" })
+            expect(result).toEqual({ "afterHash": "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "beforeHash": "0000000000000000000000000000000000000000" })
 
             expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
-            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/develop", "0000000000000000000000000000000000000000", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "update by push"])
+            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/develop", "0000000000000000000000000000000000000000", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "update by push"])
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
-            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["refs/remotes/origin/develop", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14"])
+            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["refs/remotes/origin/develop", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b"])
             expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["REMOTE_HEAD", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14"])
             done()
           })
@@ -633,11 +690,13 @@ Please make sure you have the correct access rights and the repository exists.`]
         )
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         jest.spyOn(model, '_writeLog').mockReturnValue(model)
+        jest.spyOn(model, '_createMergeCommit').mockReturnValue('03/577e30b394d4cafbbec22cc1a78b91b3e7c20b')
 
         model.fetch('origin', null, {
           prune: false,
           remoteRefs: { 'test-1': 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', 'test-2': '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' },
-          remoteBranches: ['test-1', 'test-2']
+          remoteBranches: ['test-1', 'test-2'],
+          type: 'GoogleSpreadSheet'
         }).then(() => {
           expect(recursive).toHaveBeenCalledTimes(1)
           expect(recursive.mock.calls[0]).toEqual(["test/localRepo/.sit/refs/remotes/origin"])
@@ -650,16 +709,21 @@ Please make sure you have the correct access rights and the repository exists.`]
       it('should return correctly', (done) => {
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-        model.fetch('origin', 'test', { remoteHash: 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e' })
+        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValue('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+        model.fetch('origin', 'test', { remoteHash: 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', type: 'GoogleSpreadSheet' })
           .then(result => {
-            expect(result).toEqual({ "beforeHash": "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "branchCount": 1, "remoteHash": "b18c9566daeb03818f64109ffcd9c8ad545b5f6e" })
+            expect(result).toEqual({ "beforeHash": "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "branchCount": 1, "afterHash": "03577e30b394d4cafbbec22cc1a78b91b3e7c20b" })
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
-            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["FETCH_HEAD", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e		branch 'test' of origin"])
-            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/remotes/origin/test", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e"])
+            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["FETCH_HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b		branch 'test' of origin"])
+            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/remotes/origin/test", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b"])
 
             expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
-            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/test", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "fetch origin test: fast-forward"])
+            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/test", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "fetch origin test: fast-forward"])
+
+            expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1)
+            expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "test", "GoogleSpreadSheet"])
+
             done()
           })
       })
@@ -675,11 +739,13 @@ Please make sure you have the correct access rights and the repository exists.`]
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         jest.spyOn(model, '_writeLog').mockReturnValue(model)
         jest.spyOn(model, '_deleteSyncFile').mockReturnValue(model)
+        jest.spyOn(model, '_createMergeCommit').mockReturnValue('03/577e30b394d4cafbbec22cc1a78b91b3e7c20b')
 
         model.fetch('origin', null, {
           prune: true,
           remoteRefs: { 'test-1': 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', 'test-2': '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' },
-          remoteBranches: ['test-1', 'test-2']
+          remoteBranches: ['test-1', 'test-2'],
+          type: 'GoogleSpreadSheet'
         }).then(() => {
 
           expect(recursive).toHaveBeenCalledTimes(1)
@@ -780,7 +846,7 @@ fatal: Existing because of an unresolved conflict.`])
         const obj = new SitBlob(model, '1,2,3', 3)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
         const mockModel__deleteSyncFile = jest.spyOn(model, '_deleteSyncFile').mockReturnValue(model)
-        const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValue(Promise.resolve(obj))
+        const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValueOnce(Promise.resolve(obj))
         model.merge(null, null, { abort: true })
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
@@ -833,7 +899,7 @@ Please, commit your changes before you merge.`])
         jest.spyOn(model, '_writeLog').mockReturnValue(model)
         jest.spyOn(model, 'hashObjectFromData').mockReturnValue(true)
         const mockModel__isExistFile = jest.spyOn(model, '_isExistFile').mockReturnValue(false)
-        const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValue(Promise.resolve(obj))
+        const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValueOnce(Promise.resolve(obj))
         model.merge('origin', 'master')
 
         expect(mockModel__isExistFile).toHaveBeenCalledTimes(1)
