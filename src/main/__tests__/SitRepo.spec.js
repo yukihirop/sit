@@ -657,7 +657,7 @@ first commit`
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
 
-        model.push('origin', 'develop', { HEADHash: '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' })
+        model.push('origin', 'develop', { HEADBlobHash: '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' })
           .then(result => {
             expect(result).toEqual({ "afterHash": "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "beforeHash": "0000000000000000000000000000000000000000" })
 
@@ -674,7 +674,7 @@ first commit`
 
     describe('when push do not exist branch', () => {
       it('should return correctly', (done) => {
-        model.push('origin', 'new_branch', { HEADHash: '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' })
+        model.push('origin', 'new_branch', { HEADBlobHash: '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' })
           .catch(err => {
             expect(err.message).toEqual("error: src refspec unknown does not match any\nerror: failed to push some refs to 'origin'")
             done()

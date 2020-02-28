@@ -403,7 +403,7 @@ nothing to commit`
   }
 
   push(repoName, branch, opts) {
-    const { HEADHash } = opts;
+    const { HEADBlobHash } = opts;
 
     return new Promise((resolve, reject) => {
       const logPath = `logs/refs/remotes/${repoName}/${branch}`;
@@ -418,7 +418,7 @@ nothing to commit`
         // STEP 3: Update REMOTE_HAD
         this._writeLog(logPath, beforeHash, afterHash, `update by push`)
           ._writeSyncFile(refPath, afterHash)
-          ._writeSyncFile("REMOTE_HEAD", HEADHash);
+          ._writeSyncFile("REMOTE_HEAD", HEADBlobHash);
 
         resolve({ beforeHash: beforeHash, afterHash: afterHash });
       } else {
