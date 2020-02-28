@@ -110,8 +110,7 @@ class SitRepo extends SitBaseRepo {
   }
 
   _HEADCSVData(callback) {
-    const { err, blobHash } = this._refBlob('HEAD');
-    if (err) die(err.message)
+    const blobHash = this._refBlob('HEAD');
 
     this.catFile(blobHash)
       .then(obj => {
@@ -250,8 +249,7 @@ Please make sure you have the correct access rights and the repository exists.`)
               // STEP 1: Update HEAD
               // STEP 2: Append logs/HEAD
               // STEP 3: Update dist file instead of Update index
-              const { err, blobHash } = this._refBlobFromCommitHash(sha)
-              if (err) die(err.message)
+              const blobHash = this._refBlobFromCommitHash(sha)
 
               this._writeSyncFile(`HEAD`, `ref: refs/heads/${name}`, false)
                 ._writeLog("logs/HEAD", currentHash, sha, `checkout: moving from ${currentBranch} to ${name}`)
@@ -320,9 +318,7 @@ Please make sure you have the correct access rights and the repository exists.`)
   diff(opts = {}) {
     opts = Object.assign(opts, { type: 'blob' });
 
-    const { err, blobHash } = this._refBlob('HEAD');
-    if (err) die(err.message)
-
+    const blobHash = this._refBlob('HEAD');
     const calculateHash = this.hashObject(this.distFilePath, opts);
     const index = `${blobHash.slice(0, 7)}..${calculateHash.slice(0, 7)}`;
 
