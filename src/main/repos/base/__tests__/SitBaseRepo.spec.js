@@ -85,9 +85,8 @@ test data`
     const obj = new SitCommit(model, commitData, 238)
     const mockModel__objectRead = jest.spyOn(model, '_objectRead').mockReturnValueOnce({ mockErr, obj })
     const mockObj_blobHash = jest.spyOn(obj, 'blobHash').mockReturnValueOnce('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
-    const { err, blobHash } = model._refBlob('HEAD')
+    const blobHash = model._refBlob('HEAD')
 
-    expect(err).toEqual(undefined)
     expect(blobHash).toEqual('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
 
     expect(mockModel__objectRead).toHaveBeenCalledTimes(1)
@@ -110,9 +109,8 @@ test data`
       const obj = new SitCommit(model, commitData, 238)
       const mockModel__objectRead = jest.spyOn(model, '_objectRead').mockReturnValueOnce({ mockErr, obj })
       const mockObj_blobHash = jest.spyOn(obj, 'blobHash').mockReturnValueOnce('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
-      const { err, blobHash } = model._refBlobFromCommitHash('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+      const blobHash = model._refBlobFromCommitHash('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
 
-      expect(err).toEqual(undefined)
       expect(blobHash).toEqual('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
 
       expect(mockModel__objectRead).toHaveBeenCalledTimes(1)

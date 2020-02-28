@@ -124,22 +124,26 @@ class SitBaseRepo extends SitBase {
     let blobHash = null;
 
     const { err, obj } = this._objectRead(commitHash);
+    if (err) die(err.message);
+
     if (obj instanceof SitCommit) {
-      blobHash = obj.blobHash()
+      blobHash = obj.blobHash();
     }
 
-    return { err, blobHash }
+    return blobHash;
   }
 
   _refBlobFromCommitHash(commitHash) {
     let blobHash = null;
 
     const { err, obj } = this._objectRead(commitHash);
+    if (err) die(err.message);
+
     if (obj instanceof SitCommit) {
-      blobHash = obj.blobHash()
+      blobHash = obj.blobHash();
     }
 
-    return { err, blobHash }
+    return blobHash;
   }
 
   _createDistFile(data, write = false) {

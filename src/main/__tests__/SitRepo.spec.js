@@ -230,9 +230,8 @@ describe('SitRepo', () => {
   describe('#_HEADCSVData', () => {
     describe('when HEAD exist', () => {
       it('should return correctly', (done) => {
-        const err = null
         const blobHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
-        const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValue({ err, blobHash })
+        const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValue(blobHash)
 
         model._HEADCSVData(csvData => {
           expect(csvData).toEqual(
@@ -404,7 +403,6 @@ describe('SitRepo', () => {
 
       describe('when currentBranch is not checkout branch', () => {
         it('should return correctly', () => {
-          const err = null
           const blobHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
           const commitData = `\
 blob ${blobHash}
@@ -417,7 +415,7 @@ Merge from GoogleSpreadSheet/develop`
           const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValueOnce(Promise.resolve('success'))
           jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
           jest.spyOn(model, '_writeLog').mockReturnValue(model)
-          jest.spyOn(model, '_refBlobFromCommitHash').mockReturnValueOnce({ err, blobHash })
+          jest.spyOn(model, '_refBlobFromCommitHash').mockReturnValueOnce(blobHash)
           jest.spyOn(model, 'catFile').mockReturnValueOnce(Promise.resolve(mockObj))
           model.checkout(null, 'develop', {})
 
@@ -540,9 +538,8 @@ Please make sure you have the correct access rights and the repository exists.`]
   describe('#diff', () => {
     it('should return correctly', () => {
       const mockObj = new SitBlob(model, '1,2,3', 3)
-      const err = null
       const blobHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
-      const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValue({ err, blobHash })
+      const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValue(blobHash)
       const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValueOnce(Promise.resolve(mockObj))
       model.diff()
 
@@ -660,7 +657,7 @@ first commit`
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
 
-        model.push('origin', 'develop', { HEADHash: '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' })
+        model.push('origin', 'develop', { HEADBlobHash: '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' })
           .then(result => {
             expect(result).toEqual({ "afterHash": "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "beforeHash": "0000000000000000000000000000000000000000" })
 
@@ -677,7 +674,7 @@ first commit`
 
     describe('when push do not exist branch', () => {
       it('should return correctly', (done) => {
-        model.push('origin', 'new_branch', { HEADHash: '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' })
+        model.push('origin', 'new_branch', { HEADBlobHash: '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' })
           .catch(err => {
             expect(err.message).toEqual("error: src refspec unknown does not match any\nerror: failed to push some refs to 'origin'")
             done()
