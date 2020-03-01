@@ -13,8 +13,9 @@ const SitBase = require('../base/SitBase');
 const REF_REMOTE_HEADER = ['branch', 'sha1'];
 
 class SitRefParser extends SitBase {
-  constructor(branch, refFile) {
+  constructor(repo, branch, refFile) {
     super();
+    this.repo = repo
     this.branch = branch;
     this.refFile = `${this.localRepo}/${refFile}`;
   }
@@ -22,10 +23,11 @@ class SitRefParser extends SitBase {
   parseToCSV() {
     const { err, data } = fileSafeLoad(this.refFile);
     if (err) die(err.message)
-    const sha = data.trim();
+    const commitHash = data.trim();
+    const blobHash = this.repo._refBlobFromCommitHash(commitHash);
     return [
       REF_REMOTE_HEADER,
-      [this.branch, sha]
+      [this.branch, blobHash]
     ];
   }
 

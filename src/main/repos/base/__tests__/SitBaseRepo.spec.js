@@ -74,50 +74,71 @@ describe('SitBaseRepo', () => {
   })
 
   describe('#_refBlob', () => {
-    const mockErr = null
-    const commitData = `\
+    describe('when commitHash is not initial', () => {
+      it('should return correctly', () => {
+        const mockErr = null
+        const commitData = `\
 blob 5b1cf86e97c6633e9a2dd85567e33d636dd3748a
 parent e537175bbdf4cfeaf5e3f3c757e29ebb443b28aa
 author yukihirop <te108186@gmail.com> 1578060335 +0900
 committer yukihirop <te108186@gmail.com> 1578384538 +0900
 
 test data`
-    const obj = new SitCommit(model, commitData, 238)
-    const mockModel__objectRead = jest.spyOn(model, '_objectRead').mockReturnValueOnce({ mockErr, obj })
-    const mockObj_blobHash = jest.spyOn(obj, 'blobHash').mockReturnValueOnce('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
-    const blobHash = model._refBlob('HEAD')
+        const obj = new SitCommit(model, commitData, 238)
+        const mockModel__objectRead = jest.spyOn(model, '_objectRead').mockReturnValueOnce({ mockErr, obj })
+        const mockObj_blobHash = jest.spyOn(obj, 'blobHash').mockReturnValueOnce('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
 
-    expect(blobHash).toEqual('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
+        expect(model._refBlob('HEAD')).toEqual('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
 
-    expect(mockModel__objectRead).toHaveBeenCalledTimes(1)
-    expect(mockModel__objectRead.mock.calls[0]).toEqual(['03577e30b394d4cafbbec22cc1a78b91b3e7c20b'])
+        expect(mockModel__objectRead).toHaveBeenCalledTimes(1)
+        expect(mockModel__objectRead.mock.calls[0]).toEqual(['03577e30b394d4cafbbec22cc1a78b91b3e7c20b'])
 
-    expect(mockObj_blobHash).toHaveBeenCalledTimes(1)
-    expect(mockObj_blobHash.mock.calls[0]).toEqual([])
+        expect(mockObj_blobHash).toHaveBeenCalledTimes(1)
+        expect(mockObj_blobHash.mock.calls[0]).toEqual([])
+      })
+    })
+
+    describe('when commitHash is ininital', () => {
+      it('should return correctly', () => {
+        const mockModel__refResolve = jest.spyOn(model, '_refResolve').mockReturnValueOnce(model._INITIAL_HASH())
+
+        expect(model._refBlob('HEAD')).toEqual(model._INITIAL_HASH())
+
+        expect(mockModel__refResolve).toHaveBeenCalledTimes(1)
+        expect(mockModel__refResolve.mock.calls[0]).toEqual(['HEAD'])
+      })
+    })
   })
 
   describe('#_refBlobFromCommitHash', () => {
-    it('should return correctly', () => {
-      const mockErr = null
-      const commitData = `\
+    describe('when commitHash is not initial', () => {
+      it('should return correctly', () => {
+        const mockErr = null
+        const commitData = `\
 blob 5b1cf86e97c6633e9a2dd85567e33d636dd3748a
 parent e537175bbdf4cfeaf5e3f3c757e29ebb443b28aa
 author yukihirop <te108186@gmail.com> 1578060335 +0900
 committer yukihirop <te108186@gmail.com> 1578384538 +0900
 
 test data`
-      const obj = new SitCommit(model, commitData, 238)
-      const mockModel__objectRead = jest.spyOn(model, '_objectRead').mockReturnValueOnce({ mockErr, obj })
-      const mockObj_blobHash = jest.spyOn(obj, 'blobHash').mockReturnValueOnce('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
-      const blobHash = model._refBlobFromCommitHash('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+        const obj = new SitCommit(model, commitData, 238)
+        const mockModel__objectRead = jest.spyOn(model, '_objectRead').mockReturnValueOnce({ mockErr, obj })
+        const mockObj_blobHash = jest.spyOn(obj, 'blobHash').mockReturnValueOnce('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
 
-      expect(blobHash).toEqual('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
+        expect(model._refBlobFromCommitHash('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')).toEqual('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
 
-      expect(mockModel__objectRead).toHaveBeenCalledTimes(1)
-      expect(mockModel__objectRead.mock.calls[0]).toEqual([`03577e30b394d4cafbbec22cc1a78b91b3e7c20b`])
+        expect(mockModel__objectRead).toHaveBeenCalledTimes(1)
+        expect(mockModel__objectRead.mock.calls[0]).toEqual([`03577e30b394d4cafbbec22cc1a78b91b3e7c20b`])
 
-      expect(mockObj_blobHash).toHaveBeenCalledTimes(1)
-      expect(mockObj_blobHash.mock.calls[0]).toEqual([])
+        expect(mockObj_blobHash).toHaveBeenCalledTimes(1)
+        expect(mockObj_blobHash.mock.calls[0]).toEqual([])
+      })
+    })
+
+    describe('when commitHash is initial', () => {
+      it('should return correctly', () => {
+        expect(model._refBlobFromCommitHash(model._INITIAL_HASH())).toEqual(model._INITIAL_HASH())
+      })
     })
   })
 
