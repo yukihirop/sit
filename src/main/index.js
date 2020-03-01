@@ -48,7 +48,7 @@ Please make sure you have the correct access rights and the repository exists.`)
               .then(result => {
                 if (!verbose) return;
 
-                const { beforeHash, remoteHash, branchCount } = result
+                const { beforeHash, afterHash, branchCount } = result
                 if (beforeHash === remoteHash) {
                   console.log(`\
 remote: Total ${branchCount}\n\
@@ -60,7 +60,7 @@ From ${repo.remoteRepo(repoName)}
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD\n\
-  ${beforeHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`)
+  ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`)
                   return
                 }
               })
