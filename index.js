@@ -64,6 +64,10 @@ program
     '-D, --deleteBranch <deleteBranch>',
     'delete branch'
   )
+  .option(
+    '-m, --moveBranch <moveBranch>',
+    'move/rename a branch and its reflog'
+  )
   .action(options => {
     sit().Repo.branch(options);
   });

@@ -387,6 +387,30 @@ describe('SitRepo', () => {
         })
       })
     })
+
+    describe("when specify 'moveBranch' option", () => {
+      it("should return correctly", () => {
+        const mockModel__fileCopySync = jest.spyOn(model, '_fileCopySync').mockReturnValue(model)
+        const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
+        const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
+        const mockModel__deleteSyncFile = jest.spyOn(model, '_deleteSyncFile').mockReturnValue(model)
+
+        model.branch({ moveBranch: 'new_branch' })
+        expect(mockModel__fileCopySync).toHaveBeenCalledTimes(2)
+        expect(mockModel__fileCopySync.mock.calls[0]).toEqual(["refs/heads/master", "refs/heads/new_branch"])
+        expect(mockModel__fileCopySync.mock.calls[1]).toEqual(["logs/refs/heads/master", "logs/refs/heads/new_branch"])
+
+        expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "Branch: renamed refs/heads/origin to refs/heads/new_branch"])
+
+        expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(1)
+        expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["HEAD", "ref: refs/heads/new_branch", false])
+
+        expect(mockModel__deleteSyncFile).toHaveBeenCalledTimes(2)
+        expect(mockModel__deleteSyncFile.mock.calls[0]).toEqual(["refs/heads/master"])
+        expect(mockModel__deleteSyncFile.mock.calls[1]).toEqual(["logs/refs/heads/master"])
+      })
+    })
   })
 
   describe('#checkout', () => {
