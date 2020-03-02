@@ -154,7 +154,7 @@ class SitRepo extends SitBaseRepo {
   }
 
   branch(opts = {}) {
-    const { all, deleteBranch } = opts;
+    const { all, deleteBranch, moveBranch } = opts;
     const currentBranch = this._branchResolve('HEAD');
     let fullBranchDirPath;
 
@@ -177,6 +177,22 @@ class SitRepo extends SitBaseRepo {
           return
         });
       }
+
+    } else if (moveBranch) {
+      const currentHash = this._refResolve('HEAD')
+
+      // STEP 1: Copy from refs/heads/<currentBranch> to refs/heads/<moveBranch>
+      // STEP 2: Copy from logs/refs/heads/<currentBranch> to logs/reefs/heads/<moveBranch>
+      // STEP 3: Write logs/HEAD
+      // STEP 4: Update HEAD
+      // STEP 5: Delete refs/heads/<currentBranch>
+      // STEP 6: Delete logs/refs/heads/<currentBranch>
+      this._fileCopySync(`refs/heads/${currentBranch}`, `refs/heads/${moveBranch}`)
+        ._fileCopySync(`logs/refs/heads/${currentBranch}`, `logs/refs/heads/${moveBranch}`)
+        ._writeLog("logs/HEAD", currentHash, currentHash, `Branch: renamed refs/heads/origin to refs/heads/${moveBranch}`)
+        ._writeSyncFile(`HEAD`, `ref: refs/heads/${moveBranch}`, false)
+        ._deleteSyncFile(`refs/heads/${currentBranch}`)
+        ._deleteSyncFile(`logs/refs/heads/${currentBranch}`)
 
     } else {
 
