@@ -336,6 +336,10 @@ remote: done.`);
     return repo.remote(subcommand, repoName, url, opts);
   }
 
+  Repo.log = () => {
+    return repo.log()
+  }
+
   Clasp.update = () => {
     return clasp.update();
   }

@@ -218,6 +218,13 @@ program
   })
 
 program
+  .command('log')
+  .description('Shows the commit logs')
+  .action((_options) => {
+    sit().Repo.log();
+  });
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)
