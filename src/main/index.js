@@ -11,6 +11,10 @@ const {
   csv2JSON
 } = require('./utils/array');
 
+const {
+  colorize
+} = require('./utils/string');
+
 function sit(opts) {
   const defaultOpts = {
     type: 'GoogleSpreadSheet'
@@ -135,15 +139,17 @@ Please make sure you have the correct access rights and the repository exists.`)
           if (!force && (remoteHash !== undefined) && !isPushableAboutREMOTEREADHash) {
             die(`\
 To ${repo.remoteRepo(repoName)}\n\
-! [rejected]\t\t${branch} -> ${branch} (non-fast-forward)\n\
-error: failed to push some refs to '${repo.remoteRepo(repoName)}'\n\
+${colorize('! [rejected]', 'error')}\t\t${branch} -> ${branch} (non-fast-forward)\n\
+${colorize(`error: failed to push some refs to '${repo.remoteRepo(repoName)}'`, 'error')}\n\
+${colorize(`\
 hint: Updates wre rejected because the tip of your current branch is behind\n\
 hint: its remote counterpart. Integrate the remote changes (e.q.\n\
 hint: 'sit pull ...' before pushing again.\n\
-hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
+hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`, 'info')}`);
           }
 
           // Update local repo
+          const isNewBranch = repo._isExistFile(`refs/remotes/${repoName}/${branch}`) === false;
           repo.push(repoName, branch, { ...opts, HEADBlobHash }).then(hashData => {
             const { beforeHash, afterHash } = hashData;
 
@@ -158,16 +164,22 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
               const updateRefLogRemotePromise = sheet.pushRows(repoName, "logs/refs/remotes", repo._refLastLogCSVData(branch, repoName), { clear: false });
 
               return Promise.all([updateRefRemotePromise, updateRefLogRemotePromise, updateBranchPromise]).then(() => {
-
-                console.log(`\
+                const baseMsg = `\
 Writed objects: 100% (1/1)
 Total 1\n\
 remote:\n\
 remote: Create a pull request for ${branch} on ${type} by visiting:\n\
 remote:     ${repo.remoteRepo(repoName)}\n\
 remote:\n\
-To ${repo.remoteRepo(repoName)}\n\
-\t${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
+To ${repo.remoteRepo(repoName)}`;
+
+                let detailMsg = `${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`;
+                if (force) {
+                  detailMsg = `\t+ ${detailMsg} (forced update)`
+                } else if (isNewBranch) {
+                  detailMsg = `\t* [new branch]\t${detailMsg}`
+                }
+                console.log(`${baseMsg}\n${detailMsg}`)
                 return
               });
             });
