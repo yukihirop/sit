@@ -158,16 +158,20 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
               const updateRefLogRemotePromise = sheet.pushRows(repoName, "logs/refs/remotes", repo._refLastLogCSVData(branch, repoName), { clear: false });
 
               return Promise.all([updateRefRemotePromise, updateRefLogRemotePromise, updateBranchPromise]).then(() => {
-
-                console.log(`\
+                const baseMsg = `\
 Writed objects: 100% (1/1)
 Total 1\n\
 remote:\n\
 remote: Create a pull request for ${branch} on ${type} by visiting:\n\
 remote:     ${repo.remoteRepo(repoName)}\n\
 remote:\n\
-To ${repo.remoteRepo(repoName)}\n\
-\t${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`);
+To ${repo.remoteRepo(repoName)}`;
+
+                let detailMsg = `\t${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`;
+                if (force) {
+                  detailMsg = `+ ${detailMsg} (forced update)`
+                }
+                console.log(`${baseMsg}\n${detailMsg}`)
                 return
               });
             });
