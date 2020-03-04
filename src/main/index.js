@@ -173,11 +173,11 @@ remote:     ${repo.remoteRepo(repoName)}\n\
 remote:\n\
 To ${repo.remoteRepo(repoName)}`;
 
-                let detailMsg = `\t${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`;
+                let detailMsg = `${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`;
                 if (force) {
-                  detailMsg = `+ ${detailMsg} (forced update)`
+                  detailMsg = `\t+ ${detailMsg} (forced update)`
                 } else if (isNewBranch) {
-                  detailMsg = `* [new branch]\t${detailMsg}`
+                  detailMsg = `\t* [new branch]\t${detailMsg}`
                 }
                 console.log(`${baseMsg}\n${detailMsg}`)
                 return
