@@ -9,6 +9,8 @@ const colors = {
   removed: ansi.red,
   mark: ansi.red,
   added: ansi.green,
+  error: ansi.red,
+  info: ansi.yellow,
   header: ansi.yellow,
   section: ansi.magenta,
 };
