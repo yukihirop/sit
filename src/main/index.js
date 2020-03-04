@@ -144,6 +144,7 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`);
           }
 
           // Update local repo
+          const isNewBranch = repo._isExistFile(`refs/remotes/${repoName}/${branch}`) === false;
           repo.push(repoName, branch, { ...opts, HEADBlobHash }).then(hashData => {
             const { beforeHash, afterHash } = hashData;
 
@@ -170,6 +171,8 @@ To ${repo.remoteRepo(repoName)}`;
                 let detailMsg = `\t${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`;
                 if (force) {
                   detailMsg = `+ ${detailMsg} (forced update)`
+                } else if (isNewBranch) {
+                  detailMsg = `* [new branch]\t${detailMsg}`
                 }
                 console.log(`${baseMsg}\n${detailMsg}`)
                 return
