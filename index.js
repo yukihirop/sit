@@ -220,8 +220,12 @@ program
 program
   .command('log')
   .description('Shows the commit logs')
-  .action((_options) => {
-    sit().Repo.log();
+  .option(
+    '--oneline',
+    'display oneline commit message'
+  )
+  .action((options) => {
+    sit().Repo.log(options);
   });
 
 program

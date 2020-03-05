@@ -741,18 +741,19 @@ Fast-forward
     }
   }
 
-  log(commitHash = this._refResolve('HEAD')) {
+  log(commitHash = this._refResolve('HEAD'), opts = {}) {
+    const { oneline } = opts;
     this.commits = this.commits || [];
     this.catFile(commitHash).then(obj => {
       if (obj instanceof SitCommit) {
         const commitData = obj.humanizeKVLM()
         const parent = commitData['parent']
-        this.commits.push(obj.createCommitLog(commitHash, commitData))
+        this.commits.push(obj.createCommitLog(commitHash, commitData, { oneline }))
 
         if (parent === this._INITIAL_HASH()) {
           return console.log(this.commits.join('\n'))
         } else {
-          return this.log(parent)
+          return this.log(parent, { oneline })
         }
       }
     })

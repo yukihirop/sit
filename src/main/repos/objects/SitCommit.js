@@ -33,23 +33,36 @@ class SitCommit extends SitObject {
     return Buffer.from(bufData, 'utf8').toString()
   }
 
-  createCommitLog(commitHash, commitData) {
+  createCommitLog(commitHash, commitData, opts = {}) {
     let result = ''
+    let logBaseTitle
+    const { oneline } = opts
     const [author, email, unixtime, timezone] = commitData['author'].split(' ')
     const commitMsg = commitData['']
     const currentBranch = this.repo._branchResolve('HEAD')
     const isHEAD = this.repo._refResolve('HEAD') === commitHash
 
-    if (isHEAD) {
-      result += colorize(`commit ${commitHash}`, 'info') + ' ' + `(HEAD -> ${currentBranch})\n`
+    if (oneline) {
+      logBaseTitle = colorize(commitHash.slice(0,7), 'info')
     } else {
-      result += colorize(`commit ${commitHash}`, 'info') + '\n'
+      logBaseTitle = colorize(`commit ${commitHash}`, 'info')
     }
 
-    result += `Author: ${author} ${email}\n`
-    result += `Date: ${moment(parseInt(unixtime)).format('ddd MMM d HH:mm:ss GGGG ZZ')} ${timezone}\n`
-    result += '\n'
-    result += `\t${commitMsg}\n`
+    if (isHEAD) {
+      result += logBaseTitle + ' ' + `(HEAD -> ${currentBranch})`
+    } else {
+      result += logBaseTitle
+    }
+
+    if (oneline) {
+      result += ' ' + commitMsg
+    } else {
+      result += '\n'
+      result += `Author: ${author} ${email}\n`
+      result += `Date: ${moment(parseInt(unixtime)).format('ddd MMM d HH:mm:ss GGGG ZZ')} ${timezone}\n`
+      result += '\n'
+      result += `\t${commitMsg}\n`
+    }
 
     return result
   }
