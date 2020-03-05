@@ -26,11 +26,13 @@ const {
 } = require('./utils/string');
 
 const editor = require('./utils/editor');
+const exec = require('child_process').exec;
 
 const SitBaseRepo = require('./repos/base/SitBaseRepo');
 const SitConfig = require('./repos/SitConfig');
 const SitRefParser = require('./repos/refs/SitRefParser');
 const SitRepoValidator = require('./repos/validators/SitRepoValidator');
+const SitCommit = require('./repos/objects/SitCommit')
 
 class SitRepo extends SitBaseRepo {
   init(opts = {}) {
@@ -737,6 +739,24 @@ Fast-forward
         console.log(`Do not support subcommand: '${subcommand}'`)
         break;
     }
+  }
+
+  log(commitHash = this._refResolve('HEAD'), opts = {}) {
+    const { oneline } = opts;
+    this.commits = this.commits || [];
+    this.catFile(commitHash).then(obj => {
+      if (obj instanceof SitCommit) {
+        const commitData = obj.humanizeKVLM()
+        const parent = commitData['parent']
+        this.commits.push(obj.createCommitLog(commitHash, commitData, { oneline }))
+
+        if (parent === this._INITIAL_HASH()) {
+          return console.log(this.commits.join('\n'))
+        } else {
+          return this.log(parent, { oneline })
+        }
+      }
+    })
   }
 }
 

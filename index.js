@@ -218,6 +218,17 @@ program
   })
 
 program
+  .command('log')
+  .description('Shows the commit logs')
+  .option(
+    '--oneline',
+    'display oneline commit message'
+  )
+  .action((options) => {
+    sit().Repo.log(options);
+  });
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)

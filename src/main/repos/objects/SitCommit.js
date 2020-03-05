@@ -4,6 +4,13 @@ const {
   bufferReplace
 } = require('../../utils/file');
 
+const {
+  colorize
+} = require('../../utils/string');
+
+
+const moment = require('moment');
+
 const SitObject = require('./SitObject');
 
 class SitCommit extends SitObject {
@@ -21,10 +28,50 @@ class SitCommit extends SitObject {
     this.kvlm = this._kvlmParse(data);
   }
 
-  // TODO: 
   blobHash() {
     const bufData = JSON.parse(JSON.stringify(this.kvlm["blob"]))["data"]
     return Buffer.from(bufData, 'utf8').toString()
+  }
+
+  createCommitLog(commitHash, commitData, opts = {}) {
+    let result = ''
+    let logBaseTitle
+    const { oneline } = opts
+    const [author, email, unixtime, timezone] = commitData['author'].split(' ')
+    const commitMsg = commitData['']
+    const currentBranch = this.repo._branchResolve('HEAD')
+    const isHEAD = this.repo._refResolve('HEAD') === commitHash
+
+    if (oneline) {
+      logBaseTitle = colorize(commitHash.slice(0,7), 'info')
+    } else {
+      logBaseTitle = colorize(`commit ${commitHash}`, 'info')
+    }
+
+    if (isHEAD) {
+      result += logBaseTitle + ' ' + `(HEAD -> ${currentBranch})`
+    } else {
+      result += logBaseTitle
+    }
+
+    if (oneline) {
+      result += ' ' + commitMsg
+    } else {
+      result += '\n'
+      result += `Author: ${author} ${email}\n`
+      result += `Date: ${moment(parseInt(unixtime)).format('ddd MMM d HH:mm:ss GGGG ZZ')} ${timezone}\n`
+      result += '\n'
+      result += `\t${commitMsg}\n`
+    }
+
+    return result
+  }
+
+  humanizeKVLM() {
+    return Object.keys(this.kvlm).reduce((acc, key) => {
+      acc[key] = this.kvlm[key].toString()
+      return acc
+    }, {})
   }
 
   // private
