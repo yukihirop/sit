@@ -758,6 +758,40 @@ Fast-forward
       }
     })
   }
+
+  stash(opts = {}) {
+    const blobHEADHash = this._refBlob('HEAD');
+    let calculateBlobHash = this.hashObject(this.distFilePath, { type: 'blob' });
+
+    if (blobHEADHash === calculateBlobHash) {
+      console.log('No local changes to save')
+      return
+    } else {
+      const commitHEADHash = this._refResolve('HEAD')
+      calculateBlobHash = this.hashObject(this.distFilePath, { type: 'blob', write: true })
+
+      // STEP 1: Update ORIG_HEAD
+      // STEP 2: Update logs/HEAD
+      this._writeSyncFile('ORIG_HEAD', commitHEADHash)
+        ._writeLog('logs/HEAD', commitHEADHash, commitHEADHash, 'reset: moving to HEAD', false)
+
+      // STEP 3: Create stash commit
+      const currentBranch = this.currentBranch()
+      const commitMsg = this._COMMIT_EDITMSG()
+      const stashMsg = `WIP on ${currentBranch}: ${commitHEADHash.slice(0,7)} ${commitMsg}`
+      const genCommitHash = this._createCommit(calculateBlobHash, commitHEADHash, stashMsg)
+
+      // STEP 3: Update refs/stash
+      // STEP 4: Update logs/refs/stash
+      // STEP 5: Update dist File
+      this._writeSyncFile('refs/stash', genCommitHash, false)
+        ._writeLog('logs/refs/stash', this._INITIAL_HASH(), genCommitHash, stashMsg, false)
+        .catFile(blobHEADHash).then(obj => {
+          writeSyncFile(this.distFilePath, obj.serialize().toString())
+          console.log(`Saved working directory and index state ${stashMsg}`)
+      })
+    }
+  }
 }
 
 module.exports = SitRepo;

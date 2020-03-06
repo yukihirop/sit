@@ -207,6 +207,13 @@ class SitBaseRepo extends SitBase {
     }
   }
 
+  _COMMIT_EDITMSG() {
+    let { err, data } = fileSafeLoad(this.__repoFile(false, 'COMMIT_EDITMSG'))
+    if (err) die(err.message)
+    data = data.trim();
+    return data
+  }
+
   _isExistFile(path) {
     return isExistFile(`${this.localRepo}/${path}`);
   }

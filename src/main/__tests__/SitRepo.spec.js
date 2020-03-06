@@ -1012,4 +1012,79 @@ Please, commit your changes before you merge.`])
       })
     })
   })
+
+  describe('#stash', () => {
+    describe('when basic use', () => {
+      describe('when no local change to save', () => {
+        it('should return correctly', () => {
+          console.log = jest.fn()
+          const blobHEADHash = '953b3794394d6b48d8690bc5e53aa2ffe2133035'
+          const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValueOnce(blobHEADHash)
+          const mockModel_hashObject = jest.spyOn(model, 'hashObject').mockReturnValueOnce(blobHEADHash)
+
+          model.stash()
+
+          expect(mockModel__refBlob).toHaveBeenCalledTimes(1)
+          expect(mockModel__refBlob.mock.calls[0]).toEqual(['HEAD'])
+
+          expect(mockModel_hashObject).toHaveBeenCalledTimes(1)
+          expect(mockModel_hashObject.mock.calls[0]).toEqual(["test/dist/test_data.csv", { "type": "blob" }])
+
+          expect(console.log).toHaveBeenCalledTimes(1)
+          expect(console.log.mock.calls[0]).toEqual(["No local changes to save"])
+        })
+      })
+
+      describe('when local change to save', () => {
+        it('should return correctly', () => {
+          console.log = jest.fn()
+          const blobHEADHash = '953b3794394d6b48d8690bc5e53aa2ffe2133035'
+          const calculateBlobHash = '1c9cc64a39db1bb70002b76a63759ed77fdce68f'
+          const commitHEADHash = '03577e30b394d4cafbbec22cc1a78b91b3e7c20b'
+          const commitData = `\
+blob ${calculateBlobHash}
+parent ${commitHEADHash}
+author yukihirop <te108186@gmail.com> 1582125758897 +0900
+committer GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900
+
+Saved working directory and index state WIP on fuga: 953b379 Update test data
+
+`
+          const mockObj = new SitCommit(model, commitData, 238)
+
+          const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValueOnce(blobHEADHash)
+          const mockModel_hashObject = jest.spyOn(model, 'hashObject').mockReturnValueOnce(calculateBlobHash)
+          const mockModel__refResolve = jest.spyOn(model, '_refResolve').mockReturnValueOnce(commitHEADHash)
+
+          const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
+          const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
+          const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValueOnce(Promise.resolve(mockObj))
+
+
+          model.stash()
+
+          expect(mockModel__refBlob).toHaveBeenCalledTimes(1)
+          expect(mockModel__refBlob.mock.calls[0]).toEqual(['HEAD'])
+
+          expect(mockModel_hashObject).toHaveBeenCalledTimes(2)
+          expect(mockModel_hashObject.mock.calls[0]).toEqual(["test/dist/test_data.csv", { "type": "blob" }])
+          expect(mockModel_hashObject.mock.calls[1]).toEqual(["test/dist/test_data.csv", { "type": "blob", "write": true }])
+
+          expect(mockModel__refResolve).toHaveBeenCalledTimes(1)
+          expect(mockModel__refResolve.mock.calls[0]).toEqual(['HEAD'])
+
+          expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
+          expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["ORIG_HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b"])
+          expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/stash", "34edc3f8b64838761080afbd6fa6e7b61af7ca4e", false])
+
+          expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
+          expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "reset: moving to HEAD", false])
+          expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/stash", "0000000000000000000000000000000000000000", "34edc3f8b64838761080afbd6fa6e7b61af7ca4e", "WIP on master: 03577e3 Update test data", false])
+
+          expect(mockModel_catFile).toHaveBeenCalledTimes(1)
+          expect(mockModel_catFile.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035"])
+        })
+      })
+    })
+  })
 })

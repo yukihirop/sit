@@ -229,6 +229,13 @@ program
   });
 
 program
+  .command('stash')
+  .description('Stash the changes in a dirty working directory away')
+  .action((options) => {
+    sit().Repo.stash(options)
+  });
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)
