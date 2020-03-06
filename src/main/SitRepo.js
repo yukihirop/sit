@@ -760,10 +760,10 @@ Fast-forward
   }
 
   stash(subcommand, opts = {}) {
-    if (subcommand === null) {
-      let { saveMessage } = opts
+    const blobHEADHash = this._refBlob('HEAD');
 
-      const blobHEADHash = this._refBlob('HEAD');
+    if (subcommand === undefined) {
+      let { saveMessage } = opts
       let calculateBlobHash = this.hashObject(this.distFilePath, { type: 'blob' });
 
       if (blobHEADHash === calculateBlobHash) {
@@ -779,7 +779,7 @@ Fast-forward
           ._writeLog('logs/HEAD', commitHEADHash, commitHEADHash, 'reset: moving to HEAD', false)
 
         // STEP 3: Create stash commit
-        if (!saveMessage) saveMessage = `WIP on ${this.currentBranch()}: ${commitHEADHash.slice(0, 7)} ${this._COMMIT_EDITMSG()}`
+        if (saveMessage === undefined) saveMessage = `WIP on ${this.currentBranch()}: ${commitHEADHash.slice(0, 7)} ${this._COMMIT_EDITMSG()}`
         const genCommitHash = this._createCommit(calculateBlobHash, commitHEADHash, saveMessage)
 
         // STEP 3: Update refs/stash
@@ -793,9 +793,46 @@ Fast-forward
           })
       }
     } else if (subcommand === 'save') {
+
       let { saveMessage } = opts
       if (saveMessage) saveMessage = `On ${this.currentBranch()}: ${saveMessage}`
-      this.stash(null, { ...opts, saveMessage })
+      this.stash(undefined, { ...opts, saveMessage })
+
+    } else if (subcommand === 'apply') {
+
+      const stashCommitHash = this._readFileSync('refs/stash')
+      const stashBlobHash = this._refBlobFromCommitHash(stashCommitHash)
+      this.catFile(stashBlobHash).then(obj => {
+        let { err, data } = fileSafeLoad(this.distFilePath)
+        if (err) die(err.message)
+
+        const distData = data.split('\n')
+        const stashData = obj.serialize().toString().split('\n')
+
+        this._twoWayMerge(distData, stashData, "Updated upstream", "Stashed changes", result => {
+          // STEP 1: Create sit object(blob)
+          const blobApplyHash = this.hashObjectFromData(result.data.join('\n'), { type: 'blob', write: true })
+          // STEP 2: Update dist file
+          writeSyncFile(this.distFilePath, result.data.join('\n'));
+
+          if (result.conflict) {
+            console.log(`\
+Two-way-merging ${this.distFilePath}
+CONFLICT (content): Merge conflict in ${this.distFilePath}`);
+            return
+
+          } else {
+
+            console.log(`\
+Updating ${blobHEADHash.slice(0, 7)}..${blobApplyHash.slice(0, 7)}\n
+Fast-forward
+  ${this.distFilePath}
+  1 file changed`)
+            return
+
+          }
+        })
+      })
     }
   }
 }

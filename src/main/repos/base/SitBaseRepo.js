@@ -236,6 +236,12 @@ class SitBaseRepo extends SitBase {
     return this;
   }
 
+  _readFileSync(path) {
+    const { err, data } = fileSafeLoad(`${this.localRepo}/${path}`)
+    if (err) die(err.message)
+    return data
+  }
+
   _fileCopySync(from, to) {
     fileCopySync(`${this.localRepo}/${from}`, `${this.localRepo}/${to}`);
     return this;

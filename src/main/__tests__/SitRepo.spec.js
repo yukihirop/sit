@@ -888,7 +888,7 @@ fatal: Existing because of an unresolved conflict.`])
         model.merge(null, null, { abort: true })
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "47af1af6722639322ccf17ea5f873d0e483c364f", "47af1af6722639322ccf17ea5f873d0e483c364f", "reset: moving to HEAD"])
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "reset: moving to HEAD"])
 
         expect(mockModel__deleteSyncFile).toHaveBeenCalledTimes(3)
         expect(mockModel__deleteSyncFile.mock.calls[0]).toEqual(["MERGE_MODE"])
@@ -896,7 +896,7 @@ fatal: Existing because of an unresolved conflict.`])
         expect(mockModel__deleteSyncFile.mock.calls[2]).toEqual(["MERGE_HEAD"])
 
         expect(mockModel_catFile).toHaveBeenCalledTimes(1)
-        expect(mockModel_catFile.mock.calls[0]).toEqual(["47af1af6722639322ccf17ea5f873d0e483c364f"])
+        expect(mockModel_catFile.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"])
       })
     })
 
@@ -1014,11 +1014,11 @@ Please, commit your changes before you merge.`])
   })
 
   describe('#stash', () => {
-    describe('when basic use', () => {
+    describe('when basic use (stash・stash save)', () => {
       describe('when no local change to save', () => {
         it('should return correctly', () => {
           console.log = jest.fn()
-          const blobHEADHash = '953b3794394d6b48d8690bc5e53aa2ffe2133035'
+          const blobHEADHash = '2938ad2ab5722adf9b48ff5bac74989eaa2d144c'
           const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValueOnce(blobHEADHash)
           const mockModel_hashObject = jest.spyOn(model, 'hashObject').mockReturnValueOnce(blobHEADHash)
 
@@ -1038,18 +1038,17 @@ Please, commit your changes before you merge.`])
       describe('when local change to save', () => {
         it('should return correctly', () => {
           console.log = jest.fn()
-          const blobHEADHash = '953b3794394d6b48d8690bc5e53aa2ffe2133035'
-          const calculateBlobHash = '1c9cc64a39db1bb70002b76a63759ed77fdce68f'
-          const commitHEADHash = '03577e30b394d4cafbbec22cc1a78b91b3e7c20b'
+          const blobHEADHash = '2938ad2ab5722adf9b48ff5bac74989eaa2d144c'
+          const calculateBlobHash = 'bb1ae37be908abfcefd9bdd41626fe1b959098fb'
+          const commitHEADHash = '47af1af6722639322ccf17ea5f873d0e483c364f'
           const commitData = `\
 blob ${calculateBlobHash}
 parent ${commitHEADHash}
 author yukihirop <te108186@gmail.com> 1582125758897 +0900
-committer GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900
+committer yukihirop <te108186@gmail.com> 1583663621186 +0900
 
-Saved working directory and index state WIP on fuga: 953b379 Update test data
+WIP on master: 47af1af Add good_bye`
 
-`
           const mockObj = new SitCommit(model, commitData, 238)
 
           const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValueOnce(blobHEADHash)
@@ -1060,6 +1059,7 @@ Saved working directory and index state WIP on fuga: 953b379 Update test data
           const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
           const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValueOnce(Promise.resolve(mockObj))
 
+          const mockModel__createCommit = jest.spyOn(model, '_createCommit').mockReturnValueOnce('3df8acdb918794c2bda15ae45fec2c5929ca4929')
 
           model.stash()
 
@@ -1074,15 +1074,46 @@ Saved working directory and index state WIP on fuga: 953b379 Update test data
           expect(mockModel__refResolve.mock.calls[0]).toEqual(['HEAD'])
 
           expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
-          expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["ORIG_HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b"])
-          expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/stash", "34edc3f8b64838761080afbd6fa6e7b61af7ca4e", false])
+          expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["ORIG_HEAD", "47af1af6722639322ccf17ea5f873d0e483c364f"])
+          expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/stash", "3df8acdb918794c2bda15ae45fec2c5929ca4929", false])
 
           expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
-          expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "reset: moving to HEAD", false])
-          expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/stash", "0000000000000000000000000000000000000000", "34edc3f8b64838761080afbd6fa6e7b61af7ca4e", "WIP on master: 03577e3 Update test data", false])
+          expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "47af1af6722639322ccf17ea5f873d0e483c364f", "47af1af6722639322ccf17ea5f873d0e483c364f", "reset: moving to HEAD", false])
+          expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/stash", "0000000000000000000000000000000000000000", "3df8acdb918794c2bda15ae45fec2c5929ca4929", "WIP on master: 47af1af Add good_bye", false])
 
           expect(mockModel_catFile).toHaveBeenCalledTimes(1)
-          expect(mockModel_catFile.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035"])
+          expect(mockModel_catFile.mock.calls[0]).toEqual(["2938ad2ab5722adf9b48ff5bac74989eaa2d144c"])
+
+          expect(mockModel__createCommit).toHaveBeenCalledTimes(1)
+          expect(mockModel__createCommit.mock.calls[0]).toEqual(["2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "47af1af6722639322ccf17ea5f873d0e483c364f", "WIP on master: 47af1af Add good_bye"])
+        })
+      })
+    })
+
+    describe('stash apply', () => {
+      describe('when conflict', () => {
+        it('should return correctly', () => {
+          console.log = jest.fn()
+          const blobApplyHash = 'b1eaa1fa16ee7af570f33cf971c0d70ac3110d73'
+          jest.spyOn(model, 'hashObjectFromData').mockReturnValueOnce(blobApplyHash)
+          const mockModel_catFile = jest.spyOn(model, 'catFile')
+
+          model.stash('apply')
+
+          expect(mockModel_catFile).toHaveBeenCalledTimes(1)
+          expect(mockModel_catFile.mock.calls[0]).toEqual(['b6f2667d13461fb6c521c1975018124db2e2d1e3'])
+
+          //
+          // Can't test because it's in a promise
+          //
+          // expect(mockModel_hashObjectFromData).toHaveBeenCalledTimes(1)
+          // expect(mockModel_hashObjectFromData.mock.calls[0]).toEqual('')
+
+          // expect(writeSyncFile).toHaveBeenCalledTimes(1)
+          // expect(writeSyncFile.mock.calls[0]).toEqual('')
+
+          // expect(console.log).toHaveBeenCalledTimes(1)
+          // expect(console.log.mock.calls[0]).toEqual('Two-way-merging ../dist/test_data.csv\nCONFLICT (content): Merge conflict in ../dist/test_data.csv')
         })
       })
     })
