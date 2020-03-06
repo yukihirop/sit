@@ -229,10 +229,11 @@ program
   });
 
 program
-  .command('stash')
+  .command('stash [subcommand] [saveMessage]')
   .description('Stash the changes in a dirty working directory away')
-  .action((options) => {
-    sit().Repo.stash(options)
+  .action((subcommand, saveMessage, options) => {
+    options = Object.assign(options, { saveMessage })
+    sit().Repo.stash(subcommand, options)
   });
 
 program

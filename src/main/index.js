@@ -340,8 +340,8 @@ remote: done.`);
     return repo.log(repo._refResolve('HEAD'), opts)
   }
 
-  Repo.stash = (opts = {}) => {
-    return repo.stash(opts)
+  Repo.stash = (subcommand, opts = {}) => {
+    return repo.stash(subcommand, opts)
   }
 
   Clasp.update = () => {
