@@ -230,7 +230,7 @@ describe('SitRepo', () => {
   describe('#_HEADCSVData', () => {
     describe('when HEAD exist', () => {
       it('should return correctly', (done) => {
-        const blobHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
+        const blobHash = '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc'
         const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValue(blobHash)
 
         model._HEADCSVData(csvData => {
@@ -427,7 +427,7 @@ describe('SitRepo', () => {
 
       describe('when currentBranch is not checkout branch', () => {
         it('should return correctly', () => {
-          const blobHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
+          const blobHash = '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc'
           const commitData = `\
 blob ${blobHash}
 parent 0000000000000000000000000000000000000000
@@ -562,7 +562,7 @@ Please make sure you have the correct access rights and the repository exists.`]
   describe('#diff', () => {
     it('should return correctly', () => {
       const mockObj = new SitBlob(model, '1,2,3', 3)
-      const blobHash = '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14'
+      const blobHash = '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc'
       const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValue(blobHash)
       const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValueOnce(Promise.resolve(mockObj))
       model.diff()
@@ -571,7 +571,7 @@ Please make sure you have the correct access rights and the repository exists.`]
       expect(mockModel__refBlob.mock.calls[0]).toEqual(['HEAD'])
 
       expect(mockModel_catFile).toHaveBeenCalledTimes(1)
-      expect(mockModel_catFile.mock.calls[0]).toEqual(["0133e12ee3679cb5bd494cb50e4f5a5a896eeb14"])
+      expect(mockModel_catFile.mock.calls[0]).toEqual(["8b58f3891ae3e4d274972a39d27fd460aaeaa6cc"])
     })
   })
 
@@ -589,8 +589,8 @@ Please make sure you have the correct access rights and the repository exists.`]
     describe('when do not modify dist file', () => {
       it('should return correctly', () => {
         console.log = jest.fn()
-        const mockModel__refResolve = jest.spyOn(model, '_refResolve').mockReturnValue('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
-        const mockModel_hashObject = jest.spyOn(model, 'hashObject').mockReturnValue('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
+        const mockModel__refResolve = jest.spyOn(model, '_refResolve').mockReturnValue('8b58f3891ae3e4d274972a39d27fd460aaeaa6cc')
+        const mockModel_hashObject = jest.spyOn(model, 'hashObject').mockReturnValue('8b58f3891ae3e4d274972a39d27fd460aaeaa6cc')
         model.status()
 
         expect(mockModel__refResolve).toHaveBeenCalledTimes(1)
@@ -608,7 +608,7 @@ Please make sure you have the correct access rights and the repository exists.`]
   describe('#commit', () => {
     const commitData = `\
 tree b18c9566daeb03818f64109ffcd9c8ad545b5f6e
-parent 0133e12ee3679cb5bd494cb50e4f5a5a896eeb14
+parent 8b58f3891ae3e4d274972a39d27fd460aaeaa6cc
 author yukihirop <te108186@gmail.com> 1582127655803 +0900
 committer yukihirop <te108186@gmail.com> 1582127655803 +0900
 
@@ -642,9 +642,9 @@ first commit`
     describe('when nothing that can commit', () => {
       it('should return correctly', () => {
         console.log = jest.fn()
-        const mockModel__refResolve = jest.spyOn(model, '_refResolve').mockReturnValue('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
-        const mockModel__add = jest.spyOn(model, '_add').mockReturnValue('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
-        const mockModel__createCommit = jest.spyOn(model, '_createCommit').mockReturnValueOnce('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
+        const mockModel__refResolve = jest.spyOn(model, '_refResolve').mockReturnValue('8b58f3891ae3e4d274972a39d27fd460aaeaa6cc')
+        const mockModel__add = jest.spyOn(model, '_add').mockReturnValue('8b58f3891ae3e4d274972a39d27fd460aaeaa6cc')
+        const mockModel__createCommit = jest.spyOn(model, '_createCommit').mockReturnValueOnce('8b58f3891ae3e4d274972a39d27fd460aaeaa6cc')
         model.commit({ message: 'first commit' })
 
         expect(mockModel__refResolve).toHaveBeenCalledTimes(1)
@@ -654,7 +654,7 @@ first commit`
         expect(mockModel__add.mock.calls[0]).toEqual(["test/dist/test_data.csv", { "message": "first commit" }])
 
         expect(mockModel__createCommit).toHaveBeenCalledTimes(1)
-        expect(mockModel__createCommit.mock.calls[0]).toEqual(["0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14", "first commit"])
+        expect(mockModel__createCommit.mock.calls[0]).toEqual(["8b58f3891ae3e4d274972a39d27fd460aaeaa6cc", "8b58f3891ae3e4d274972a39d27fd460aaeaa6cc", "first commit"])
 
         expect(console.log).toHaveBeenCalledTimes(1)
         expect(console.log.mock.calls[0]).toEqual(['On branch master\nnothing to commit'])
@@ -681,7 +681,7 @@ first commit`
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
 
-        model.push('origin', 'develop', { HEADBlobHash: '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' })
+        model.push('origin', 'develop', { HEADBlobHash: '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' })
           .then(result => {
             expect(result).toEqual({ "afterHash": "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "beforeHash": "0000000000000000000000000000000000000000" })
 
@@ -690,7 +690,7 @@ first commit`
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
             expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["refs/remotes/origin/develop", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"])
-            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["REMOTE_HEAD", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14"])
+            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["REMOTE_HEAD", "8b58f3891ae3e4d274972a39d27fd460aaeaa6cc"])
             done()
           })
       })
@@ -698,7 +698,7 @@ first commit`
 
     describe('when push do not exist branch', () => {
       it('should return correctly', (done) => {
-        model.push('origin', 'new_branch', { HEADBlobHash: '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' })
+        model.push('origin', 'new_branch', { HEADBlobHash: '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' })
           .catch(err => {
             expect(err.message).toEqual("error: src refspec unknown does not match any\nerror: failed to push some refs to 'origin'")
             done()
@@ -731,7 +731,7 @@ first commit`
 
         model.fetch('origin', null, {
           prune: false,
-          remoteRefs: { 'test-1': 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', 'test-2': '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' },
+          remoteRefs: { 'test-1': 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', 'test-2': '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' },
           remoteBranches: ['test-1', 'test-2'],
           type: 'GoogleSpreadSheet'
         }).then(() => {
@@ -780,7 +780,7 @@ first commit`
 
         model.fetch('origin', null, {
           prune: true,
-          remoteRefs: { 'test-1': 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', 'test-2': '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' },
+          remoteRefs: { 'test-1': 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', 'test-2': '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' },
           remoteBranches: ['test-1', 'test-2'],
           type: 'GoogleSpreadSheet'
         }).then(() => {

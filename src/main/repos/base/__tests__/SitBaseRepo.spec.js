@@ -493,7 +493,7 @@ Merge from GoogleSpreadSheet/master`)
       it('should return correctly', (done) => {
         model._objectResolve(shortSHA1).then(shaArr => {
           expect(shaArr.length).toEqual(1)
-          expect(shaArr[0]).toEqual('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
+          expect(shaArr[0]).toEqual('8b58f3891ae3e4d274972a39d27fd460aaeaa6cc')
           done()
         })
       })
