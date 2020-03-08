@@ -618,7 +618,7 @@ first commit`
         console.log = jest.fn()
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-        const mockModel__createCommit = jest.spyOn(model, '_createCommit').mockReturnValueOnce('1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16')
+        const mockModel__createCommit = jest.spyOn(model, '_createCommit').mockReturnValueOnce('74c5d77421a1ad26f39b88248606e4ad4e76817d')
         model.commit({ message: 'first commit' })
 
         expect(mockModel__createCommit).toHaveBeenCalledTimes(1)
@@ -627,14 +627,14 @@ first commit`
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(3)
         expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["COMMIT_EDITMSG", "first commit"])
         expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["ORIG_HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"])
-        expect(mockModel__writeSyncFile.mock.calls[2]).toEqual(["refs/heads/master", "1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16"])
+        expect(mockModel__writeSyncFile.mock.calls[2]).toEqual(["refs/heads/master", "74c5d77421a1ad26f39b88248606e4ad4e76817d"])
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16", "commit first commit"])
-        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/master", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16", "commit first commit"])
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "74c5d77421a1ad26f39b88248606e4ad4e76817d", "commit first commit"])
+        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/master", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "74c5d77421a1ad26f39b88248606e4ad4e76817d", "commit first commit"])
 
         expect(console.log).toHaveBeenCalledTimes(1)
-        expect(console.log.mock.calls[0]).toEqual(["[master b18c956] first commit"])
+        expect(console.log.mock.calls[0]).toEqual(["[master 74c5d77] first commit"])
       })
     })
 

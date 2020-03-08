@@ -450,8 +450,7 @@ Merge from GoogleSpreadSheet/master`)
 こんにちは,hello,common.greeting.hello
 さようなら,goodbye,common.greeting.good_bye
 おやすみなさい,good_night,common.greeting.good_night
-歓迎します,welcome,common.greeting.welcom
-`)
+歓迎します,welcome,common.greeting.welcom`)
         expect(err).toBeNull()
       })
     })
