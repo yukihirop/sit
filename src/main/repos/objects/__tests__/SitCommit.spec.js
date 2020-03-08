@@ -47,7 +47,7 @@ Create local repository: .trs`)
     describe('when do not specify oneline option', () => {
       it('should return correctly', () => {
         expect(model.createCommitLog('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', {
-          'blob': '953b3794394d6b48d8690bc5e53aa2ffe2133035',
+          'blob': '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b',
           'parent': '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc',
           'author': 'yukihirop <te108186@gmail.com> 1582125758897 +0900',
           'committer': 'GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900',
@@ -65,7 +65,7 @@ Date: Thu Feb 4 00:22:38 2020 +0900 +0900\n\
     describe('when specify oneline option', () => {
       it('should return correctly', () => {
         expect(model.createCommitLog('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', {
-          'blob': '953b3794394d6b48d8690bc5e53aa2ffe2133035',
+          'blob': '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b',
           'parent': '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc',
           'author': 'yukihirop <te108186@gmail.com> 1582125758897 +0900',
           'committer': 'GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900',

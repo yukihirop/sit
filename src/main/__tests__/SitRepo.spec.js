@@ -122,7 +122,7 @@ describe('SitRepo', () => {
         model.clone(
           'origin',
           'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0',
-          '953b3794394d6b48d8690bc5e53aa2ffe2133035',
+          '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b',
           [
             ['日本語', '英語', 'キー'],
             ['こんにちは', 'hello', 'greetiing.hello']
@@ -157,7 +157,7 @@ describe('SitRepo', () => {
         expect(mockModel__createDistFile.mock.calls[0][1]).toEqual(true)
 
         expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1)
-        expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035", "0000000000000000000000000000000000000000", "master", "GoogleSpreadSheet"])
+        expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "0000000000000000000000000000000000000000", "master", "GoogleSpreadSheet"])
       })
     })
 
@@ -175,7 +175,7 @@ describe('SitRepo', () => {
         model.clone(
           'origin',
           'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0',
-          '953b3794394d6b48d8690bc5e53aa2ffe2133035',
+          '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b',
           '日本語,英語,キー\nこんにちは,hello,greeting.hello\nさようなら,good_bye,greeting.good_bye\n歓迎します,wellcome,greeting.welcome\nおやすみ,good night,greeting.good_night',
           { type: 'GoogleSpreadSheet' }
         )
@@ -183,7 +183,7 @@ describe('SitRepo', () => {
         expect(mkdirSyncRecursive.mock.calls[0][0]).toEqual('do_not_exist')
 
         expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1)
-        expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035", "0000000000000000000000000000000000000000", "master", "GoogleSpreadSheet"])
+        expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "0000000000000000000000000000000000000000", "master", "GoogleSpreadSheet"])
       })
     })
   })

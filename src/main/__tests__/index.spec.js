@@ -135,7 +135,7 @@ Please make sure you have the correct access rights and the repository exists.`]
           mockGSS_pushRows.mockReturnValue(Promise.resolve())
 
           mockSitRepo_remoteRepo.mockReturnValueOnce('./test/localRepo/.sit')
-          mockSitRepo_push.mockReturnValueOnce(Promise.resolve({ beforeHash: '7aceca70f741b25a21a31282c670ad7d3ad533f8', afterHash: '953b3794394d6b48d8690bc5e53aa2ffe2133035' }))
+          mockSitRepo_push.mockReturnValueOnce(Promise.resolve({ beforeHash: '7aceca70f741b25a21a31282c670ad7d3ad533f8', afterHash: '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b' }))
           sit().Repo.push('origin', 'master')
 
           expect(mockGSS_getRows).toHaveBeenCalledTimes(1)
@@ -165,7 +165,7 @@ Please make sure you have the correct access rights and the repository exists.`]
     describe('when repoName exist', () => {
       describe('when url exist', () => {
         beforeEach(() => {
-          mockGSS_getRows.mockReturnValueOnce(Promise.resolve([['branch', 'sha1'], ['master', '953b3794394d6b48d8690bc5e53aa2ffe2133035']]))
+          mockGSS_getRows.mockReturnValueOnce(Promise.resolve([['branch', 'sha1'], ['master', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']]))
           mockGSS_getRows.mockReturnValueOnce(Promise.resolve([['日本語', '英語', 'キー'], ['こんにちは', 'hello', 'greeting.hello']]))
           SitRepo.prototype.init = mockSitRepo_init
         })
@@ -200,7 +200,7 @@ Please make sure you have the correct access rights and the repository exists.`]
             Clasp.prototype.update = mockClasp_update
             mockSitRepo_init.mockReturnValue(true)
             mockSitRepo_clone.mockReturnValue(true)
-            mockSitRepo_hashObjectFromData.mockReturnValue('953b3794394d6b48d8690bc5e53aa2ffe2133035')
+            mockSitRepo_hashObjectFromData.mockReturnValue('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
             mockClasp_update.mockReturnValue(true)
             console.log = jest.fn()
 
@@ -300,10 +300,10 @@ Please make sure you have the correct access rights and the repository exists.`]
         const mockSitRepo_catFile = jest.fn()
         SitRepo.prototype.catFile = mockSitRepo_catFile
         mockSitRepo_catFile.mockReturnValueOnce(Promise.resolve(mockBlob))
-        sit().Repo.catFile('953b3794394d6b48d8690bc5e53aa2ffe2133035', { type: true })
+        sit().Repo.catFile('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', { type: true })
 
         expect(mockSitRepo_catFile).toHaveBeenCalledTimes(1)
-        expect(mockSitRepo_catFile.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035"])
+        expect(mockSitRepo_catFile.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"])
       })
     })
   })
