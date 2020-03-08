@@ -442,7 +442,7 @@ Merge from GoogleSpreadSheet/master`)
 
   describe('#_objectRead', () => {
     describe('when sha exists', () => {
-      const sha1 = 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e';
+      const sha1 = '1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16';
       it('should return correctly', () => {
         const { err, obj } = model._objectRead(sha1)
         expect(obj.serialize().toString()).toEqual(`\

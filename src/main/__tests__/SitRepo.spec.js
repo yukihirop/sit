@@ -455,7 +455,7 @@ Merge from GoogleSpreadSheet/develop`
           SitConfig.prototype.updateSection = mockSitConfig_updateSection
           const mockModel__fileCopySync = jest.spyOn(model, '_fileCopySync').mockReturnValue(model)
           const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-          const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValueOnce(Promise.resolve('b18c9566daeb03818f64109ffcd9c8ad545b5f6e'))
+          const mockModel__objectFind = jest.spyOn(model, '_objectFind').mockReturnValueOnce(Promise.resolve('1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16'))
           model.checkout('origin', 'test', {})
 
           expect(mockSitConfig_updateSection).toHaveBeenCalledTimes(1)
@@ -606,7 +606,7 @@ Please make sure you have the correct access rights and the repository exists.`]
 
   describe('#commit', () => {
     const commitData = `\
-tree b18c9566daeb03818f64109ffcd9c8ad545b5f6e
+tree 1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16
 parent 8b58f3891ae3e4d274972a39d27fd460aaeaa6cc
 author yukihirop <te108186@gmail.com> 1582127655803 +0900
 committer yukihirop <te108186@gmail.com> 1582127655803 +0900
@@ -618,7 +618,7 @@ first commit`
         console.log = jest.fn()
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-        const mockModel__createCommit = jest.spyOn(model, '_createCommit').mockReturnValueOnce('b18c9566daeb03818f64109ffcd9c8ad545b5f6e')
+        const mockModel__createCommit = jest.spyOn(model, '_createCommit').mockReturnValueOnce('1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16')
         model.commit({ message: 'first commit' })
 
         expect(mockModel__createCommit).toHaveBeenCalledTimes(1)
@@ -627,11 +627,11 @@ first commit`
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(3)
         expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["COMMIT_EDITMSG", "first commit"])
         expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["ORIG_HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"])
-        expect(mockModel__writeSyncFile.mock.calls[2]).toEqual(["refs/heads/master", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e"])
+        expect(mockModel__writeSyncFile.mock.calls[2]).toEqual(["refs/heads/master", "1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16"])
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "commit first commit"])
-        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/master", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "commit first commit"])
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16", "commit first commit"])
+        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/master", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16", "commit first commit"])
 
         expect(console.log).toHaveBeenCalledTimes(1)
         expect(console.log.mock.calls[0]).toEqual(["[master b18c956] first commit"])
@@ -709,7 +709,7 @@ first commit`
   describe('#fetch', () => {
     describe('when repoName is blank', () => {
       it('should return correctly', (done) => {
-        model.fetch(null, 'develop', { remoteHash: 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e' })
+        model.fetch(null, 'develop', { remoteHash: '1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16' })
           .catch(err => {
             expect(err.message).toEqual("repository is required")
             done()
@@ -730,7 +730,7 @@ first commit`
 
         model.fetch('origin', null, {
           prune: false,
-          remoteRefs: { 'test-1': 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', 'test-2': '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' },
+          remoteRefs: { 'test-1': '1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16', 'test-2': '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' },
           remoteBranches: ['test-1', 'test-2'],
           type: 'GoogleSpreadSheet'
         }).then(() => {
@@ -781,7 +781,7 @@ first commit`
 
         model.fetch('origin', null, {
           prune: true,
-          remoteRefs: { 'test-1': 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', 'test-2': '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' },
+          remoteRefs: { 'test-1': '1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16', 'test-2': '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' },
           remoteBranches: ['test-1', 'test-2'],
           type: 'GoogleSpreadSheet'
         }).then(() => {
