@@ -91,7 +91,7 @@ test data`
         expect(model._refBlob('HEAD')).toEqual('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
 
         expect(mockModel__objectRead).toHaveBeenCalledTimes(1)
-        expect(mockModel__objectRead.mock.calls[0]).toEqual(['03577e30b394d4cafbbec22cc1a78b91b3e7c20b'])
+        expect(mockModel__objectRead.mock.calls[0]).toEqual(['4e2b7c47eb492ab07c5d176dccff3009c1ebc79b'])
 
         expect(mockObj_blobHash).toHaveBeenCalledTimes(1)
         expect(mockObj_blobHash.mock.calls[0]).toEqual([])
@@ -125,10 +125,10 @@ test data`
         const mockModel__objectRead = jest.spyOn(model, '_objectRead').mockReturnValueOnce({ mockErr, obj })
         const mockObj_blobHash = jest.spyOn(obj, 'blobHash').mockReturnValueOnce('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
 
-        expect(model._refBlobFromCommitHash('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')).toEqual('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
+        expect(model._refBlobFromCommitHash('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')).toEqual('5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
 
         expect(mockModel__objectRead).toHaveBeenCalledTimes(1)
-        expect(mockModel__objectRead.mock.calls[0]).toEqual([`03577e30b394d4cafbbec22cc1a78b91b3e7c20b`])
+        expect(mockModel__objectRead.mock.calls[0]).toEqual([`4e2b7c47eb492ab07c5d176dccff3009c1ebc79b`])
 
         expect(mockObj_blobHash).toHaveBeenCalledTimes(1)
         expect(mockObj_blobHash.mock.calls[0]).toEqual([])
@@ -169,12 +169,12 @@ test data`
       it('should return correctly', () => {
         mockSitRefParser_parseToCSV.mockReturnValueOnce([
           ['branch', 'sha1'],
-          ['master', '953b3794394d6b48d8690bc5e53aa2ffe2133035']
+          ['master', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']
         ])
 
         expect(model._refCSVData('master')).toEqual([
           ['branch', 'sha1'],
-          ['master', '953b3794394d6b48d8690bc5e53aa2ffe2133035']
+          ['master', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']
         ])
         expect(mockSitRefParser_parseToCSV).toHaveBeenCalledTimes(1)
         expect(mockSitRefParser_parseToCSV.mock.calls[0]).toEqual([])
@@ -193,12 +193,12 @@ test data`
       it('should return correctly', () => {
         mockSitLogParser_parseToCSV.mockReturnValueOnce([
           ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
-          ["master", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "update by push"]
+          ["master", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "update by push"]
         ])
 
         expect(model._refLastLogCSVData('master', 'origin')).toEqual([
           ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
-          ["master", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "update by push"]
+          ["master", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "update by push"]
         ])
 
         expect(mockSitLogParser_parseToCSV).toHaveBeenCalledTimes(1)
@@ -210,12 +210,12 @@ test data`
       it('should return correctly', () => {
         mockSitLogParser_parseToCSV.mockReturnValueOnce([
           ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
-          ["master", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]
+          ["master", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]
         ])
 
         expect(model._refLastLogCSVData('master')).toEqual([
           ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
-          ["master", "0000000000000000000000000000000000000000", "953b3794394d6b48d8690bc5e53aa2ffe2133035", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]
+          ["master", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]
         ])
 
         expect(mockSitLogParser_parseToCSV).toHaveBeenCalledTimes(1)
@@ -248,7 +248,7 @@ test data`
     it('should return correctly', () => {
       expect(model._writeLog(
         'refs/heads/master',
-        '953b3794394d6b48d8690bc5e53aa2ffe2133035',
+        '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b',
         '5b1cf86e97c6633e9a2dd85567e33d636dd3748a',
         'fetch origin master: fast-forward'
       )).toEqual(model)
@@ -274,16 +274,16 @@ test data`
   })
 
   describe('#_createCommitMessage', () => {
-    const blobHash = '953b3794394d6b48d8690bc5e53aa2ffe2133035';
-    const parentHash = '03577e30b394d4cafbbec22cc1a78b91b3e7c20b'
+    const blobHash = '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b';
+    const parentHash = '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b'
     const message = 'Update test data';
     mockMoment_format.mockReturnValueOnce('1582125758897')
       .mockReturnValueOnce('+0900')
 
     it('should return correctly', () => {
       expect(model._createCommitMessage(blobHash, parentHash, message)).toEqual(`\
-blob 953b3794394d6b48d8690bc5e53aa2ffe2133035
-parent 03577e30b394d4cafbbec22cc1a78b91b3e7c20b
+blob 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b
+parent 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b
 author yukihirop <te108186@gmail.com> 1582125758897 +0900
 committer yukihirop <te108186@gmail.com> 1582125758897 +0900
 
@@ -292,12 +292,12 @@ Update test data`)
   })
 
   describe('#_createCommit', () => {
-    const blobHash = '953b3794394d6b48d8690bc5e53aa2ffe2133035';
-    const parentHash = '03577e30b394d4cafbbec22cc1a78b91b3e7c20b'
+    const blobHash = '2938ad2ab5722adf9b48ff5bac74989eaa2d144c';
+    const parentHash = '47af1af6722639322ccf17ea5f873d0e483c364f'
     const message = 'Update test data';
     const mockCommitMsg = `\
-blob 953b3794394d6b48d8690bc5e53aa2ffe2133035
-parent 03577e30b394d4cafbbec22cc1a78b91b3e7c20b
+blob 2938ad2ab5722adf9b48ff5bac74989eaa2d144c
+parent 47af1af6722639322ccf17ea5f873d0e483c364f
 author yukihirop <te108186@gmail.com> 1582125758897 +0900
 committer yukihirop <te108186@gmail.com> 1582125758897 +0900
 
@@ -305,17 +305,17 @@ Update test data`
 
     it('should return correctly', () => {
       const mockModel__createCommitMessage = jest.spyOn(model, '_createCommitMessage').mockReturnValueOnce(mockCommitMsg)
-      const mockModel__objectHash = jest.spyOn(model, '_objectHash').mockReturnValueOnce('2fbb75b48757eea03a71c3dc522249599a5642de')
+      const mockModel__objectHash = jest.spyOn(model, '_objectHash').mockReturnValueOnce('08ef09cfca228224c55a0875928b3af2ff89c3d3')
 
-      expect(model._createCommit(blobHash, parentHash, message)).toEqual(`2fbb75b48757eea03a71c3dc522249599a5642de`)
+      expect(model._createCommit(blobHash, parentHash, message)).toEqual('08ef09cfca228224c55a0875928b3af2ff89c3d3')
 
       expect(mockModel__createCommitMessage).toHaveBeenCalledTimes(1)
-      expect(mockModel__createCommitMessage.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "Update test data"])
+      expect(mockModel__createCommitMessage.mock.calls[0]).toEqual(["2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "47af1af6722639322ccf17ea5f873d0e483c364f", "Update test data"])
 
       expect(mockModel__objectHash).toHaveBeenCalledTimes(1)
       expect(mockModel__objectHash.mock.calls[0][0]).toEqual(`\
-blob 953b3794394d6b48d8690bc5e53aa2ffe2133035
-parent 03577e30b394d4cafbbec22cc1a78b91b3e7c20b
+blob 2938ad2ab5722adf9b48ff5bac74989eaa2d144c
+parent 47af1af6722639322ccf17ea5f873d0e483c364f
 author yukihirop <te108186@gmail.com> 1582125758897 +0900
 committer yukihirop <te108186@gmail.com> 1582125758897 +0900
 
@@ -326,8 +326,8 @@ Update test data`)
   })
 
   describe('#_createMergeCommitMessage', () => {
-    const blobHash = '953b3794394d6b48d8690bc5e53aa2ffe2133035';
-    const parentHash = '03577e30b394d4cafbbec22cc1a78b91b3e7c20b'
+    const blobHash = '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b';
+    const parentHash = '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b'
     const branch = 'master';
     const type = 'GoogleSpreadSheet';
     mockMoment_format.mockReturnValueOnce('1582125758897')
@@ -335,8 +335,8 @@ Update test data`)
 
     it('should return correctly', () => {
       expect(model._createMergeCommitMessage(blobHash, parentHash, branch, type)).toEqual(`\
-blob 953b3794394d6b48d8690bc5e53aa2ffe2133035
-parent 03577e30b394d4cafbbec22cc1a78b91b3e7c20b
+blob 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b
+parent 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b
 author yukihirop <te108186@gmail.com> 1582125758897 +0900
 committer GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900
 
@@ -345,13 +345,13 @@ Merge from GoogleSpreadSheet/master`)
   })
 
   describe('#_createMergeCommit', () => {
-    const blobHash = '953b3794394d6b48d8690bc5e53aa2ffe2133035';
-    const parentHash = '03577e30b394d4cafbbec22cc1a78b91b3e7c20b'
+    const blobHash = '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b';
+    const parentHash = '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b'
     const branch = 'master';
     const type = 'GoogleSpreadSheet';
     const mockCommitMsg = `\
-blob 953b3794394d6b48d8690bc5e53aa2ffe2133035
-parent 03577e30b394d4cafbbec22cc1a78b91b3e7c20b
+blob 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b
+parent 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b
 author yukihirop <te108186@gmail.com> 1582125758897 +0900
 committer GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900
 
@@ -359,17 +359,17 @@ Merge from GoogleSpreadSheet/master`
 
     it('should return corrctly', () => {
       const mockModel__createMergeCommitMessage = jest.spyOn(model, '_createMergeCommitMessage').mockReturnValueOnce(mockCommitMsg)
-      const mockModel__objectHash = jest.spyOn(model, '_objectHash').mockReturnValueOnce('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+      const mockModel__objectHash = jest.spyOn(model, '_objectHash').mockReturnValueOnce('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
 
-      expect(model._createMergeCommit(blobHash, parentHash, branch, type)).toEqual('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+      expect(model._createMergeCommit(blobHash, parentHash, branch, type)).toEqual('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
 
       expect(mockModel__createMergeCommitMessage).toHaveBeenCalledTimes(1)
-      expect(mockModel__createMergeCommitMessage.mock.calls[0]).toEqual(["953b3794394d6b48d8690bc5e53aa2ffe2133035", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "master", "GoogleSpreadSheet"])
+      expect(mockModel__createMergeCommitMessage.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "master", "GoogleSpreadSheet"])
 
       expect(mockModel__objectHash).toHaveBeenCalledTimes(1)
       expect(mockModel__objectHash.mock.calls[0][0]).toEqual(`\
-blob 953b3794394d6b48d8690bc5e53aa2ffe2133035
-parent 03577e30b394d4cafbbec22cc1a78b91b3e7c20b
+blob 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b
+parent 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b
 author yukihirop <te108186@gmail.com> 1582125758897 +0900
 committer GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900
 
@@ -415,7 +415,7 @@ Merge from GoogleSpreadSheet/master`)
   describe('#_objectHash', () => {
     describe('when blob', () => {
       it('should return correctly', () => {
-        const mockSHA1 = '953b3794394d6b48d8690bc5e53aa2ffe2133035'
+        const mockSHA1 = '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b'
         const mockModel__objectwrite = jest.spyOn(model, '_objectWrite').mockReturnValueOnce(mockSHA1)
         expect(model._objectHash('1,2,3\n4,5,6', 'blob', false)).toEqual(mockSHA1)
         expect(mockModel__objectwrite).toHaveBeenCalled()
@@ -442,7 +442,7 @@ Merge from GoogleSpreadSheet/master`)
 
   describe('#_objectRead', () => {
     describe('when sha exists', () => {
-      const sha1 = 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e';
+      const sha1 = '1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16';
       it('should return correctly', () => {
         const { err, obj } = model._objectRead(sha1)
         expect(obj.serialize().toString()).toEqual(`\
@@ -450,8 +450,7 @@ Merge from GoogleSpreadSheet/master`)
 こんにちは,hello,common.greeting.hello
 さようなら,goodbye,common.greeting.good_bye
 おやすみなさい,good_night,common.greeting.good_night
-歓迎します,welcome,common.greeting.welcom
-`)
+歓迎します,welcome,common.greeting.welcom`)
         expect(err).toBeNull()
       })
     })
@@ -471,29 +470,29 @@ Merge from GoogleSpreadSheet/master`)
       it('should return correctly', (done) => {
         model._objectResolve('HEAD').then(shaArr => {
           expect(shaArr.length).toEqual(1)
-          expect(shaArr[0]).toEqual('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+          expect(shaArr[0]).toEqual('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
           done()
         })
       })
     })
 
     describe('when name is SHA1 (full)', () => {
-      const sha1 = '03577e30b394d4cafbbec22cc1a78b91b3e7c20b'
+      const sha1 = '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b'
       it('should return correctly', (done) => {
         model._objectResolve(sha1).then(shaArr => {
           expect(shaArr.length).toEqual(1)
-          expect(shaArr[0]).toEqual('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+          expect(shaArr[0]).toEqual('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
           done()
         })
       })
     })
 
     describe('when name is SHA1 (7 degits)', () => {
-      const shortSHA1 = '0133e12'
+      const shortSHA1 = '8b58f38'
       it('should return correctly', (done) => {
         model._objectResolve(shortSHA1).then(shaArr => {
           expect(shaArr.length).toEqual(1)
-          expect(shaArr[0]).toEqual('0133e12ee3679cb5bd494cb50e4f5a5a896eeb14')
+          expect(shaArr[0]).toEqual('8b58f3891ae3e4d274972a39d27fd460aaeaa6cc')
           done()
         })
       })
@@ -523,13 +522,13 @@ Merge from GoogleSpreadSheet/master`)
   describe('#_refResolve', () => {
     describe('when ref is HEAD', () => {
       it('should return correctly', () => {
-        expect(model._refResolve('HEAD')).toEqual('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+        expect(model._refResolve('HEAD')).toEqual('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
       })
     })
 
     describe('when ref is not HEAD', () => {
       it('should return correctly', () => {
-        expect(model._refResolve('refs/heads/master')).toEqual('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+        expect(model._refResolve('refs/heads/master')).toEqual('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
       })
     })
   })
