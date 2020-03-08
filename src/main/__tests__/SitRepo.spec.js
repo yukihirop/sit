@@ -115,7 +115,7 @@ describe('SitRepo', () => {
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
         const mockModel__createDistFile = jest.spyOn(model, '_createDistFile').mockReturnValueOnce(true)
-        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValueOnce('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValueOnce('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
         const mockSitConfig_updateSection = jest.fn()
         SitConfig.prototype.updateSection = mockSitConfig_updateSection
 
@@ -137,17 +137,17 @@ describe('SitRepo', () => {
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
         expect(mockModel__writeSyncFile.mock.calls[0][0]).toBe('refs/heads/master')
-        expect(mockModel__writeSyncFile.mock.calls[0][1]).toBe('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+        expect(mockModel__writeSyncFile.mock.calls[0][1]).toBe('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
         expect(mockModel__writeSyncFile.mock.calls[1][0]).toBe('refs/remotes/origin/HEAD')
         expect(mockModel__writeSyncFile.mock.calls[1][1]).toBe('ref: refs/remotes/origin/master')
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(3)
         expect(mockModel__writeLog.mock.calls[0][0]).toBe('logs/refs/heads/master')
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/master", "0000000000000000000000000000000000000000", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/master", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
         expect(mockModel__writeLog.mock.calls[1][0]).toBe('logs/refs/remotes/origin/HEAD')
-        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/remotes/origin/HEAD", "0000000000000000000000000000000000000000", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/remotes/origin/HEAD", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
         expect(mockModel__writeLog.mock.calls[2][0]).toBe('logs/HEAD')
-        expect(mockModel__writeLog.mock.calls[2]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
+        expect(mockModel__writeLog.mock.calls[2]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"])
 
         expect(mockModel__createDistFile).toHaveBeenCalledTimes(1)
         expect(mockModel__createDistFile.mock.calls[0][0]).toEqual([
@@ -169,7 +169,7 @@ describe('SitRepo', () => {
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         jest.spyOn(model, '_writeLog').mockReturnValue(model)
         const mockSitConfig_updateSection = jest.fn()
-        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValueOnce('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValueOnce('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
         SitConfig.prototype.updateSection = mockSitConfig_updateSection
 
         model.clone(
@@ -211,7 +211,7 @@ describe('SitRepo', () => {
 
   describe('#beforeHEADHash', () => {
     it('should return correctly', () => {
-      expect(model.beforeHEADHash()).toEqual('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+      expect(model.beforeHEADHash()).toEqual('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
     })
   })
 
@@ -401,7 +401,7 @@ describe('SitRepo', () => {
         expect(mockModel__fileCopySync.mock.calls[1]).toEqual(["logs/refs/heads/master", "logs/refs/heads/new_branch"])
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "Branch: renamed refs/heads/origin to refs/heads/new_branch"])
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "Branch: renamed refs/heads/origin to refs/heads/new_branch"])
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(1)
         expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["HEAD", "ref: refs/heads/new_branch", false])
@@ -515,11 +515,11 @@ Merge from GoogleSpreadSheet/develop`
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
             expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["HEAD", "ref: refs/heads/new_branch", false])
-            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/heads/new_branch", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", false])
+            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/heads/new_branch", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", false])
 
             expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
-            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "checkout: moving from master to new_branch"])
-            expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/new_branch", null, "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "branch: Created from HEAD"])
+            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "checkout: moving from master to new_branch"])
+            expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/new_branch", null, "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "branch: Created from HEAD"])
 
             expect(console.log).toHaveBeenCalledTimes(1)
             expect(console.log.mock.calls[0]).toEqual(["Switched to a new branch 'new_branch'"])
@@ -623,16 +623,16 @@ first commit`
         model.commit({ message: 'first commit' })
 
         expect(mockModel__createCommit).toHaveBeenCalledTimes(1)
-        expect(mockModel__createCommit.mock.calls[0]).toEqual(["1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "first commit"])
+        expect(mockModel__createCommit.mock.calls[0]).toEqual(["1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "first commit"])
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(3)
         expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["COMMIT_EDITMSG", "first commit"])
-        expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["ORIG_HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b"])
+        expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["ORIG_HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"])
         expect(mockModel__writeSyncFile.mock.calls[2]).toEqual(["refs/heads/master", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e"])
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "commit first commit"])
-        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/master", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "commit first commit"])
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "commit first commit"])
+        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/master", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "commit first commit"])
 
         expect(console.log).toHaveBeenCalledTimes(1)
         expect(console.log.mock.calls[0]).toEqual(["[master b18c956] first commit"])
@@ -683,13 +683,13 @@ first commit`
 
         model.push('origin', 'develop', { HEADBlobHash: '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14' })
           .then(result => {
-            expect(result).toEqual({ "afterHash": "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "beforeHash": "0000000000000000000000000000000000000000" })
+            expect(result).toEqual({ "afterHash": "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "beforeHash": "0000000000000000000000000000000000000000" })
 
             expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
-            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/develop", "0000000000000000000000000000000000000000", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "update by push"])
+            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/develop", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "update by push"])
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
-            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["refs/remotes/origin/develop", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b"])
+            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["refs/remotes/origin/develop", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"])
             expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["REMOTE_HEAD", "0133e12ee3679cb5bd494cb50e4f5a5a896eeb14"])
             done()
           })
@@ -746,17 +746,17 @@ first commit`
       it('should return correctly', (done) => {
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValue('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValue('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
         model.fetch('origin', 'test', { remoteHash: 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', type: 'GoogleSpreadSheet' })
           .then(result => {
-            expect(result).toEqual({ "beforeHash": "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "branchCount": 1, "afterHash": "03577e30b394d4cafbbec22cc1a78b91b3e7c20b" })
+            expect(result).toEqual({ "beforeHash": "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "branchCount": 1, "afterHash": "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b" })
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
-            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["FETCH_HEAD", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b		branch 'test' of origin"])
-            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/remotes/origin/test", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b"])
+            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["FETCH_HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b		branch 'test' of origin"])
+            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/remotes/origin/test", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"])
 
             expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
-            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/test", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b", "fetch origin test: fast-forward"])
+            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/test", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "fetch origin test: fast-forward"])
 
             expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1)
             expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "test", "GoogleSpreadSheet"])

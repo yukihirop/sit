@@ -46,14 +46,14 @@ Create local repository: .trs`)
   describe('#createCommitLog', () => {
     describe('when do not specify oneline option', () => {
       it('should return correctly', () => {
-        expect(model.createCommitLog('03577e30b394d4cafbbec22cc1a78b91b3e7c20b', {
+        expect(model.createCommitLog('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', {
           'blob': '953b3794394d6b48d8690bc5e53aa2ffe2133035',
           'parent': '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14',
           'author': 'yukihirop <te108186@gmail.com> 1582125758897 +0900',
           'committer': 'GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900',
           '': 'Merge from GoogleSpreadSheet/master'
         })).toEqual(`\
-${colorize('commit 03577e30b394d4cafbbec22cc1a78b91b3e7c20b', 'info')} (HEAD -> master)\n\
+${colorize('commit 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'info')} (HEAD -> master)\n\
 Author: yukihirop <te108186@gmail.com>\n\
 Date: Thu Feb 4 00:22:38 2020 +0900 +0900\n\
 
@@ -64,7 +64,7 @@ Date: Thu Feb 4 00:22:38 2020 +0900 +0900\n\
 
     describe('when specify oneline option', () => {
       it('should return correctly', () => {
-        expect(model.createCommitLog('03577e30b394d4cafbbec22cc1a78b91b3e7c20b', {
+        expect(model.createCommitLog('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', {
           'blob': '953b3794394d6b48d8690bc5e53aa2ffe2133035',
           'parent': '0133e12ee3679cb5bd494cb50e4f5a5a896eeb14',
           'author': 'yukihirop <te108186@gmail.com> 1582125758897 +0900',

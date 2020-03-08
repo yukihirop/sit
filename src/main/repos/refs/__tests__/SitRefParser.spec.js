@@ -17,11 +17,11 @@ describe('SitRefParser', () => {
   describe('#parseToCSV', () => {
     describe('when refFile exist', () => {
       it('should return correctly', () => {
-        jest.spyOn(repo, '_refBlobFromCommitHash').mockReturnValueOnce('03577e30b394d4cafbbec22cc1a78b91b3e7c20b')
+        jest.spyOn(repo, '_refBlobFromCommitHash').mockReturnValueOnce('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
         model = new SitRefParser(repo, 'master', 'refs/heads/master')
         expect(model.parseToCSV()).toEqual([
           ["branch", "sha1"],
-          ["master", "03577e30b394d4cafbbec22cc1a78b91b3e7c20b"]
+          ["master", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"]
         ])
       })
     })
