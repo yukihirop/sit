@@ -292,12 +292,12 @@ Update test data`)
   })
 
   describe('#_createCommit', () => {
-    const blobHash = '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b';
-    const parentHash = '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b'
+    const blobHash = '2938ad2ab5722adf9b48ff5bac74989eaa2d144c';
+    const parentHash = '47af1af6722639322ccf17ea5f873d0e483c364f'
     const message = 'Update test data';
     const mockCommitMsg = `\
-blob 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b
-parent 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b
+blob 2938ad2ab5722adf9b48ff5bac74989eaa2d144c
+parent 47af1af6722639322ccf17ea5f873d0e483c364f
 author yukihirop <te108186@gmail.com> 1582125758897 +0900
 committer yukihirop <te108186@gmail.com> 1582125758897 +0900
 
@@ -305,17 +305,17 @@ Update test data`
 
     it('should return correctly', () => {
       const mockModel__createCommitMessage = jest.spyOn(model, '_createCommitMessage').mockReturnValueOnce(mockCommitMsg)
-      const mockModel__objectHash = jest.spyOn(model, '_objectHash').mockReturnValueOnce('2fbb75b48757eea03a71c3dc522249599a5642de')
+      const mockModel__objectHash = jest.spyOn(model, '_objectHash').mockReturnValueOnce('08ef09cfca228224c55a0875928b3af2ff89c3d3')
 
-      expect(model._createCommit(blobHash, parentHash, message)).toEqual(`2fbb75b48757eea03a71c3dc522249599a5642de`)
+      expect(model._createCommit(blobHash, parentHash, message)).toEqual('08ef09cfca228224c55a0875928b3af2ff89c3d3')
 
       expect(mockModel__createCommitMessage).toHaveBeenCalledTimes(1)
-      expect(mockModel__createCommitMessage.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "Update test data"])
+      expect(mockModel__createCommitMessage.mock.calls[0]).toEqual(["2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "47af1af6722639322ccf17ea5f873d0e483c364f", "Update test data"])
 
       expect(mockModel__objectHash).toHaveBeenCalledTimes(1)
       expect(mockModel__objectHash.mock.calls[0][0]).toEqual(`\
-blob 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b
-parent 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b
+blob 2938ad2ab5722adf9b48ff5bac74989eaa2d144c
+parent 47af1af6722639322ccf17ea5f873d0e483c364f
 author yukihirop <te108186@gmail.com> 1582125758897 +0900
 committer yukihirop <te108186@gmail.com> 1582125758897 +0900
 
