@@ -237,8 +237,7 @@ describe('SitRepo', () => {
           expect(csvData).toEqual(
             [
               ["日本語", "英語", "キー"],
-              ["こんにちは", "hello", "greeting.hello"],
-              [""]
+              ["こんにちは", "hello", "common.greeting.hello"]
             ]
           )
 
@@ -266,11 +265,11 @@ describe('SitRepo', () => {
   describe('#catFile', () => {
     describe('when name is existed sha1', () => {
       it('should return correctly', (done) => {
-        const name = '0133e12'
+        const name = '8b58f38'
 
         model.catFile(name)
           .then(obj => {
-            expect(obj.serialize().toString()).toEqual('日本語,英語,キー\nこんにちは,hello,greeting.hello\n')
+            expect(obj.serialize().toString()).toEqual('日本語,英語,キー\nこんにちは,hello,common.greeting.hello')
             done()
           })
       })
@@ -294,7 +293,7 @@ describe('SitRepo', () => {
         const path = 'test/dist/test_data.csv'
         const opts = { type: 'blob', write: false }
 
-        expect(model.hashObject(path, opts)).toEqual('1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16')
+        expect(model.hashObject(path, opts)).toEqual('2938ad2ab5722adf9b48ff5bac74989eaa2d144c')
       })
     })
   })
@@ -466,7 +465,7 @@ Merge from GoogleSpreadSheet/develop`
           expect(mockModel__fileCopySync.mock.calls[0]).toEqual(["refs/remotes/origin/test", "refs/heads/test"])
 
           expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
-          expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/test", null, "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "branch: Created from refs/remotes/origin/test"])
+          expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/test", null, "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "branch: Created from refs/remotes/origin/test"])
 
           // checkout test (2 times)
 
@@ -623,7 +622,7 @@ first commit`
         model.commit({ message: 'first commit' })
 
         expect(mockModel__createCommit).toHaveBeenCalledTimes(1)
-        expect(mockModel__createCommit.mock.calls[0]).toEqual(["1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "first commit"])
+        expect(mockModel__createCommit.mock.calls[0]).toEqual(["2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "first commit"])
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(3)
         expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["COMMIT_EDITMSG", "first commit"])
@@ -746,20 +745,22 @@ first commit`
       it('should return correctly', (done) => {
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model)
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model)
-        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit').mockReturnValue('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
-        model.fetch('origin', 'test', { remoteHash: 'b18c9566daeb03818f64109ffcd9c8ad545b5f6e', type: 'GoogleSpreadSheet' })
+        const mockModel__createMergeCommit = jest.spyOn(model, '_createMergeCommit')
+          .mockReturnValueOnce('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
+          .mockReturnValueOnce('47af1af6722639322ccf17ea5f873d0e483c364f')
+        model.fetch('origin', 'test', { remoteHash: '47af1af6722639322ccf17ea5f873d0e483c364f', type: 'GoogleSpreadSheet' })
           .then(result => {
-            expect(result).toEqual({ "beforeHash": "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "branchCount": 1, "afterHash": "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b" })
+            expect(result).toEqual({ "beforeHash": "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "branchCount": 1, "afterHash": "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b" })
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
             expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["FETCH_HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b		branch 'test' of origin"])
             expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/remotes/origin/test", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"])
 
             expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
-            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/test", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "fetch origin test: fast-forward"])
+            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/test", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "fetch origin test: fast-forward"])
 
             expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1)
-            expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "b18c9566daeb03818f64109ffcd9c8ad545b5f6e", "test", "GoogleSpreadSheet"])
+            expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["47af1af6722639322ccf17ea5f873d0e483c364f", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "test", "GoogleSpreadSheet"])
 
             done()
           })
@@ -887,7 +888,7 @@ fatal: Existing because of an unresolved conflict.`])
         model.merge(null, null, { abort: true })
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(1)
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "reset: moving to HEAD"])
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "47af1af6722639322ccf17ea5f873d0e483c364f", "47af1af6722639322ccf17ea5f873d0e483c364f", "reset: moving to HEAD"])
 
         expect(mockModel__deleteSyncFile).toHaveBeenCalledTimes(3)
         expect(mockModel__deleteSyncFile.mock.calls[0]).toEqual(["MERGE_MODE"])
@@ -895,7 +896,7 @@ fatal: Existing because of an unresolved conflict.`])
         expect(mockModel__deleteSyncFile.mock.calls[2]).toEqual(["MERGE_HEAD"])
 
         expect(mockModel_catFile).toHaveBeenCalledTimes(1)
-        expect(mockModel_catFile.mock.calls[0]).toEqual(["0000000000000000000000000000000000000000"])
+        expect(mockModel_catFile.mock.calls[0]).toEqual(["47af1af6722639322ccf17ea5f873d0e483c364f"])
       })
     })
 
@@ -943,7 +944,7 @@ Please, commit your changes before you merge.`])
         expect(mockModel__isExistFile.mock.calls[0]).toEqual(["MERGE_HEAD"])
 
         expect(mockModel_catFile).toHaveBeenCalledTimes(1)
-        expect(mockModel_catFile.mock.calls[0]).toEqual(["5b1cf86e97c6633e9a2dd85567e33d636dd3748a"])
+        expect(mockModel_catFile.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"])
       })
     })
   })

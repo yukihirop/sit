@@ -135,7 +135,7 @@ Please make sure you have the correct access rights and the repository exists.`]
           mockGSS_pushRows.mockReturnValue(Promise.resolve())
 
           mockSitRepo_remoteRepo.mockReturnValueOnce('./test/localRepo/.sit')
-          mockSitRepo_push.mockReturnValueOnce(Promise.resolve({ beforeHash: '7aceca70f741b25a21a31282c670ad7d3ad533f8', afterHash: '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b' }))
+          mockSitRepo_push.mockReturnValueOnce(Promise.resolve({ beforeHash: '47af1af6722639322ccf17ea5f873d0e483c364f', afterHash: '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b' }))
           sit().Repo.push('origin', 'master')
 
           expect(mockGSS_getRows).toHaveBeenCalledTimes(1)

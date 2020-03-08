@@ -71,7 +71,7 @@ Date: Thu Feb 4 00:22:38 2020 +0900 +0900\n\
           'committer': 'GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900',
           '': 'Merge from GoogleSpreadSheet/master'
         }, { oneline: true })).toEqual(`\
-${colorize('03577e3', 'info')} (HEAD -> master) Merge from GoogleSpreadSheet/master`)
+${colorize('4e2b7c4', 'info')} (HEAD -> master) Merge from GoogleSpreadSheet/master`)
       })
       })
   })

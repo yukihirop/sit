@@ -489,7 +489,7 @@ Merge from GoogleSpreadSheet/master`)
     })
 
     describe('when name is SHA1 (7 degits)', () => {
-      const shortSHA1 = '0133e12'
+      const shortSHA1 = '8b58f38'
       it('should return correctly', (done) => {
         model._objectResolve(shortSHA1).then(shaArr => {
           expect(shaArr.length).toEqual(1)
