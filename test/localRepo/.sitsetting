@@ -22,4 +22,4 @@ repo:
   local: .sit
 dist:
   path: ../dist
-  sheetName: "master_data.csv"
+  sheetName: "test_data.csv"
