@@ -40,17 +40,31 @@ describe('SitLogParser', () => {
             19 |           ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
             20 |           ["master", "0000000000000000000000000000000000000000", "8b58f3891ae3e4d274972a39d27fd460aaeaa6cc", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "clone: from 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0'"],
             21 |           ["master", "8b58f3891ae3e4d274972a39d27fd460aaeaa6cc", "2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "yukihirop", "<te108186@gmail.com>", "1583639422044", "+0900", "commit Add good_bye"]
-       */
-      xit('should return correctly', () => {
-        model = new SitLogParser(repo, 'master', 'logs/refs/heads/master')
-        jest.spyOn(repo, '_refBlobFromCommitHash').mockReturnValueOnce('0000000000000000000000000000000000000000')
-          .mockReturnValueOnce('8b58f3891ae3e4d274972a39d27fd460aaeaa6cc')
+      */
+      describe('when replaceBlob is true', () => {
+        xit('should return correctly', () => {
+          model = new SitLogParser(repo, 'master', 'logs/refs/heads/master')
+          jest.spyOn(repo, '_refBlobFromCommitHash').mockReturnValueOnce('0000000000000000000000000000000000000000')
+            .mockReturnValueOnce('8b58f3891ae3e4d274972a39d27fd460aaeaa6cc')
 
-        expect(model.parseToCSV()).toEqual([
-          ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
-          ["master", "0000000000000000000000000000000000000000", "8b58f3891ae3e4d274972a39d27fd460aaeaa6cc", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"],
-          ["master", "8b58f3891ae3e4d274972a39d27fd460aaeaa6cc", "2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "yukihirop", "<te108186@gmail.com>", "1583639422044", "+0900", "commit Add good_bye"]
-        ])
+          expect(model.parseToCSV()).toEqual([
+            ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
+            ["master", "0000000000000000000000000000000000000000", "8b58f3891ae3e4d274972a39d27fd460aaeaa6cc", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"],
+            ["master", "8b58f3891ae3e4d274972a39d27fd460aaeaa6cc", "2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "yukihirop", "<te108186@gmail.com>", "1583639422044", "+0900", "commit Add good_bye"]
+          ])
+        })
+      })
+
+      describe('when replaceBlob is false', () => {
+        xit('should return correctly', () => {
+          model = new SitLogParser(repo, 'master', 'logs/refs/stash')
+
+          expect(model.parseToCSV(false)).toEqual([
+            ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
+            ["master", "0000000000000000000000000000000000000000", "3df8acdb918794c2bda15ae45fec2c5929ca4929", "yukihirop", "<te108186@gmail.com>", "1583663621190", "+0900", "WIP on master: 4e2b7c4 Add good_bye"],
+            ["master", "3df8acdb918794c2bda15ae45fec2c5929ca4929", "00fa2d2f5b497b41e288f8c9bce3bf61515d3101", "yukihirop", "<te108186@gmail.com>", "1583747819860", "+0900", "On master: stash message"]
+          ])
+        })
       })
     })
 
@@ -59,6 +73,41 @@ describe('SitLogParser', () => {
       it('should return correctly', () => {
         model = new SitLogParser(repo, 'master', 'logs/refs/heads/hoge')
         expect(() => { model.parseToCSV() }).toThrowError("Do not exist file: test/localRepo/.sit/logs/refs/heads/hoge")
+      })
+    })
+  })
+
+  describe('#parseToJSON', () => {
+    describe('whn logFile exist', () => {
+      describe('when replaceBlob is true', () => {
+        xit('should return correctly', () => {
+          model = new SitLogParser(repo, 'master', 'logs/refs/heads/master')
+          jest.spyOn(repo, '_refBlobFromCommitHash').mockReturnValueOnce('0000000000000000000000000000000000000000')
+            .mockReturnValueOnce('8b58f3891ae3e4d274972a39d27fd460aaeaa6cc')
+
+          expect(model.parseToJSON()).toEqual([
+            { "aftersha": "8b58f3891ae3e4d274972a39d27fd460aaeaa6cc", "beforesha": "0000000000000000000000000000000000000000", "branch": "master", "email": "<te108186@gmail.com>", "message": "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0", "timezone": "+0900", "unixtime": "1580961933681", "username": "yukihirop" },
+            { "aftersha": "2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "beforesha": "8b58f3891ae3e4d274972a39d27fd460aaeaa6cc", "branch": "master", "email": "<te108186@gmail.com>", "message": "commit Add good_bye", "timezone": "+0900", "unixtime": "1583639422044", "username": "yukihirop" }
+          ])
+        })
+      })
+
+      describe('when replaceBlob is false', () => {
+        xit('should return correctly', () => {
+          model = new SitLogParser(repo, 'master', 'logs/refs/stash')
+
+          expect(model.parseToJSON(false)).toEqual([
+            { "aftersha": "3df8acdb918794c2bda15ae45fec2c5929ca4929", "beforesha": "0000000000000000000000000000000000000000", "branch": "master", "email": "<te108186@gmail.com>", "message": "WIP on master: 4e2b7c4 Add good_bye", "timezone": "+0900", "unixtime": "1583663621190", "username": "yukihirop" },
+            { "aftersha": "00fa2d2f5b497b41e288f8c9bce3bf61515d3101", "beforesha": "3df8acdb918794c2bda15ae45fec2c5929ca4929", "branch": "master", "email": "<te108186@gmail.com>", "message": "On master: stash message", "timezone": "+0900", "unixtime": "1583747819860", "username": "yukihirop" }
+          ])
+        })
+      })
+    })
+
+    describe('when logFile do not exist', () => {
+      it('should return correctly', () => {
+        model = new SitLogParser(repo, 'master', 'logs/refs/heads/hoge')
+        expect(() => { model.parseToJSON() }).toThrowError("Do not exist file: test/localRepo/.sit/logs/refs/heads/hoge")
       })
     })
   })

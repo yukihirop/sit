@@ -26,13 +26,13 @@ const {
 } = require('./utils/string');
 
 const editor = require('./utils/editor');
-const exec = require('child_process').exec;
 
 const SitBaseRepo = require('./repos/base/SitBaseRepo');
 const SitConfig = require('./repos/SitConfig');
 const SitRefParser = require('./repos/refs/SitRefParser');
 const SitRepoValidator = require('./repos/validators/SitRepoValidator');
-const SitCommit = require('./repos/objects/SitCommit')
+const SitCommit = require('./repos/objects/SitCommit');
+const SitLogParser = require('./repos/logs/SitLogParser');
 
 class SitRepo extends SitBaseRepo {
   init(opts = {}) {
@@ -834,6 +834,15 @@ Fast-forward
           }
         })
       })
+    } else if (subcommand === 'list') {
+      const currentBranch = this._branchResolve('HEAD')
+      const parser = new SitLogParser(this, currentBranch, 'logs/refs/stash')
+      try {
+        const stashList = parser.parseForLog('stash')
+        console.log(stashList)
+      } catch (err) {
+        console.log('stash list is nothing')
+      }
     }
   }
 }
