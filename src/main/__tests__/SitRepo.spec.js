@@ -1070,22 +1070,24 @@ WIP on master: 47af1af Add good_bye`
           expect(mockModel_hashObject.mock.calls[0]).toEqual(["test/dist/test_data.csv", { "type": "blob" }])
           expect(mockModel_hashObject.mock.calls[1]).toEqual(["test/dist/test_data.csv", { "type": "blob", "write": true }])
 
-          expect(mockModel__refResolve).toHaveBeenCalledTimes(1)
-          expect(mockModel__refResolve.mock.calls[0]).toEqual(['HEAD'])
+          expect(mockModel__refResolve).toHaveBeenCalledTimes(3)
+          expect(mockModel__refResolve.mock.calls[0]).toEqual(['refs/stash'])
+          expect(mockModel__refResolve.mock.calls[1]).toEqual(['HEAD'])
+          expect(mockModel__refResolve.mock.calls[2]).toEqual(['refs/heads/master'])
 
           expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2)
-          expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["ORIG_HEAD", "47af1af6722639322ccf17ea5f873d0e483c364f"])
+          expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["ORIG_HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"])
           expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/stash", "3df8acdb918794c2bda15ae45fec2c5929ca4929", false])
 
           expect(mockModel__writeLog).toHaveBeenCalledTimes(2)
-          expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "47af1af6722639322ccf17ea5f873d0e483c364f", "47af1af6722639322ccf17ea5f873d0e483c364f", "reset: moving to HEAD", false])
-          expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/stash", "0000000000000000000000000000000000000000", "3df8acdb918794c2bda15ae45fec2c5929ca4929", "WIP on master: 47af1af Add good_bye", false])
+          expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "reset: moving to HEAD", false])
+          expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/stash", "47af1af6722639322ccf17ea5f873d0e483c364f", "3df8acdb918794c2bda15ae45fec2c5929ca4929", "WIP on master: 4e2b7c4 Add good_bye", false])
 
           expect(mockModel_catFile).toHaveBeenCalledTimes(1)
           expect(mockModel_catFile.mock.calls[0]).toEqual(["2938ad2ab5722adf9b48ff5bac74989eaa2d144c"])
 
           expect(mockModel__createCommit).toHaveBeenCalledTimes(1)
-          expect(mockModel__createCommit.mock.calls[0]).toEqual(["2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "47af1af6722639322ccf17ea5f873d0e483c364f", "WIP on master: 47af1af Add good_bye"])
+          expect(mockModel__createCommit.mock.calls[0]).toEqual(["2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "WIP on master: 4e2b7c4 Add good_bye"])
         })
       })
     })

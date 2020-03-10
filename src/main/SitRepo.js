@@ -770,6 +770,7 @@ Fast-forward
         console.log('No local changes to save')
         return
       } else {
+        const commitStash = this._refResolve('refs/stash')
         const commitHEADHash = this._refResolve('HEAD')
         calculateBlobHash = this.hashObject(this.distFilePath, { type: 'blob', write: true })
 
@@ -786,7 +787,7 @@ Fast-forward
         // STEP 4: Update logs/refs/stash
         // STEP 5: Update dist File
         this._writeSyncFile('refs/stash', genCommitHash, false)
-          ._writeLog('logs/refs/stash', this._INITIAL_HASH(), genCommitHash, saveMessage, false)
+          ._writeLog('logs/refs/stash', commitStash, genCommitHash, saveMessage, false)
           .catFile(blobHEADHash).then(obj => {
             writeSyncFile(this.distFilePath, obj.serialize().toString())
             console.log(`Saved working directory and index state ${saveMessage}`)
