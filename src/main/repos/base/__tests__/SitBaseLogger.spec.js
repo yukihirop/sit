@@ -17,7 +17,9 @@ jest.mock('@utils/file', () => (
 ));
 
 describe('SitBaseLogger', () => {
-  const model = new SitBaseLogger('df9a34ac9610f4ae808c1d010100c2ed9447c714', '5b1cf86e97c6633e9a2dd85567e33d636dd3748a')
+  const beforeSHA = 'df9a34ac9610f4ae808c1d010100c2ed9447c714';
+  const afterSHA = '5b1cf86e97c6633e9a2dd85567e33d636dd3748a';
+  const model = new SitBaseLogger()
 
   afterEach(() => {
     jest.restoreAllMocks()
@@ -26,7 +28,7 @@ describe('SitBaseLogger', () => {
   describe('#write', () => {
     describe('when filedir exist', () => {
       it('should return correctly', () => {
-        model.write('logs/refs/heads/hoge', 'commit: test', true)
+        model.write('logs/refs/heads/hoge', beforeSHA, afterSHA, 'commit: test', true)
         expect(mkdirSyncRecursive).not.toHaveBeenCalled()
         expect(appendFile).toHaveBeenCalled()
       })
@@ -34,7 +36,7 @@ describe('SitBaseLogger', () => {
 
     describe('when filedir do not exist', () => {
       it('should return correctly', () => {
-        model.write('logs/hoge/fuga', 'commit: test', true)
+        model.write('logs/hoge/fuga', beforeSHA, afterSHA, 'commit: test', true)
         expect(mkdirSyncRecursive).toHaveBeenCalled()
         expect(appendFile).toHaveBeenCalled()
       })
@@ -42,7 +44,7 @@ describe('SitBaseLogger', () => {
 
     describe('when mkdir is false', () => {
       it('should return correctly', () => {
-        model.write('logs/hoge/fuga', 'commit: test', false)
+        model.write('logs/hoge/fuga', beforeSHA, afterSHA, 'commit: test', false)
         expect(mkdirSyncRecursive).not.toHaveBeenCalled()
         expect(appendFile).toHaveBeenCalled()
       })

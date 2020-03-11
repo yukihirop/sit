@@ -219,8 +219,13 @@ class SitBaseRepo extends SitBase {
   }
 
   _writeLog(file, beforeSHA, afterSHA, message, mkdir = true) {
-    new SitLogger(beforeSHA, afterSHA).write(file, message, mkdir)
+    new SitLogger().write(file, beforeSHA, afterSHA, message, mkdir)
     return this;
+  }
+
+  _deleteLineLog(logFile, key) {
+    const parser = new SitLogParser(this, this.currentBranch(), logFile)
+    console.log(parser.remakeLog(key))
   }
 
   _writeSyncFile(path, data, mkdir = true) {
