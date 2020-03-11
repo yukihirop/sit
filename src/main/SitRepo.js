@@ -99,10 +99,6 @@ class SitRepo extends SitBaseRepo {
     return isExistFile(this.localRepo);
   }
 
-  currentBranch() {
-    return this._branchResolve('HEAD');
-  }
-
   beforeHEADHash() {
     return this._refResolve('HEAD');
   }
@@ -834,6 +830,54 @@ Fast-forward
           }
         })
       })
+
+    } else if (subcommand === 'pop') {
+
+      let { stashKey } = opts
+      if (!stashKey) stashKey = 'stash@{0}'
+
+      const stashCommitHash = this._refStash(stashKey, false)
+      const stashBlobHash = this._refBlobFromCommitHash(stashCommitHash)
+      this.catFile(stashBlobHash).then(obj => {
+        let { err, data } = fileSafeLoad(this.distFilePath)
+        if (err) die(err.message)
+
+        const distData = data.split('\n')
+        const stashData = obj.serialize().toString().split('\n')
+
+        this._twoWayMerge(distData, stashData, "Updated upstream", "Stashed changes", result => {
+          // STEP 1: Create sit object(blob)
+          this.hashObjectFromData(result.data.join('\n'), { type: 'blob', write: true })
+          // STEP 2: Update dist file
+          writeSyncFile(this.distFilePath, result.data.join('\n'));
+
+          if (result.conflict) {
+
+            console.log(`\
+Two-way-merging ${this.distFilePath}
+CONFLICT (content): Merge conflict in ${this.distFilePath}`);
+            return
+
+          } else {
+
+            if (stashKey === 'stash@{0}') {
+              this._writeSyncFile('refs/stash', this._refStash(stashKey, true))
+            }
+            this._deleteLineLog('logs/refs/stash', stashKey)
+
+            console.log(`\
+On branch ${this.currentBranch()}
+Changes not staged for commit:
+
+\tmodified:\t${this.distFilePath}
+
+Dropped ${stashKey} (${stashCommitHash})`)
+            return
+
+          }
+        })
+      })
+
     } else if (subcommand === 'list') {
       const currentBranch = this._branchResolve('HEAD')
       const parser = new SitLogParser(this, currentBranch, 'logs/refs/stash')

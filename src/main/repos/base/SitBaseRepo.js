@@ -119,6 +119,10 @@ class SitBaseRepo extends SitBase {
     return result;
   }
 
+  currentBranch() {
+    return this._branchResolve('HEAD');
+  }
+
   _refBlob(ref) {
     let commitHash = this._refResolve(ref);
     let blobHash = null;
@@ -223,9 +227,12 @@ class SitBaseRepo extends SitBase {
     return this;
   }
 
-  _deleteLineLog(logFile, key) {
-    const parser = new SitLogParser(this, this.currentBranch(), logFile)
-    console.log(parser.remakeLog(key))
+  _deleteLineLog(file, key) {
+    const parser = new SitLogParser(this, this.currentBranch(), file)
+    const logger = new SitLogger()
+
+    logger.bulkOverWrite(file, parser.remakeLog(key))
+    return this;
   }
 
   _writeSyncFile(path, data, mkdir = true) {
@@ -327,7 +334,7 @@ class SitBaseRepo extends SitBase {
       let arr = [];
       let currentItemIndex = 0;
       let currentConflict = false;
-      const initialItem = { startIndex: 0, length: 0, to: [], from: [] };
+      const initialItem = { startIndex: 0, conflictLength: 0, to: [], from: [] };
 
       Object.keys(result).forEach((key, index) => {
         let line = result[key];
@@ -335,7 +342,7 @@ class SitBaseRepo extends SitBase {
 
         if (line.conflict) {
           item.startIndex = currentItemIndex;
-          item.length++;
+          item.conflictLength++;
           item.to.push(line.to);
           item.from.push(line.from);
           arr[currentItemIndex] = item;
@@ -363,13 +370,17 @@ class SitBaseRepo extends SitBase {
       let isConflict = false;
       arr.forEach(item => {
         // conflict
-        if (item.length > 0) {
-          isConflict = true;
-          data.push(`${toMark} ${toName}`);
-          data.push(...item.to.filter(n => n));
-          data.push(sepalate);
-          data.push(...item.from.filter(n => n));
-          data.push(`${fromMark} ${fromName}`);
+        if (item.conflictLength > 0) {
+          if (item.to[0] !== null) {
+            isConflict = true;
+            data.push(`${toMark} ${toName}`);
+            data.push(...item.to.filter(n => n));
+            data.push(sepalate);
+            data.push(...item.from.filter(n => n));
+            data.push(`${fromMark} ${fromName}`);
+          } else {
+            data.push(...item.from);
+          }
         } else {
           data.push(...item.to);
         }
@@ -592,6 +603,29 @@ class SitBaseRepo extends SitBase {
     } else {
       return this._INITIAL_HASH();
     }
+  }
+
+  _refStash(stashKey, next = false) {
+    const parser = new SitLogParser(this, this.currentBranch(), 'logs/refs/stash')
+    const index = parser.parseForIndex('stash')
+    let stashCommitHash;
+
+    if (next) {
+      stashCommitHash = index[this._nextKey(stashKey)].aftersha
+    } else {
+      stashCommitHash = index[stashKey].aftersha
+    }
+
+    return stashCommitHash
+  }
+
+  _nextKey(key) {
+    let type, num;
+
+    const atIndex = key.indexOf('@')
+    type = key.slice(0, atIndex)
+    num = parseInt(key.slice(atIndex + 2, atIndex + 3))
+    return `${type}@{${num + 1}}`
   }
 
   _branchResolve(name) {

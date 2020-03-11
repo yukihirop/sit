@@ -229,10 +229,20 @@ program
   });
 
 program
-  .command('stash [subcommand] [saveMessage]')
+  .command('stash [subcommand] [value]')
   .description('Stash the changes in a dirty working directory away')
-  .action((subcommand, saveMessage, options) => {
-    options = Object.assign(options, { saveMessage })
+  .action((subcommand, value, options) => {
+    switch (subcommand) {
+      case 'save':
+        const saveMessage = value
+        options = Object.assign(options, { saveMessage })
+        break;
+      case 'pop' || 'apply':
+        const stashKey = value
+        options = Object.assign(options, { stashKey })
+        break;
+    }
+
     sit().Repo.stash(subcommand, options)
   });
 

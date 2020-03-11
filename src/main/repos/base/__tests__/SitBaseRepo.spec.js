@@ -73,6 +73,12 @@ describe('SitBaseRepo', () => {
     })
   })
 
+  describe('#currentBranch', () => {
+    it('should return correctly', () => {
+      expect(model.currentBranch()).toEqual('master')
+    })
+  })
+
   describe('#_refBlob', () => {
     describe('when commitHash is not initial', () => {
       it('should return correctly', () => {
@@ -183,10 +189,15 @@ test data`
   });
 
   describe('#_refLastLogCSVData', () => {
+    const old_parseToCSV = SitLogParser.prototype.parseToCSV
     const mockSitLogParser_parseToCSV = jest.fn()
 
     beforeEach(() => {
       SitLogParser.prototype.parseToCSV = mockSitLogParser_parseToCSV
+    })
+
+    afterEach(() => {
+      SitLogParser.prototype.parseToCSV = old_parseToCSV
     })
 
     describe('when repoName exists', () => {
@@ -529,6 +540,28 @@ Merge from GoogleSpreadSheet/master`)
     describe('when ref is not HEAD', () => {
       it('should return correctly', () => {
         expect(model._refResolve('refs/heads/master')).toEqual('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
+      })
+    })
+  })
+
+  describe('#_refStash', () => {
+    describe('when next is false', () => {
+      it('should return correclty', () => {
+        expect(model._refStash('stash@{1}', false)).toEqual('3df8acdb918794c2bda15ae45fec2c5929ca4929')
+      })
+    })
+
+    describe('when next is true', () => {
+      it('should return correctly', () => {
+        expect(model._refStash('stash@{0}', true)).toEqual('3df8acdb918794c2bda15ae45fec2c5929ca4929')
+      })
+    })
+  })
+
+  describe('#_nextKey', () => {
+    describe('when stash', () => {
+      it('should return correctly', () => {
+        expect(model._nextKey('stash@{0}')).toEqual('stash@{1}')
       })
     })
   })

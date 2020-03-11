@@ -207,12 +207,6 @@ describe('SitRepo', () => {
     })
   })
 
-  describe('#currentBranch', () => {
-    it('should return correctly', () => {
-      expect(model.currentBranch()).toEqual('master')
-    })
-  })
-
   describe('#beforeHEADHash', () => {
     it('should return correctly', () => {
       expect(model.beforeHEADHash()).toEqual('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
@@ -1154,6 +1148,85 @@ WIP on master: 47af1af Add good_bye`
         model.stash('list')
         expect(console.log).toHaveBeenCalledTimes(1)
         expect(console.log.mock.calls[0][0]).toEqual(`${colorize('3df8acd', 'info')} stash@{0}: WIP on master: 4e2b7c4 Add good_bye\n${colorize('00fa2d2', 'info')} stash@{1}: On master: stash message`)
+      })
+    })
+
+    describe('stash pop', () => {
+      describe('when do not specify key', () => {
+        //　Can't test because mock of function inside promise
+        xit('should return correctly', () => {
+          console.log = jest.fn()
+          const stashResult = `
+日本語,英語,キー
+こんにちは,hello,common.greeting.hello
+さようなら,goodbye,common.greeting.good_bye
+歓迎します,wellcome,common.greeting.welcome
+おやすみ,good night,common.greeting.good_night`
+          const mockModel_hashObjectFromData = jest.spyOn(model, 'hashObjectFromData').mockReturnValueOnce('blob hash')
+          const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValueOnce(model)
+          const mockModel__deleteLineLog = jest.spyOn(model, '_deleteLineLog').mockReturnValueOnce(model)
+
+          model.stash('pop')
+
+          expect(mockModel_hashObjectFromData).toHaveBeenCalledTimes(1)
+          expect(mockModel_hashObjectFromData.mock.calls[0][0]).toEqual(result)
+          expect(mockModel_hashObjectFromData.mock.calls[0][1]).toEqual({ type: 'blob', write: true })
+
+          expect(writeSyncFile).toHaveBeenCalledTimes(1)
+          expect(writeSyncFile.mock.calls[0][0]).toEqual('./dist/test_data.csv')
+          expect(writeSyncFile.mock.calls[0][1]).toEqual(stashResult)
+
+          expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(1)
+          expect(mockModel__writeSyncFile.mock.calls[0][0]).toEqual('refs/stash')
+          expect(mockModel__writeSyncFile.mock.calls[0][0]).toEqual('3df8acdb918794c2bda15ae45fec2c5929ca4929')
+
+          expect(mockModel__deleteLineLog).toHaveBeenCalledTimes(1)
+          exepct(mockModel__deleteLineLog.mock.calls[0]).toEqual('logs/refs/stash', 'stash@{0}')
+
+          expect(console.log).toHaveBeenCalledTimes(1)
+          expect(console.log.mock.calls[0]).toEqual(`\
+On branch master
+Changes not staged for commit:
+
+  modified:	../dist/test_data.csv
+
+Dropped stash@{0} (00fa2d2f5b497b41e288f8c9bce3bf61515d3101)`)
+        })
+      })
+
+      describe('when specify key', () => {
+        xit('should return correctly', () => {
+          console.log = jest.fn()
+          const stashResult = `
+日本語,英語,キー
+こんにちは,hello,common.greeting.hello
+さようなら,goodbye,common.greeting.good_bye
+おやすみ,good night,common.greeting.good_night`
+          const mockModel_hashObjectFromData = jest.spyOn(model, 'hashObjectFromData').mockReturnValueOnce('blob hash')
+          const mockModel__deleteLineLog = jest.spyOn(model, '_deleteLineLog').mockReturnValueOnce(model)
+
+          model.stash('pop', 'stash@{1}')
+
+          expect(mockModel_hashObjectFromData).toHaveBeenCalledTimes(1)
+          expect(mockModel_hashObjectFromData.mock.calls[0][0]).toEqual(result)
+          expect(mockModel_hashObjectFromData.mock.calls[0][1]).toEqual({ type: 'blob', write: true })
+
+          expect(writeSyncFile).toHaveBeenCalledTimes(1)
+          expect(writeSyncFile.mock.calls[0][0]).toEqual('./dist/test_data.csv')
+          expect(writeSyncFile.mock.calls[0][1]).toEqual(stashResult)
+
+          expect(mockModel__deleteLineLog).toHaveBeenCalledTimes(1)
+          exepct(mockModel__deleteLineLog.mock.calls[0]).toEqual('logs/refs/stash', 'stash@{1}')
+
+          expect(console.log).toHaveBeenCalledTimes(1)
+          expect(console.log.mock.calls[0]).toEqual(`\
+On branch master
+Changes not staged for commit:
+
+  modified:	../dist/test_data.csv
+
+Dropped stash@{1} (3df8acdb918794c2bda15ae45fec2c5929ca4929)`)
+        })
       })
     })
   })
