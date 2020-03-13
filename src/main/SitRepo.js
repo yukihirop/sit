@@ -755,7 +755,7 @@ Fast-forward
     })
   }
 
-  stash(subcommand, opts = {}) {
+  stash(subcommand = undefined, opts = {}) {
     const blobHEADHash = this._refBlob('HEAD');
 
     if (subcommand === undefined) {

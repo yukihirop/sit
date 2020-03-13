@@ -10,6 +10,7 @@ const { Command } = require('./src/main/monkey_patches/commander')
   , initCmd = require('./cmd/init')()
   , claspCmd = require('./cmd/clasp')()
   , repoCmd = require('./cmd/repo')()
+  , stashCmd = require('./cmd/stash')()
 
 program
   .version(pkg.version)
@@ -229,27 +230,10 @@ program
   });
 
 program
-  .command('stash [subcommand] [value]')
-  .description('Stash the changes in a dirty working directory away')
-  .action((subcommand, value, options) => {
-    switch (subcommand) {
-      case 'save':
-        const saveMessage = value
-        options = Object.assign(options, { saveMessage })
-        break;
-      case 'pop' || 'apply':
-        const stashKey = value
-        options = Object.assign(options, { stashKey })
-        break;
-    }
-
-    sit().Repo.stash(subcommand, options)
-  });
-
-program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)
+  .useSubcommand(stashCmd)
 
 if (process.argv.length <= 2) {
   program.help();
