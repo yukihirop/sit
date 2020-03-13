@@ -1229,5 +1229,18 @@ Dropped stash@{1} (3df8acdb918794c2bda15ae45fec2c5929ca4929)`)
         })
       })
     })
+
+    describe('stash show', () => {
+      describe('when specify -p(--print)', () => {
+        it('should return correctly', () => {
+          const mockModel_diff = jest.spyOn(model, 'diff').mockReturnValueOnce('diff')
+
+          model.stash('show', { print: true })
+
+          expect(mockModel_diff).toHaveBeenCalledTimes(1)
+          expect(mockModel_diff.mock.calls[0]).toEqual([{ "compareBlobHash": "b6f2667d13461fb6c521c1975018124db2e2d1e3" }])
+        })
+      })
+    })
   })
 })

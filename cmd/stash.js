@@ -39,6 +39,18 @@ function StashCmd() {
       sit().Repo.stash('list', options)
     });
 
+  stashCmd
+    .command('show [stashKey]')
+    .description(' Show the changes recorded in the stash entry as a diff between the stashed contents and the commit back when the stash entry was first created.')
+    .option(
+      '-p, --print',
+      'display diff from HEAD'
+    )
+    .action((stashKey, options) => {
+      options = Object.assign(options, { stashKey })
+      sit().Repo.stash('show', options)
+    });
+
   return stashCmd
 }
 
