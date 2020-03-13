@@ -797,43 +797,7 @@ Fast-forward
 
     } else if (subcommand === 'apply') {
 
-      const stashCommitHash = this._readFileSync('refs/stash')
-      const stashBlobHash = this._refBlobFromCommitHash(stashCommitHash)
-      this.catFile(stashBlobHash).then(obj => {
-        let { err, data } = fileSafeLoad(this.distFilePath)
-        if (err) die(err.message)
-
-        const distData = data.split('\n')
-        const stashData = obj.serialize().toString().split('\n')
-
-        this._twoWayMerge(distData, stashData, "Updated upstream", "Stashed changes", result => {
-          // STEP 1: Create sit object(blob)
-          const blobApplyHash = this.hashObjectFromData(result.data.join('\n'), { type: 'blob', write: true })
-          // STEP 2: Update dist file
-          writeSyncFile(this.distFilePath, result.data.join('\n'));
-
-          if (result.conflict) {
-            console.log(`\
-Two-way-merging ${this.distFilePath}
-CONFLICT (content): Merge conflict in ${this.distFilePath}`);
-            return
-
-          } else {
-
-            console.log(`\
-Updating ${blobHEADHash.slice(0, 7)}..${blobApplyHash.slice(0, 7)}\n
-Fast-forward
-  ${this.distFilePath}
-  1 file changed`)
-            return
-
-          }
-        })
-      })
-
-    } else if (subcommand === 'pop') {
-
-      let { stashKey } = opts
+      let { stashKey, popHandler } = opts
       if (!stashKey) stashKey = 'stash@{0}'
 
       const stashCommitHash = this._refStash(stashKey, false)
@@ -860,10 +824,7 @@ CONFLICT (content): Merge conflict in ${this.distFilePath}`);
 
           } else {
 
-            if (stashKey === 'stash@{0}') {
-              this._writeSyncFile('refs/stash', this._refStash(stashKey, true))
-            }
-            this._deleteLineLog('logs/refs/stash', stashKey)
+            if (popHandler) popHandler(stashKey)
 
             console.log(`\
 On branch ${this.currentBranch()}
@@ -877,6 +838,19 @@ Dropped ${stashKey} (${stashCommitHash})`)
           }
         })
       })
+
+    } else if (subcommand === 'pop') {
+      let { stashKey } = opts
+      if (!stashKey) stashKey = 'stash@{0}'
+
+      const popHandler = (stashKey) => {
+        if (stashKey === 'stash@{0}') {
+          this._writeSyncFile('refs/stash', this._refStash(stashKey, true))
+        }
+        this._deleteLineLog('logs/refs/stash', stashKey)
+      }
+
+      this.stash('apply', { stashKey, popHandler })
 
     } else if (subcommand === 'list') {
       const currentBranch = this._branchResolve('HEAD')

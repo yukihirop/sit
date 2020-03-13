@@ -17,9 +17,10 @@ function StashCmd() {
     });
 
   stashCmd
-    .command('apply')
+    .command('apply [stashKey]')
     .description('Like pop, but do not remove the state from the stash list. Unlike pop')
-    .action((options) => {
+    .action((stashKey, options) => {
+      options = Object.assign(options, { stashKey })
       sit().Repo.stash('apply', options)
     });
 
