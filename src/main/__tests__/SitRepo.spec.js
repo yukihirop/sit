@@ -1020,7 +1020,7 @@ Please, commit your changes before you merge.`])
           const mockModel__refBlob = jest.spyOn(model, '_refBlob').mockReturnValueOnce(blobHEADHash)
           const mockModel_hashObject = jest.spyOn(model, 'hashObject').mockReturnValueOnce(blobHEADHash)
 
-          model.stash()
+          model.stash('save')
 
           expect(mockModel__refBlob).toHaveBeenCalledTimes(1)
           expect(mockModel__refBlob.mock.calls[0]).toEqual(['HEAD'])
@@ -1059,7 +1059,7 @@ WIP on master: 47af1af Add good_bye`
 
           const mockModel__createCommit = jest.spyOn(model, '_createCommit').mockReturnValueOnce('3df8acdb918794c2bda15ae45fec2c5929ca4929')
 
-          model.stash()
+          model.stash('save')
 
           expect(mockModel__refBlob).toHaveBeenCalledTimes(1)
           expect(mockModel__refBlob.mock.calls[0]).toEqual(['HEAD'])

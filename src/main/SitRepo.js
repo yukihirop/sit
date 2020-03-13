@@ -758,8 +758,10 @@ Fast-forward
   stash(subcommand = undefined, opts = {}) {
     const blobHEADHash = this._refBlob('HEAD');
 
-    if (subcommand === undefined) {
+    if (subcommand === 'save') {
       let { saveMessage } = opts
+      if (saveMessage) saveMessage = `On ${this.currentBranch()}: ${saveMessage}`
+      
       let calculateBlobHash = this.hashObject(this.distFilePath, { type: 'blob' });
 
       if (blobHEADHash === calculateBlobHash) {
@@ -789,11 +791,6 @@ Fast-forward
             console.log(`Saved working directory and index state ${saveMessage}`)
           })
       }
-    } else if (subcommand === 'save') {
-
-      let { saveMessage } = opts
-      if (saveMessage) saveMessage = `On ${this.currentBranch()}: ${saveMessage}`
-      this.stash(undefined, { ...opts, saveMessage })
 
     } else if (subcommand === 'apply') {
 
