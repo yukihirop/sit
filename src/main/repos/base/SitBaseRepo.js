@@ -502,7 +502,10 @@ class SitBaseRepo extends SitBase {
         }
 
         if (shaArr.length > 1) {
-          reject(new Error(`Ambigous reference ${name}: Cndidates are:\n - ${"\n-1".join(shaArr)}`));
+          reject(new Error(`Ambigous reference ${name}: Cndidates are:\n${shaArr.reduce((acc, item) => {
+            acc = acc + `- ${item}\n`
+            return acc
+          }, '').trim()}`));
         }
 
         let sha = shaArr[0];
@@ -563,7 +566,7 @@ class SitBaseRepo extends SitBase {
                 if (fileName.startsWith(rem)) {
                   return prefix + fileName
                 }
-              });
+              }).filter(v => v);
 
               if (candidates.length > 0) {
                 resolve(candidates);
