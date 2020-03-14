@@ -847,17 +847,18 @@ CONFLICT (content): Merge conflict in ${this.distFilePath}`);
 
           } else {
 
-            if (popHandler) popHandler(stashKey)
-
-            console.log(`\
+            if (popHandler) {
+              popHandler(stashKey, stashCommitHash)
+            } else {
+              console.log(`\
 On branch ${this.currentBranch()}
 Changes not staged for commit:
 
 \tmodified:\t${this.distFilePath}
 
-Dropped ${stashKey} (${stashCommitHash})`)
-            return
-
+no changes added to commit`)
+              return
+            }
           }
         })
       })
@@ -866,11 +867,20 @@ Dropped ${stashKey} (${stashCommitHash})`)
       let { stashKey } = opts
       if (!stashKey) stashKey = 'stash@{0}'
 
-      const popHandler = (stashKey) => {
+      const popHandler = (stashKey, stashCommitHash) => {
         if (stashKey === 'stash@{0}') {
           this._writeSyncFile('refs/stash', this._refStash(stashKey, true))
         }
         this._deleteLineLog('logs/refs/stash', stashKey)
+
+        console.log(`\
+On branch ${this.currentBranch()}
+Changes not staged for commit:
+
+\tmodified:\t${this.distFilePath}
+
+Dropped ${stashKey} (${stashCommitHash})`)
+        return
       }
 
       this.stash('apply', { stashKey, popHandler })
