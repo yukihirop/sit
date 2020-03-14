@@ -6,23 +6,21 @@ const SitBase = require('./SitBase')
 const {
   isExistFile,
   mkdirSyncRecursive,
-  appendFile
+  appendFile,
+  writeSyncFile
 } = require('../../utils/file');
 
 const moment = require('moment');
 
 class SitBaseLogger extends SitBase {
-  constructor(beforeSHA, afterSHA) {
+  constructor() {
     super()
-    this.beforeSHA = beforeSHA
-    this.afterSHA = afterSHA
     this.localConfig = new SitConfig('local').config;
     this.globalConfig = new SitConfig('global').config;
   }
 
-  write(file, message, mkdir) {
-    const space = ' ';
-    const data = `${(this.beforeSHA || this._INITIAL_HASH())}${space}${this.afterSHA}${space}${this.username()}${space}<${this.email()}>${space}${moment().format('x')}${space}${moment().format('ZZ')}\t${message}\r\n`;
+  write(file, beforesha, aftersha, message, mkdir) {
+    const data = this.createLogData({ beforesha, aftersha, message }, mkdir);
 
     if (mkdir) {
       const fullDirPath = this.localRepo + '/' + file.split('/').slice(0, -1).join('/');
@@ -33,6 +31,21 @@ class SitBaseLogger extends SitBase {
     }
 
     appendFile(`${this.localRepo}/${file}`, data);
+  }
+
+  createLogData({ beforesha, aftersha, username, email, unixtime, timezone, message }, mkdir) {
+    const space = ' ';
+    beforesha = beforesha || this._INITIAL_HASH()
+    username = username || this.username()
+    email = email || `<${this.email()}>`
+    unixtime = unixtime || moment().format('x')
+    timezone = timezone || moment().format('ZZ')
+
+    return `${beforesha}${space}${aftersha}${space}${username}${space}${email}${space}${unixtime}${space}${timezone}\t${message}\n`;
+  }
+
+  bulkOverWrite(file, data) {
+    writeSyncFile(`${this.localRepo}/${file}`, data, false)
   }
 
   username() {

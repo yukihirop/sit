@@ -26,13 +26,13 @@ const {
 } = require('./utils/string');
 
 const editor = require('./utils/editor');
-const exec = require('child_process').exec;
 
 const SitBaseRepo = require('./repos/base/SitBaseRepo');
 const SitConfig = require('./repos/SitConfig');
 const SitRefParser = require('./repos/refs/SitRefParser');
 const SitRepoValidator = require('./repos/validators/SitRepoValidator');
-const SitCommit = require('./repos/objects/SitCommit')
+const SitCommit = require('./repos/objects/SitCommit');
+const SitLogParser = require('./repos/logs/SitLogParser');
 
 class SitRepo extends SitBaseRepo {
   init(opts = {}) {
@@ -97,10 +97,6 @@ class SitRepo extends SitBaseRepo {
 
   isLocalRepo() {
     return isExistFile(this.localRepo);
-  }
-
-  currentBranch() {
-    return this._branchResolve('HEAD');
   }
 
   beforeHEADHash() {
@@ -334,31 +330,57 @@ Please make sure you have the correct access rights and the repository exists.`)
   }
 
   diff(opts = {}) {
+    const { compareBlobHash } = opts;
     opts = Object.assign(opts, { type: 'blob' });
 
     const blobHash = this._refBlob('HEAD');
-    const calculateHash = this.hashObject(this.distFilePath, opts);
-    const index = `${blobHash.slice(0, 7)}..${calculateHash.slice(0, 7)}`;
 
-    this.catFile(blobHash).then(obj => {
-      const headStream = obj.serialize().toString();
-      const { err, data } = fileSafeLoad(this.distFilePath);
+    if (compareBlobHash) {
+      const index = `${blobHash.slice(0, 7)}..${compareBlobHash.slice(0, 7)}`;
 
-      if (err) {
-        die(err.message)
-      }
-      if (headStream !== data) {
-        let patch = jsdiff.createPatch(index, headStream, data, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
-        patch = patch
-          .replace(/^[---].*\t/gm, '--- ')
-          .replace(/^[+++].*\t/gm, '+++ ')
-          .replace(/^\-.*/gm, colorize('$&', 'removed'))
-          .replace(/^\+.*/gm, colorize('$&', 'added'))
-          .replace(/^@@.+@@/gm, colorize('$&', 'section'));
-        console.log(patch);
-        return
-      }
-    });
+      this.catFile(blobHash).then(obj => {
+        this.catFile(compareBlobHash).then(compareObj => {
+          const headData = obj.serialize().toString();
+          const compareData = compareObj.serialize().toString();
+
+          if (headData !== compareData) {
+            let patch = jsdiff.createPatch(index, headData, compareData, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
+            patch = patch
+              .replace(/^[---].*\t/gm, '--- ')
+              .replace(/^[+++].*\t/gm, '+++ ')
+              .replace(/^\-.*/gm, colorize('$&', 'removed'))
+              .replace(/^\+.*/gm, colorize('$&', 'added'))
+              .replace(/^@@.+@@/gm, colorize('$&', 'section'));
+            console.log(patch);
+            return
+          }
+        })
+      })
+
+    } else {
+      const calculateHash = this.hashObject(this.distFilePath, opts);
+      const index = `${blobHash.slice(0, 7)}..${calculateHash.slice(0, 7)}`;
+
+      this.catFile(blobHash).then(obj => {
+        const headStream = obj.serialize().toString();
+        const { err, data } = fileSafeLoad(this.distFilePath);
+
+        if (err) {
+          die(err.message)
+        }
+        if (headStream !== data) {
+          let patch = jsdiff.createPatch(index, headStream, data, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
+          patch = patch
+            .replace(/^[---].*\t/gm, '--- ')
+            .replace(/^[+++].*\t/gm, '+++ ')
+            .replace(/^\-.*/gm, colorize('$&', 'removed'))
+            .replace(/^\+.*/gm, colorize('$&', 'added'))
+            .replace(/^@@.+@@/gm, colorize('$&', 'section'));
+          console.log(patch);
+          return
+        }
+      });
+    }
   }
 
   status(opts = {}) {
@@ -757,6 +779,148 @@ Fast-forward
         }
       }
     })
+  }
+
+  stash(subcommand = undefined, opts = {}) {
+    const blobHEADHash = this._refBlob('HEAD');
+
+    if (subcommand === 'save') {
+      let { saveMessage } = opts
+      if (saveMessage) saveMessage = `On ${this.currentBranch()}: ${saveMessage}`
+
+      let calculateBlobHash = this.hashObject(this.distFilePath, { type: 'blob' });
+
+      if (blobHEADHash === calculateBlobHash) {
+        console.log('No local changes to save')
+        return
+      } else {
+        const commitStash = this._refResolve('refs/stash')
+        const commitHEADHash = this._refResolve('HEAD')
+        calculateBlobHash = this.hashObject(this.distFilePath, { type: 'blob', write: true })
+
+        // STEP 1: Update ORIG_HEAD
+        // STEP 2: Update logs/HEAD
+        this._writeSyncFile('ORIG_HEAD', commitHEADHash)
+          ._writeLog('logs/HEAD', commitHEADHash, commitHEADHash, 'reset: moving to HEAD', false)
+
+        // STEP 3: Create stash commit
+        if (saveMessage === undefined) saveMessage = `WIP on ${this.currentBranch()}: ${commitHEADHash.slice(0, 7)} ${this._COMMIT_EDITMSG()}`
+        const genCommitHash = this._createCommit(calculateBlobHash, commitHEADHash, saveMessage)
+
+        // STEP 3: Update refs/stash
+        // STEP 4: Update logs/refs/stash
+        // STEP 5: Update dist File
+        this._writeSyncFile('refs/stash', genCommitHash, false)
+          ._writeLog('logs/refs/stash', commitStash, genCommitHash, saveMessage, false)
+          .catFile(blobHEADHash).then(obj => {
+            writeSyncFile(this.distFilePath, obj.serialize().toString())
+            console.log(`Saved working directory and index state ${saveMessage}`)
+          })
+      }
+
+    } else if (subcommand === 'apply') {
+
+      let { stashKey, popHandler } = opts
+      if (!stashKey) stashKey = 'stash@{0}'
+
+      const stashCommitHash = this._refStash(stashKey, false)
+      const stashBlobHash = this._refBlobFromCommitHash(stashCommitHash)
+      this.catFile(stashBlobHash).then(obj => {
+        let { err, data } = fileSafeLoad(this.distFilePath)
+        if (err) die(err.message)
+
+        const distData = data.split('\n')
+        const stashData = obj.serialize().toString().split('\n')
+
+        this._twoWayMerge(distData, stashData, "Updated upstream", "Stashed changes", result => {
+          // STEP 1: Create sit object(blob)
+          this.hashObjectFromData(result.data.join('\n'), { type: 'blob', write: true })
+          // STEP 2: Update dist file
+          writeSyncFile(this.distFilePath, result.data.join('\n'));
+
+          if (result.conflict) {
+
+            console.log(`\
+Two-way-merging ${this.distFilePath}
+CONFLICT (content): Merge conflict in ${this.distFilePath}`);
+            return
+
+          } else {
+
+            if (popHandler) {
+              popHandler(stashKey, stashCommitHash)
+            } else {
+              console.log(`\
+On branch ${this.currentBranch()}
+Changes not staged for commit:
+
+\tmodified:\t${this.distFilePath}
+
+no changes added to commit`)
+              return
+            }
+          }
+        })
+      })
+
+    } else if (subcommand === 'pop') {
+      let { stashKey } = opts
+      if (!stashKey) stashKey = 'stash@{0}'
+
+      const popHandler = (stashKey, stashCommitHash) => {
+        if (stashKey === 'stash@{0}') {
+          this._writeSyncFile('refs/stash', this._refStash(stashKey, true))
+        }
+        this._deleteLineLog('logs/refs/stash', stashKey)
+
+        console.log(`\
+On branch ${this.currentBranch()}
+Changes not staged for commit:
+
+\tmodified:\t${this.distFilePath}
+
+Dropped ${stashKey} (${stashCommitHash})`)
+        return
+      }
+
+      this.stash('apply', { stashKey, popHandler })
+
+    } else if (subcommand === 'list') {
+      const currentBranch = this._branchResolve('HEAD')
+      const parser = new SitLogParser(this, currentBranch, 'logs/refs/stash')
+      try {
+        const stashList = parser.parseForLog('stash')
+        console.log(stashList)
+      } catch (err) {
+        console.log('stash list is nothing')
+      }
+    } else if (subcommand === 'show') {
+      let { print, stashKey } = opts
+      if (!stashKey) stashKey = 'stash@{0}'
+
+      const stashCommitHash = this._refStash(stashKey, false)
+      const compareBlobHash = this._refBlobFromCommitHash(stashCommitHash)
+
+      if (print) {
+        this.diff({ compareBlobHash })
+      }
+    } else if (subcommand === 'drop') {
+      let { stashKey } = opts
+      if (!stashKey) stashKey = 'stash@{0}'
+
+      const deleteStashKey = this._refStash(stashKey, false)
+
+      if (stashKey === 'stash@{0}') {
+        this._writeSyncFile('refs/stash', this._refStash(stashKey, true))
+      }
+      this._deleteLineLog('logs/refs/stash', stashKey)
+
+      if (stashKey === 'stash@{0}') {
+        console.log(`Dropped refs/stash@{0} (${deleteStashKey})`)
+      } else {
+        console.log(`Dropped ${stashKey} (${deleteStashKey})`)
+      }
+    }
   }
 }
 
