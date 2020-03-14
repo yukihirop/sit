@@ -894,6 +894,22 @@ Dropped ${stashKey} (${stashCommitHash})`)
       if (print) {
         this.diff({ compareBlobHash })
       }
+    } else if (subcommand === 'drop') {
+      let { stashKey } = opts
+      if (!stashKey) stashKey = 'stash@{0}'
+
+      const deleteStashKey = this._refStash(stashKey, false)
+
+      if (stashKey === 'stash@{0}') {
+        this._writeSyncFile('refs/stash', this._refStash(stashKey, true))
+      }
+      this._deleteLineLog('logs/refs/stash', stashKey)
+
+      if (stashKey === 'stash@{0}') {
+        console.log(`Dropped refs/stash@{0} (${deleteStashKey})`)
+      } else {
+        console.log(`Dropped ${stashKey} (${deleteStashKey})`)
+      }
     }
   }
 }

@@ -1242,5 +1242,41 @@ Dropped stash@{1} (3df8acdb918794c2bda15ae45fec2c5929ca4929)`)
         })
       })
     })
+
+    describe('stash drop', () => {
+      describe('when do not specify stash key', () => {
+        it('should return correctly', () => {
+          console.log = jest.fn()
+          const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValueOnce(model)
+          const mockModel__deleteLineLog = jest.spyOn(model, '_deleteLineLog').mockReturnValueOnce(model)
+
+          model.stash('drop')
+
+          expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(1)
+          expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["refs/stash", "3df8acdb918794c2bda15ae45fec2c5929ca4929"])
+
+          expect(mockModel__deleteLineLog).toHaveBeenCalledTimes(1)
+          expect(mockModel__deleteLineLog.mock.calls[0]).toEqual(["logs/refs/stash", "stash@{0}"])
+
+          expect(console.log).toHaveBeenCalledTimes(1)
+          expect(console.log.mock.calls[0]).toEqual(["Dropped refs/stash@{0} (00fa2d2f5b497b41e288f8c9bce3bf61515d3101)"])
+        })
+      })
+
+      describe('when specify stash@{1}', () => {
+        it('should return correctly', () => {
+          console.log = jest.fn()
+          const mockModel__deleteLineLog = jest.spyOn(model, '_deleteLineLog').mockReturnValueOnce(model)
+
+          model.stash('drop', { stashKey: 'stash@{1}' })
+
+          expect(mockModel__deleteLineLog).toHaveBeenCalledTimes(1)
+          expect(mockModel__deleteLineLog.mock.calls[0]).toEqual(["logs/refs/stash", "stash@{1}"])
+
+          expect(console.log).toHaveBeenCalledTimes(1)
+          expect(console.log.mock.calls[0]).toEqual(["Dropped stash@{1} (3df8acdb918794c2bda15ae45fec2c5929ca4929)"])
+        })
+      })
+    })
   })
 })

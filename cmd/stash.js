@@ -51,6 +51,14 @@ function StashCmd() {
       sit().Repo.stash('show', options)
     });
 
+  stashCmd
+    .command('drop [stashKey]')
+    .description('Remove a single stash entry from the list of stash entries.')
+    .action((stashKey, options) => {
+      options = Object.assign(options, { stashKey })
+      sit().Repo.stash('drop', options)
+    });
+
   return stashCmd
 }
 
