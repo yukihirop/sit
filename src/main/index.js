@@ -344,6 +344,10 @@ remote: done.`);
     return repo.stash(subcommand, opts)
   }
 
+  Repo.reflog = (opts = {}) => {
+    return repo.reflog(opts)
+  }
+
   Clasp.update = () => {
     return clasp.update();
   }

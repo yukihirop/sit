@@ -171,5 +171,16 @@ ${colorize('00fa2d2', 'info')} stash@{0}: On master: stash message
 ${colorize('3df8acd', 'info')} stash@{1}: WIP on master: 4e2b7c4 Add good_bye`)
       })
     })
+
+    describe('when specify HEAD', () => {
+      xit('should return correctly', () => {
+        model = new SitLogParser(repo, 'master', 'logs/HEAD')
+        expect(model.parseForLog('HEAD')).toEqual(`\
+${colorize('4e2b7c4', 'info')} HEAD@{0}: reset: moving to HEAD\n\
+${colorize('4e2b7c4', 'info')} HEAD@{1}: reset: moving to HEAD\n\
+${colorize('4e2b7c4', 'info')} HEAD@{2}: commit Add good_bye\n\
+${colorize('4e2b7c4', 'info')} HEAD@{3}: clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0`)
+      })
+    })
   })
 })
