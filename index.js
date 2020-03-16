@@ -230,6 +230,13 @@ program
   });
 
 program
+  .command('reflog')
+  .description('Shows the ref logs')
+  .action((options) => {
+    sit().Repo.reflog(options)
+  });
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)

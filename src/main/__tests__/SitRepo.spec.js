@@ -1279,4 +1279,18 @@ Dropped stash@{1} (3df8acdb918794c2bda15ae45fec2c5929ca4929)`)
       })
     })
   })
+
+  describe('#reflog', () => {
+    xit('should return correctly', () => {
+      console.log = jest.fn()
+
+      model.reflog()
+      expect(console.log).toHaveBeenCalledTimes(1)
+      expect(console.log.mock.calls[0][0]).toEqual(`\
+${colorize('4e2b7c4', 'info')} HEAD@{0}: reset: moving to HEAD\n\
+${colorize('4e2b7c4', 'info')} HEAD@{1}: reset: moving to HEAD\n\
+${colorize('4e2b7c4', 'info')} HEAD@{2}: commit Add good_bye\n\
+${colorize('4e2b7c4', 'info')} HEAD@{3}: clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0\n`)
+    })
+  })
 })

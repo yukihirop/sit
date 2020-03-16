@@ -922,6 +922,18 @@ Dropped ${stashKey} (${stashCommitHash})`)
       }
     }
   }
+
+  reflog(opts = {}) {
+    try {
+      const currentBranch = this._branchResolve('HEAD')
+      const parser = new SitLogParser(this, currentBranch, 'logs/HEAD')
+      const reflogList = parser.parseForLog('HEAD')
+
+      console.log(reflogList)
+    } catch (err) {
+      console.log('reflog list is nothing')
+    }
+  }
 }
 
 module.exports = SitRepo;
