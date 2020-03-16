@@ -17,18 +17,41 @@ class SitRefParser extends SitBase {
     super();
     this.repo = repo
     this.branch = branch;
+    this.relativeRefFile = refFile;
     this.refFile = `${this.localRepo}/${refFile}`;
   }
 
-  parseToCSV() {
+  parseToCSV(replaceBlob = true, isHeader = true) {
     const { err, data } = fileSafeLoad(this.refFile);
     if (err) die(err.message)
-    const commitHash = data.trim();
-    const blobHash = this.repo._refBlobFromCommitHash(commitHash);
-    return [
-      REF_REMOTE_HEADER,
-      [this.branch, blobHash]
-    ];
+    let commitHash = data.trim();
+    let hash;
+
+    if (data.startsWith("ref: ")) {
+      commitHash = this.repo._refResolve(data.slice(5));
+    }
+
+    if (replaceBlob) {
+      hash = this.repo._refBlobFromCommitHash(commitHash);
+    } else {
+      hash = commitHash
+    }
+
+    if (isHeader) {
+      return [
+        REF_REMOTE_HEADER,
+        [this.branch, hash]
+      ];
+    } else {
+      return [
+        [this.branch, hash]
+      ];
+    }
+  }
+
+  parseForLog() {
+    const [[ _, commitHash]] = this.parseToCSV(false, false);
+    return `${commitHash} ${this.relativeRefFile}`
   }
 
   isRemote() {

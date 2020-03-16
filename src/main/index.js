@@ -348,6 +348,10 @@ remote: done.`);
     return repo.reflog(opts)
   }
 
+  Repo.showRef = (opts = {}) => {
+    return repo.showRef(opts)
+  }
+
   Clasp.update = () => {
     return clasp.update();
   }

@@ -1293,4 +1293,32 @@ ${colorize('4e2b7c4', 'info')} HEAD@{2}: commit Add good_bye\n\
 ${colorize('4e2b7c4', 'info')} HEAD@{3}: clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0\n`)
     })
   })
+
+  describe('#show-ref', () => {
+
+    xit('should return correctly', () => {
+      console.log = jest.fn();
+
+      recursive.mockReturnValueOnce(Promise.resolve(
+        [
+          "test/localRepo/.sit/refs/heads/develop",
+          "test/localRepo/.sit/refs/heads/master",
+          "test/localRepo/.sit/refs/remotes/origin/HEAD",
+          "test/localRepo/.sit/refs/remotes/origin/master",
+          "test/localRepo/.sit/refs/remotes/origin/test",
+          "test/localRepo/.sit/refs/stash"
+        ])
+      )
+
+      model.showRef()
+      expect(console.log).toHaveBeenCalledTimes(1)
+      expect(console.log.mock.calls[0][0]).toEqual(`\
+00fa2d2f5b497b41e288f8c9bce3bf61515d3101 refs/stash
+cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
+4e2b7c47eb492ab07c5d176dccff3009c1ebc79b refs/heads/master
+4e2b7c47eb492ab07c5d176dccff3009c1ebc79b refs/remotes/origin/HEAD
+4e2b7c47eb492ab07c5d176dccff3009c1ebc79b refs/remotes/origin/test
+4e2b7c47eb492ab07c5d176dccff3009c1ebc79b refs/remotes/origin/master`)
+    })
+  })
 })
