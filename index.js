@@ -237,6 +237,13 @@ program
   });
 
 program
+  .command('show-ref')
+  .description('Show refs')
+  .action((options) => {
+    sit().Repo.showRef(options)
+  })
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)

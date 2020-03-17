@@ -934,6 +934,21 @@ Dropped ${stashKey} (${stashCommitHash})`)
       console.log('reflog list is nothing')
     }
   }
+
+  showRef(opts = {}) {
+    const currentBranch = this._branchResolve('HEAD')
+
+    recursive(`${this.localRepo}/refs`).then(files => {
+      const result = files.reduce((acc, file) => {
+        const refPath = pathRelative(this.localRepo, file)
+        const parser = new SitRefParser(this, currentBranch, refPath)
+        acc.push(parser.parseForLog())
+        return acc
+      }, [])
+
+      console.log(result.join('\n').trim())
+    })
+  }
 }
 
 module.exports = SitRepo;
