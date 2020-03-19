@@ -250,6 +250,10 @@ program
     '--short',
     'display short'
   )
+  .option(
+    '--show-toplevel',
+    'display sit root dir'
+  )
   .action((args, options) => {
     sit().Repo.revParse(args, options)
   })

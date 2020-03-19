@@ -41,6 +41,8 @@ jest.mock('moment', () => {
   })
 });
 
+const fs = require('fs');
+
 describe('SitRepo', () => {
   const model = new SitRepo()
   const oldLocalRepo = model.localRepo
@@ -1345,6 +1347,17 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
         model.revParse('origin/test')
         expect(console.log).toHaveBeenCalledTimes(1)
         expect(console.log.mock.calls[0][0]).toEqual('4e2b7c4')
+      })
+    })
+
+    describe('when specify --show-toplevel', () => {
+      it('should return correctly', () => {
+        console.log = jest.fn()
+        const currentPath = fs.realpathSync('./');
+
+        model.revParse(undefined, { showToplevel: true })
+        expect(console.log).toHaveBeenCalledTimes(1)
+        expect(console.log.mock.calls[0][0]).toEqual(`${currentPath}/test/localRepo/.sit`)
       })
     })
   })
