@@ -534,7 +534,8 @@ class SitBaseRepo extends SitBase {
   _objectResolve(name) {
     const hashRE = new RegExp('^[0-9A-Fa-f]{1,40}$')
     const smallHashRE = new RegExp('^[0-9A-Fa-f]{1,7}');
-    const fullRefPath = this._getPath(`refs/heads/${name}`);
+    const fullHeadRefPath = this._getPath(`refs/heads/${name}`);
+    const fullRemoteRefPath = this._getPath(`refs/remotes/${name}`);
 
     return new Promise((resolve, reject) => {
       if (!name) {
@@ -588,8 +589,10 @@ class SitBaseRepo extends SitBase {
         } else {
           reject(new Error(`error: pathspec '${name}' did not match any file(s) known to sit`));
         }
-      } else if (isExistFile(fullRefPath)) {
+      } else if (isExistFile(fullHeadRefPath)) {
         resolve([this._refResolve(`refs/heads/${name}`)])
+      } else if (isExistFile(fullRemoteRefPath)) {
+        resolve([this._refResolve(`refs/remotes/${name}`)])
       } else {
         reject(new Error(`error: pathspec '${name}' did not match any file(s) known to sit`));
       }

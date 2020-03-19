@@ -955,6 +955,20 @@ Dropped ${stashKey} (${stashCommitHash})`)
       console.log(result.join('\n').trim())
     })
   }
+
+  revParse(obj, opts = {}) {
+    const { short } = opts;
+
+    this._objectFind(obj).then(sha => {
+      if (short) {
+        console.log(sha.slice(0, 7));
+      } else {
+        console.log(sha)
+      }
+    }).catch(err => {
+      die(err.message);
+    })
+  }
 }
 
 module.exports = SitRepo;

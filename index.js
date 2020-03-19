@@ -244,6 +244,17 @@ program
   })
 
 program
+  .command('rev-parse [args]')
+  .description('Many Sit porcelainish commands take mixture of flags')
+  .option(
+    '--short',
+    'display short'
+  )
+  .action((args, options) => {
+    sit().Repo.revParse(args, options)
+  })
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)
