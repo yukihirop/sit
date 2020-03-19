@@ -391,7 +391,13 @@ Please make sure you have the correct access rights and the repository exists.`)
     const calculateHash = this.hashObject(this.distFilePath, opts);
 
     if (currentHash !== calculateHash) {
-      console.log(`modified: ${this.distFilePath}`);
+      const modified = `modified: ${this.distFilePath}`
+      console.log(`\
+On branch ${currentBranch}\n\
+
+\t${colorize(modified, 'mark')}\n\
+
+no changes added to commit`);
       return
     } else {
       console.log(`\

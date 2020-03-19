@@ -579,7 +579,12 @@ Please make sure you have the correct access rights and the repository exists.`]
         model.status()
 
         expect(console.log).toHaveBeenCalledTimes(1)
-        expect(console.log.mock.calls[0]).toEqual(["modified: test/dist/test_data.csv"])
+        expect(console.log.mock.calls[0][0]).toEqual(`\
+On branch master\n\
+
+\t${colorize('modified: test/dist/test_data.csv', 'mark')}\n\
+
+no changes added to commit`)
       })
     })
 
