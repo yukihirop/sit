@@ -259,6 +259,22 @@ program
   })
 
 program
+  .command('pull-request <repository> <args>')
+  .description('Create pull request in Sheet')
+  .option(
+    '-t, --type <type>',
+    'sheet type',
+    'GoogleSpreadSheet'
+  )
+  .option(
+    '-f, --force',
+    'override sheet'
+  )
+  .action((repository, args, options) => {
+    sit().Repo.pullRequest(repository, args, options)
+  })
+
+program
   .useSubcommand(initCmd)
   .useSubcommand(claspCmd)
   .useSubcommand(repoCmd)

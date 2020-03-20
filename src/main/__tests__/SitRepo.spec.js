@@ -1361,4 +1361,63 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
       })
     })
   })
+
+  describe('#createPullRequestData', () => {
+    describe('When some elements exist only in Hoge', () => {
+      it('should return correctly', () => {
+        const header = ['日本語', '英語', 'キー'];
+        const toData = [
+          header,
+          ['こんにちは', 'hello', 'common.greeting.hello'],
+          ['さようなら', 'goodbye', 'common.greeting.good_bye'],
+          ['おはよう', 'good morning', 'common.greeting.good_morning']
+        ];
+        const fromData = [
+          header,
+          ['こんにちは', 'hello', 'common.greeting.hello'],
+        ]
+        model.createPullRequestData(toData, fromData, (result) => {
+          expect(result).toEqual(
+            [
+              ["日本語", "英語", "キー", "Index", "Status"],
+              ["こんにちは", "hello", "common.greeting.hello", 0, ""],
+              ["さようなら", "goodbye", "common.greeting.good_bye", 1, "±"],
+              ["おはよう", "good morning", "common.greeting.good_morning", 2, "±"]
+            ]
+          )
+        })
+      })
+    })
+
+    describe('If there are corrections and additions', () => {
+      it('should return correctly', () => {
+        const header = ['日本語', '英語', 'キー'];
+        const toData = [
+          header,
+          ['こんにちは', 'hello', 'common.greeting.hello'],
+          ['さようなら', 'goodbye', 'common.greeting.good_bye'],
+          ['おはよう', 'good morning', 'common.greeting.good_morning']
+        ];
+        const fromData = [
+          header,
+          ['こんにちは', 'hello', 'common.greeting.hello'],
+          ['さようなら', 'goodbye', 'common.greeting.good_bye'],
+          ['バイバイ', 'bye bye', 'common.greeting.bye_bye'],
+          ['おやすみなさい', 'good night', 'common.greeting.good_night']
+        ]
+        model.createPullRequestData(toData, fromData, (result) => {
+          expect(result).toEqual(
+            [
+              ["日本語", "英語", "キー", "Index", "Status"],
+              ["こんにちは", "hello", "common.greeting.hello", 0, ""],
+              ["さようなら", "goodbye", "common.greeting.good_bye", 1, ""],
+              ["おはよう", "good morning", "common.greeting.good_morning", 2, "-"],
+              ["バイバイ", "bye bye", "common.greeting.bye_bye", 2, "+"],
+              ["おやすみなさい", "good night", "common.greeting.good_night", 3, "+"]
+            ]
+          )
+        })
+      })
+    })
+  })
 })

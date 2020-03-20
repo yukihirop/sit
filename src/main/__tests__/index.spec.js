@@ -433,6 +433,57 @@ Please make sure you have the correct access rights and the repository exists.`]
     })
   })
 
+  describe('Repo.pullRequest', () => {
+    describe('when bad syntax', () => {
+      it('should return correctly', () => {
+        console.error = jest.fn()
+        jest.spyOn(process, 'exit').mockImplementation(() => {
+          throw new Error('process.exit() was called.')
+        });
+
+        expect(() => sit().Repo.pullRequest('origin', 'master_test')).toThrow('process.exit() was called.')
+        expect(console.error).toHaveBeenCalledTimes(1)
+        expect(console.error.mock.calls[0]).toEqual(["fatal: ambiguous argument 'master_test': unknown revision or path not in the working tree."])
+      })
+    })
+
+    describe('when remote branch (from branch) do not exist', () => {
+      it('should return correctly', () => {
+        console.error = jest.fn()
+        jest.spyOn(process, 'exit').mockImplementation(() => {
+          throw new Error('process.exit() was called.')
+        });
+
+        expect(() => sit().Repo.pullRequest('origin', 'master...do_not_exist')).toThrow('process.exit() was called.')
+        expect(console.error).toHaveBeenCalledTimes(1)
+        expect(console.error.mock.calls[0]).toEqual(["error: pathspec 'origin/do_not_exist' did not match any file(s) known to sit"])
+      })
+    })
+
+    describe('when remote branch (to branch) do not exist', () => {
+      it('should return correctly', () => {
+        console.error = jest.fn()
+        jest.spyOn(process, 'exit').mockImplementation(() => {
+          throw new Error('process.exit() was called.')
+        });
+
+        expect(() => sit().Repo.pullRequest('origin', 'do_not_exist...test')).toThrow('process.exit() was called.')
+        expect(console.error).toHaveBeenCalledTimes(1)
+        expect(console.error.mock.calls[0]).toEqual(["error: pathspec 'origin/do_not_exist' did not match any file(s) known to sit"])
+      })
+    })
+
+    describe('when pull request is success', () => {
+      it('should return correctly', () => {
+        mockGSS_getRows.mockReturnValueOnce(Promise.resolve([[], []]))
+        sit().Repo.pullRequest('origin', 'master...test')
+
+        expect(mockGSS_getRows).toHaveBeenCalledTimes(1)
+        expect(mockGSS_getRows.mock.calls[0]).toEqual(['origin', 'master'])
+      })
+    })
+  })
+
   describe('Clasp.update', () => {
     it('should return correctly', () => {
       const mockClasp_update = jest.fn()

@@ -975,6 +975,40 @@ Dropped ${stashKey} (${stashCommitHash})`)
       })
     }
   }
+
+  createPullRequestData(toData, fromData, callback) {
+    this.__createtwoWayMergeData(toData, fromData, (result) => {
+      let header = result['0']['to'];
+      header.push('Index', 'Status');
+
+      delete result['0'];
+
+      const data = Object.values(result).reduce((acc, item, index) => {
+        if (item.conflict) {
+          if (item['to'] === null) {
+            item['from'].push(index, '+');
+            acc.push(item['from']);
+          } else {
+            if (item['from'] === null) {
+              item['to'].push(index, '±');
+              acc.push(item['to']);
+            } else {
+              item['to'].push(index, '-')
+              item['from'].push(index, '+');
+              acc.push(item['to']);
+              acc.push(item['from']);
+            }
+          }
+        } else {
+          item['to'].push(index, '');
+          acc.push(item['to']);
+        }
+        return acc;
+      }, [header]);
+
+      callback(data);
+    })
+  }
 }
 
 module.exports = SitRepo;
