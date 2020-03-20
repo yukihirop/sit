@@ -356,6 +356,55 @@ remote: done.`);
     return repo.revParse(obj, opts)
   }
 
+  Repo.pullRequest = (repoName, toFrom, opts = {}) => {
+    const { type } = opts;
+    const pattern = /^(?<toBranch>.+)\.{3}(?<fromBranch>.+)$/;
+    const result = toFrom.match(pattern);
+    let toBranch, fromBranch;
+
+    if (result) {
+      toBranch = result.groups.toBranch;
+      fromBranch = result.groups.fromBranch;
+    } else {
+      toBranch = null;
+      fromBranch = null;
+    }
+
+    if (!toBranch || !fromBranch) {
+      die(`fatal: ambiguous argument '${toFrom}': unknown revision or path not in the working tree.`)
+    }
+
+    if (!repo._isExistFile(`refs/remotes/${repoName}/${toBranch}`)) {
+      die(`error: pathspec '${repoName}/${toBranch}' did not match any file(s) known to sit`)
+    }
+
+    if (!repo._isExistFile(`refs/remotes/${repoName}/${fromBranch}`)) {
+      die(`error: pathspec '${repoName}/${fromBranch}' did not match any file(s) known to sit`)
+    }
+
+    sheet.getRows(repoName, toBranch).then(toData => {
+      sheet.getRows(repoName, fromBranch).then(fromData => {
+        repo.createPullRequestData(toData, fromData, (result) => {
+          const prBranch = `[pr] ${toBranch}...${fromBranch}`;
+
+          sheet.pushRows(repoName, prBranch, result, { clear: true }).then(() => {
+            const baseMsg = `\
+Total 1\n\
+remote:\n\
+remote: Create a pull request for '${toBranch}' from '${fromBranch}' on ${type} by visiting:\n\
+remote:     ${repo.remoteRepo(repoName)}\n\
+remote:\n\
+To ${repo.remoteRepo(repoName)}`;
+
+            const detailMsg = `\tPlease look at sheet: '${prBranch}' in ${type}`;
+            console.log(`${baseMsg}\n${detailMsg}`)
+            return
+          })
+        })
+      })
+    })
+  }
+
   Clasp.update = () => {
     return clasp.update();
   }

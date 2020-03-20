@@ -17,6 +17,10 @@ const {
   pathDirname
 } = require('../../utils/file');
 
+const {
+  isEqual
+} = require('../../utils/array');
+
 const SitSetting = require('../../SitSetting')
   , SitConfig = require('../SitConfig');
 
@@ -676,8 +680,7 @@ class SitBaseRepo extends SitBase {
       let toLine = toData.shift() || null;
       let fromLine = fromData.shift() || null;
 
-
-      if (toLine === fromLine) {
+      if (isEqual(toLine, fromLine)) {
         result[index] = { conflict: false, to: toLine, from: fromLine };
       } else {
         result[index] = { conflict: true, to: toLine, from: fromLine };
