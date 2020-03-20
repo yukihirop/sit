@@ -18,7 +18,9 @@ const {
   mTimeMs,
   rmDirSync,
   fileBasename,
-  pathRelative
+  pathRelative,
+  pathJoin,
+  currentPath
 } = require('./utils/file');
 
 const {
@@ -954,6 +956,24 @@ Dropped ${stashKey} (${stashCommitHash})`)
 
       console.log(result.join('\n').trim())
     })
+  }
+
+  revParse(obj, opts = {}) {
+    const { short, showToplevel } = opts;
+
+    if (obj === undefined && showToplevel) {
+      console.log(pathJoin(currentPath, this.localRepo))
+    } else {
+      this._objectFind(obj).then(sha => {
+        if (short) {
+          console.log(sha.slice(0, 7));
+        } else {
+          console.log(sha)
+        }
+      }).catch(err => {
+        die(err.message);
+      })
+    }
   }
 }
 

@@ -487,6 +487,26 @@ Merge from GoogleSpreadSheet/master`)
       })
     })
 
+    describe('when name is ORIG_HEAD', () => {
+      it('should return correctly', (done) => {
+        model._objectResolve('ORIG_HEAD').then(shaArr => {
+          expect(shaArr.length).toEqual(1)
+          expect(shaArr[0]).toEqual('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
+          done()
+        })
+      })
+    })
+
+    describe('when name is origin/test', () => {
+      it('should return correctly', (done) => {
+        model._objectResolve('origin/test').then(shaArr => {
+          expect(shaArr.length).toEqual(1)
+          expect(shaArr[0]).toEqual('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
+          done()
+        })
+      })
+    })
+
     describe('when name is SHA1 (full)', () => {
       const sha1 = '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b'
       it('should return correctly', (done) => {

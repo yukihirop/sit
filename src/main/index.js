@@ -352,6 +352,10 @@ remote: done.`);
     return repo.showRef(opts)
   }
 
+  Repo.revParse = (obj, opts = {}) => {
+    return repo.revParse(obj, opts)
+  }
+
   Clasp.update = () => {
     return clasp.update();
   }

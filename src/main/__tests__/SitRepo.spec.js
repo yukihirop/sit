@@ -41,6 +41,8 @@ jest.mock('moment', () => {
   })
 });
 
+const fs = require('fs');
+
 describe('SitRepo', () => {
   const model = new SitRepo()
   const oldLocalRepo = model.localRepo
@@ -1299,7 +1301,7 @@ ${colorize('4e2b7c4', 'info')} HEAD@{3}: clone: from https://docs.google.com/spr
     })
   })
 
-  describe('#show-ref', () => {
+  describe('#showRef', () => {
 
     xit('should return correctly', () => {
       console.log = jest.fn();
@@ -1324,6 +1326,39 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b refs/remotes/origin/HEAD
 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b refs/remotes/origin/test
 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b refs/remotes/origin/master`)
+    })
+  })
+
+  describe('#revParse', () => {
+    describe('when do not specify', () => {
+      xit('should return correctly', () => {
+        console.log = jest.fn()
+
+        model.revParse('origin/test')
+        expect(console.log).toHaveBeenCalledTimes(1)
+        expect(console.log.mock.calls[0][0]).toEqual('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')
+      })
+    })
+
+    describe('when specify --short', () => {
+      xit('should return correctly', () => {
+        console.log = jest.fn()
+
+        model.revParse('origin/test')
+        expect(console.log).toHaveBeenCalledTimes(1)
+        expect(console.log.mock.calls[0][0]).toEqual('4e2b7c4')
+      })
+    })
+
+    describe('when specify --show-toplevel', () => {
+      it('should return correctly', () => {
+        console.log = jest.fn()
+        const currentPath = fs.realpathSync('./');
+
+        model.revParse(undefined, { showToplevel: true })
+        expect(console.log).toHaveBeenCalledTimes(1)
+        expect(console.log.mock.calls[0][0]).toEqual(`${currentPath}/test/localRepo/.sit`)
+      })
     })
   })
 })
