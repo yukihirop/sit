@@ -1,6 +1,6 @@
 /* eslint-disable  camelcase, import/no-unresolved */
 
-'use strict';
+
 
 const sit = require('@main/index');
 const SitRepo = require('@main/SitRepo');

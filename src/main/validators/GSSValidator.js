@@ -1,4 +1,4 @@
-'use strict';
+
 
 const GSSValidator = function (uri, baseURL) {
   const _errors = [];

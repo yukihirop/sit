@@ -1,4 +1,4 @@
-'use strict';
+
 
 const SitBase = require('../base/SitBase');
 const PROHIBITED_STR_REGEXP = /[\^,@,\0,!,?,*]/;

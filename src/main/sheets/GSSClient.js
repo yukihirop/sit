@@ -1,4 +1,4 @@
-'use strict';
+
 
 const { GoogleSpreadsheet } = require('../monkey_patches/google-spreadsheet');
 

@@ -1,4 +1,4 @@
-'use strict';
+
 
 const SitBaseConfig = require('./base/SitBaseConfig');
 

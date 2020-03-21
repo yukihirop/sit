@@ -1,4 +1,4 @@
-'use strict';
+
 
 // Copy from https://github.com/millermedeiros/disparity/blob/master/disparity.js
 

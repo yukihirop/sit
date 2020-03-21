@@ -1,4 +1,4 @@
-'use strict';
+
 
 const { packageJSON } = require('./utils/file');
 const GSSValidator = require('./validators/GSSValidator');

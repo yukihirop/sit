@@ -1,6 +1,6 @@
 /* eslint-disable  camelcase, import/no-unresolved */
 
-'use strict';
+
 
 const SitRepo = require('../SitRepo');
 const SitConfig = require('@repos/SitConfig');

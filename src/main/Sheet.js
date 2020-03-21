@@ -1,4 +1,4 @@
-'use strict';
+
 
 const GSS = require('./sheets/GSS');
 

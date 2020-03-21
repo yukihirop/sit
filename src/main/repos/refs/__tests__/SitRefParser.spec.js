@@ -1,6 +1,6 @@
 /* eslint-disable  camelcase, import/no-unresolved */
 
-'use strict';
+
 
 const SitBaseRepo = require('@repos/base/SitBaseRepo');
 const SitRefParser = require('@repos/refs/SitRefParser');

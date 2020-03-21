@@ -1,4 +1,4 @@
-'use strict';
+
 
 // Reference
 // https://hide-o-55.hatenadiary.org/entry/20111025/1319541282

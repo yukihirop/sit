@@ -1,4 +1,4 @@
-'use strict';
+
 
 const SitBaseLogger = require('../base/SitBaseLogger');
 

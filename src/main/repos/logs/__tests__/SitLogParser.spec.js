@@ -1,6 +1,6 @@
 /* eslint-disable  camelcase, import/no-unresolved */
 
-'use strict';
+
 
 const SitLogParser = require('@repos/logs/SitLogParser');
 const SitRepo = require('@main/SitRepo');

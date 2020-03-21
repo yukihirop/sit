@@ -1,4 +1,4 @@
-'use strict';
+
 
 const flatten = require('flat');
 const unflatten = flatten.unflatten;
