@@ -1,3 +1,5 @@
+/* eslint-disable  camelcase */
+
 'use strict';
 
 const SitBaseLogger = require('@repos/base/SitBaseLogger');

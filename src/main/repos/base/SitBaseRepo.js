@@ -308,16 +308,16 @@ class SitBaseRepo extends SitBase {
     let result = '';
     const space = ' '
       , author = this.username()
-      , author_email = this.email()
+      , authorEmail = this.email()
       , committer = type
-      , committer_email = `noreply@${type.toLowerCase()}.com`
+      , committerEmail = `noreply@${type.toLowerCase()}.com`
       , timewithZone = `${moment().format('x')}${space}${moment().format('ZZ')}`
       , mergeMessage = `Merge from ${type}/${branch}`;
 
     result += `blob${space}${blobHash}\n`;
     result += `parent${space}${parentHash}\n`;
-    result += `author${space}${author}${space}<${author_email}>${space}${timewithZone}\n`;
-    result += `committer${space}${committer}${space}<${committer_email}>${space}${timewithZone}\n`;
+    result += `author${space}${author}${space}<${authorEmail}>${space}${timewithZone}\n`;
+    result += `committer${space}${committer}${space}<${committerEmail}>${space}${timewithZone}\n`;
     result += '\n';
     result += mergeMessage;
 

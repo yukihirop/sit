@@ -1,3 +1,5 @@
+/* eslint-disable  camelcase */
+
 const SitBaseRepo = require('@repos/base/SitBaseRepo');
 const SitBlob = require('@repos/objects/SitBlob');
 const SitCommit = require('@repos/objects/SitCommit');
