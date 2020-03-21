@@ -18,5 +18,5 @@ const compact = (obj) => {
 module.exports = {
   flatten,
   compact,
-  unflatten
+  unflatten,
 };

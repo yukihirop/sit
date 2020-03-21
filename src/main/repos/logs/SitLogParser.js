@@ -2,11 +2,11 @@
 
 const {
   fileSafeLoad,
-  isExistFile
+  isExistFile,
 } = require('../../utils/file');
 
 const {
-  colorize
+  colorize,
 } = require('../../utils/string');
 
 const SitBase = require('../base/SitBase');

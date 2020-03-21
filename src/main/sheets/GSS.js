@@ -3,7 +3,7 @@
 const {
   diffArray,
   overrideCSV,
-  isEqual
+  isEqual,
 } = require('../utils/array');
 
 const Client = require('./GSSClient');
@@ -17,7 +17,7 @@ class GSS {
   constructor(opts = {}) {
     const defaultOpts = {
       type: 'GoogleSpreadSheet',
-      baseURL: 'https://docs.google.com/spreadsheets/d'
+      baseURL: 'https://docs.google.com/spreadsheets/d',
     };
     const gopts = Object.assign({}, defaultOpts, opts);
 
@@ -127,8 +127,8 @@ class GSS {
             title: sheetName,
             gridProperties: {
               rowCount: SitSetting.sheet.gss.defaultWorksheet.rowCount,
-              columnCount: SitSetting.sheet.gss.defaultWorksheet.colCount
-            }
+              columnCount: SitSetting.sheet.gss.defaultWorksheet.colCount,
+            },
           })
             .then((newSheet) => {
               let csvData = worksheet.csvData(data);
@@ -177,7 +177,7 @@ class GSS {
       startRowIndex: 0,
       endRowIndex: rowCount,
       startColumnIndex: 0,
-      endColumnIndex: header.length
+      endColumnIndex: header.length,
     });
 
     // i is itemIndex

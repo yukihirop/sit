@@ -3,7 +3,7 @@
 const SitBaseRepo = require('@repos/base/SitBaseRepo');
 const SitRefParser = require('@repos/refs/SitRefParser');
 const {
-  colorize
+  colorize,
 } = require('@utils/string');
 
 describe('SitRefParser', () => {
@@ -21,7 +21,7 @@ describe('SitRefParser', () => {
         model = new SitRefParser(repo, 'master', 'refs/heads/master');
         expect(model.parseToCSV()).toEqual([
           ['branch', 'sha1'],
-          ['master', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']
+          ['master', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b'],
         ]);
       });
     });

@@ -20,7 +20,7 @@ jest.mock('@main/sheets/GSS', () => {
       getRows: mockGSS_getRows,
       pushRows: mockGSS_pushRows,
       getSheetNames: mockGSS_getSheetNames,
-      header: mockGSS_header
+      header: mockGSS_header,
     };
   });
 });

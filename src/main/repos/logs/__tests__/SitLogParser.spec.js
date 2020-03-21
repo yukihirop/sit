@@ -4,7 +4,7 @@ const SitLogParser = require('@repos/logs/SitLogParser');
 const SitRepo = require('@main/SitRepo');
 
 const {
-  colorize
+  colorize,
 } = require('@main/utils/string');
 
 describe('SitLogParser', () => {
@@ -54,7 +54,7 @@ describe('SitLogParser', () => {
           expect(model.parseToCSV()).toEqual([
             ['branch', 'beforesha', 'aftersha', 'username', 'email', 'unixtime', 'timezone', 'message'],
             ['master', '0000000000000000000000000000000000000000', '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0'],
-            ['master', '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', '2938ad2ab5722adf9b48ff5bac74989eaa2d144c', 'yukihirop', '<te108186@gmail.com>', '1583639422044', '+0900', 'commit Add good_bye']
+            ['master', '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', '2938ad2ab5722adf9b48ff5bac74989eaa2d144c', 'yukihirop', '<te108186@gmail.com>', '1583639422044', '+0900', 'commit Add good_bye'],
           ]);
         });
       });
@@ -66,7 +66,7 @@ describe('SitLogParser', () => {
           expect(model.parseToCSV(false)).toEqual([
             ['branch', 'beforesha', 'aftersha', 'username', 'email', 'unixtime', 'timezone', 'message'],
             ['master', '0000000000000000000000000000000000000000', '3df8acdb918794c2bda15ae45fec2c5929ca4929', 'yukihirop', '<te108186@gmail.com>', '1583663621190', '+0900', 'WIP on master: 4e2b7c4 Add good_bye'],
-            ['master', '3df8acdb918794c2bda15ae45fec2c5929ca4929', '00fa2d2f5b497b41e288f8c9bce3bf61515d3101', 'yukihirop', '<te108186@gmail.com>', '1583747819860', '+0900', 'On master: stash message']
+            ['master', '3df8acdb918794c2bda15ae45fec2c5929ca4929', '00fa2d2f5b497b41e288f8c9bce3bf61515d3101', 'yukihirop', '<te108186@gmail.com>', '1583747819860', '+0900', 'On master: stash message'],
           ]);
         });
       });
@@ -91,7 +91,7 @@ describe('SitLogParser', () => {
 
           expect(model.parseToJSON()).toEqual([
             { aftersha: '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', beforesha: '0000000000000000000000000000000000000000', branch: 'master', email: '<te108186@gmail.com>', message: 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0', timezone: '+0900', unixtime: '1580961933681', username: 'yukihirop' },
-            { aftersha: '2938ad2ab5722adf9b48ff5bac74989eaa2d144c', beforesha: '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', branch: 'master', email: '<te108186@gmail.com>', message: 'commit Add good_bye', timezone: '+0900', unixtime: '1583639422044', username: 'yukihirop' }
+            { aftersha: '2938ad2ab5722adf9b48ff5bac74989eaa2d144c', beforesha: '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', branch: 'master', email: '<te108186@gmail.com>', message: 'commit Add good_bye', timezone: '+0900', unixtime: '1583639422044', username: 'yukihirop' },
           ]);
         });
       });
@@ -102,7 +102,7 @@ describe('SitLogParser', () => {
 
           expect(model.parseToJSON(false)).toEqual([
             { aftersha: '3df8acdb918794c2bda15ae45fec2c5929ca4929', beforesha: '0000000000000000000000000000000000000000', branch: 'master', email: '<te108186@gmail.com>', message: 'WIP on master: 4e2b7c4 Add good_bye', timezone: '+0900', unixtime: '1583663621190', username: 'yukihirop' },
-            { aftersha: '00fa2d2f5b497b41e288f8c9bce3bf61515d3101', beforesha: '3df8acdb918794c2bda15ae45fec2c5929ca4929', branch: 'master', email: '<te108186@gmail.com>', message: 'On master: stash message', timezone: '+0900', unixtime: '1583747819860', username: 'yukihirop' }
+            { aftersha: '00fa2d2f5b497b41e288f8c9bce3bf61515d3101', beforesha: '3df8acdb918794c2bda15ae45fec2c5929ca4929', branch: 'master', email: '<te108186@gmail.com>', message: 'On master: stash message', timezone: '+0900', unixtime: '1583747819860', username: 'yukihirop' },
           ]);
         });
       });
@@ -145,7 +145,7 @@ describe('SitLogParser', () => {
             message: 'On master: stash message',
             timezone: '+0900',
             unixtime: '1583747819860',
-            username: 'yukihirop'
+            username: 'yukihirop',
           },
           'stash@{1}': {
             aftersha: '3df8acdb918794c2bda15ae45fec2c5929ca4929',
@@ -156,7 +156,7 @@ describe('SitLogParser', () => {
             timezone: '+0900',
             unixtime: '1583663621190',
             username: 'yukihirop',
-          }
+          },
         });
       });
     });

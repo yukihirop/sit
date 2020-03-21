@@ -1,11 +1,11 @@
 'use strict';
 
 const {
-  bufferReplace
+  bufferReplace,
 } = require('../../utils/file');
 
 const {
-  colorize
+  colorize,
 } = require('../../utils/string');
 
 

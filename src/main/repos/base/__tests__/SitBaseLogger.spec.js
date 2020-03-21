@@ -5,7 +5,7 @@ const SitBaseLogger = require('@repos/base/SitBaseLogger');
 const {
   mkdirSyncRecursive,
   appendFile,
-  writeSyncFile
+  writeSyncFile,
 } = require('@utils/file');
 
 // https://stackoverflow.com/questions/39755439/how-to-mock-imported-named-function-in-jest-when-module-is-unmocked
@@ -14,7 +14,7 @@ jest.mock('@utils/file', () => (
     ...(jest.requireActual('@utils/file')),
     mkdirSyncRecursive: jest.fn(),
     appendFile: jest.fn(),
-    writeSyncFile: jest.fn()
+    writeSyncFile: jest.fn(),
   }
 ));
 

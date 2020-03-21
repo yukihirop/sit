@@ -30,7 +30,7 @@ let GSSValidator = function (uri, baseURL) {
   return {
     getErrors,
     setErrors,
-    isSpreadSheetURL
+    isSpreadSheetURL,
   };
 };
 

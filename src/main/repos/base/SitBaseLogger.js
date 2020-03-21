@@ -7,7 +7,7 @@ const {
   isExistFile,
   mkdirSyncRecursive,
   appendFile,
-  writeSyncFile
+  writeSyncFile,
 } = require('../../utils/file');
 
 const moment = require('moment');

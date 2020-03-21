@@ -5,7 +5,7 @@ const Clasp = require('@main/Clasp');
 const {
   fileCopySync,
   appendFile,
-  isExistFile
+  isExistFile,
 } = require('@utils/file');
 
 const fs = require('fs');
@@ -15,7 +15,7 @@ jest.mock('@utils/file', () => (
     ...(jest.requireActual('@utils/file')),
     fileCopySync: jest.fn(),
     appendFile: jest.fn(),
-    isExistFile: jest.fn(() => true)
+    isExistFile: jest.fn(() => true),
   }
 ));
 

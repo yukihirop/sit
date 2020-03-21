@@ -22,5 +22,5 @@ const colorize = (str, colorId) => {
 };
 
 module.exports = {
-  colorize
+  colorize,
 };

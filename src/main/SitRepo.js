@@ -7,7 +7,7 @@ const jsdiff = require('diff')
   , opener = require('opener');
 
 const {
-  diffArray
+  diffArray,
 } = require('./utils/array');
 
 const {
@@ -20,11 +20,11 @@ const {
   fileBasename,
   pathRelative,
   pathJoin,
-  currentPath
+  currentPath,
 } = require('./utils/file');
 
 const {
-  colorize
+  colorize,
 } = require('./utils/string');
 
 const editor = require('./utils/editor');
@@ -404,7 +404,7 @@ no changes added to commit`);
     } else {
       console.log(`\
 On branch ${currentBranch}\n\
-nothing to commit`
+nothing to commit`,
       );
       return;
     }

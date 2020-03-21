@@ -14,11 +14,11 @@ const {
   fileCopySync,
   absolutePath,
   pathJoin,
-  pathDirname
+  pathDirname,
 } = require('../../utils/file');
 
 const {
-  isEqual
+  isEqual,
 } = require('../../utils/array');
 
 const SitSetting = require('../../SitSetting')

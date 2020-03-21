@@ -8,7 +8,7 @@ const mockSitLogger_write = jest.fn();
 jest.mock('@repos/logs/SitLogger', () => {
   return jest.fn().mockImplementation(() => {
     return {
-      write: mockSitLogger_write
+      write: mockSitLogger_write,
     };
   });
 });
@@ -17,7 +17,7 @@ jest.mock('@repos/logs/SitLogger', () => {
 jest.mock('@utils/file', () => (
   {
     ...(jest.requireActual('@utils/file')),
-    writeSyncFile: jest.fn()
+    writeSyncFile: jest.fn(),
   }
 ));
 
@@ -25,7 +25,7 @@ const mockMoment_format = jest.fn();
 jest.mock('moment', () => {
   return jest.fn().mockImplementation(() => {
     return {
-      format: mockMoment_format
+      format: mockMoment_format,
     };
   });
 });
@@ -159,12 +159,12 @@ test data`;
       it('should return correctly', () => {
         mockSitRefParser_parseToCSV.mockReturnValueOnce([
           ['branch', 'sha1'],
-          ['master', '5b1cf86e97c6633e9a2dd85567e33d636dd3748a']
+          ['master', '5b1cf86e97c6633e9a2dd85567e33d636dd3748a'],
         ]);
 
         expect(model._refCSVData('master', 'origin')).toEqual([
           ['branch', 'sha1'],
-          ['master', '5b1cf86e97c6633e9a2dd85567e33d636dd3748a']
+          ['master', '5b1cf86e97c6633e9a2dd85567e33d636dd3748a'],
         ]);
         expect(mockSitRefParser_parseToCSV).toHaveBeenCalledTimes(1);
         expect(mockSitRefParser_parseToCSV.mock.calls[0]).toEqual([]);
@@ -175,12 +175,12 @@ test data`;
       it('should return correctly', () => {
         mockSitRefParser_parseToCSV.mockReturnValueOnce([
           ['branch', 'sha1'],
-          ['master', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']
+          ['master', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b'],
         ]);
 
         expect(model._refCSVData('master')).toEqual([
           ['branch', 'sha1'],
-          ['master', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']
+          ['master', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b'],
         ]);
         expect(mockSitRefParser_parseToCSV).toHaveBeenCalledTimes(1);
         expect(mockSitRefParser_parseToCSV.mock.calls[0]).toEqual([]);
@@ -204,12 +204,12 @@ test data`;
       it('should return correctly', () => {
         mockSitLogParser_parseToCSV.mockReturnValueOnce([
           ['branch', 'beforesha', 'aftersha', 'username', 'email', 'unixtime', 'timezone', 'message'],
-          ['master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'update by push']
+          ['master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'update by push'],
         ]);
 
         expect(model._refLastLogCSVData('master', 'origin')).toEqual([
           ['branch', 'beforesha', 'aftersha', 'username', 'email', 'unixtime', 'timezone', 'message'],
-          ['master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'update by push']
+          ['master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'update by push'],
         ]);
 
         expect(mockSitLogParser_parseToCSV).toHaveBeenCalledTimes(1);
@@ -221,12 +221,12 @@ test data`;
       it('should return correctly', () => {
         mockSitLogParser_parseToCSV.mockReturnValueOnce([
           ['branch', 'beforesha', 'aftersha', 'username', 'email', 'unixtime', 'timezone', 'message'],
-          ['master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0']
+          ['master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0'],
         ]);
 
         expect(model._refLastLogCSVData('master')).toEqual([
           ['branch', 'beforesha', 'aftersha', 'username', 'email', 'unixtime', 'timezone', 'message'],
-          ['master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0']
+          ['master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0'],
         ]);
 
         expect(mockSitLogParser_parseToCSV).toHaveBeenCalledTimes(1);
@@ -261,7 +261,7 @@ test data`;
         'refs/heads/master',
         '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b',
         '5b1cf86e97c6633e9a2dd85567e33d636dd3748a',
-        'fetch origin master: fast-forward'
+        'fetch origin master: fast-forward',
       )).toEqual(model);
       expect(mockSitLogger_write).toHaveBeenCalled();
     });
@@ -272,14 +272,14 @@ test data`;
       expect(model._iniParse('config')).toEqual({
         branch: {
           master: {
-            merge: 'refs/heads/master', remote: 'origin'
-          }
+            merge: 'refs/heads/master', remote: 'origin',
+          },
         },
         remote: {
           origin: {
-            fetch: '+refs/heads/*:refs/remotes/origin/*', type: 'GoogleSpreadSheet', url: 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0'
-          }
-        }
+            fetch: '+refs/heads/*:refs/remotes/origin/*', type: 'GoogleSpreadSheet', url: 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0',
+          },
+        },
       });
     });
   });
@@ -416,7 +416,7 @@ Merge from GoogleSpreadSheet/master`);
           7,
           8,
           9,
-          10
+          10,
         ]);
         done();
       });

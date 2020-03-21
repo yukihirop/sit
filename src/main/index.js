@@ -8,16 +8,16 @@ const AppClasp = require('./Clasp');
 const SitConfig = require('./repos/SitConfig');
 
 const {
-  csv2JSON
+  csv2JSON,
 } = require('./utils/array');
 
 const {
-  colorize
+  colorize,
 } = require('./utils/string');
 
 function sit(opts) {
   const defaultOpts = {
-    type: 'GoogleSpreadSheet'
+    type: 'GoogleSpreadSheet',
   };
 
   process.env.SIT_DIR = (process.env.SIT_DIR === undefined) ? '.' : process.env.SIT_DIR;
@@ -412,7 +412,7 @@ To ${repo.remoteRepo(repoName)}`;
   return {
     Sheet,
     Repo,
-    Clasp
+    Clasp,
   };
 }
 

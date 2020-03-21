@@ -4,11 +4,11 @@ const {
   iniParse,
   iniStringify,
   writeSyncFile,
-  isExistFile
+  isExistFile,
 } = require('../../utils/file');
 
 const {
-  compact
+  compact,
 } = require('../../utils/object');
 
 const SitBase = require('./SitBase');

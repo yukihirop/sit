@@ -11,11 +11,11 @@ const {
   writeSyncFile,
   rmDirSync,
   recursive,
-  mkdirSyncRecursive
+  mkdirSyncRecursive,
 } = require('@utils/file');
 
 const {
-  colorize
+  colorize,
 } = require('@main/utils/string');
 
 // https://stackoverflow.com/questions/39755439/how-to-mock-imported-named-function-in-jest-when-module-is-unmocked
@@ -25,7 +25,7 @@ jest.mock('@utils/file', () => (
     writeSyncFile: jest.fn(),
     rmDirSync: jest.fn(),
     recursive: jest.fn(),
-    mkdirSyncRecursive: jest.fn()
+    mkdirSyncRecursive: jest.fn(),
   }
 ));
 
@@ -36,7 +36,7 @@ const mockMoment_format = jest.fn();
 jest.mock('moment', () => {
   return jest.fn().mockImplementation(() => {
     return {
-      format: mockMoment_format
+      format: mockMoment_format,
     };
   });
 });
@@ -131,9 +131,9 @@ describe('SitRepo', () => {
           '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b',
           [
             ['日本語', '英語', 'キー'],
-            ['こんにちは', 'hello', 'greetiing.hello']
+            ['こんにちは', 'hello', 'greetiing.hello'],
           ],
-          { type: 'GoogleSpreadSheet' }
+          { type: 'GoogleSpreadSheet' },
         );
         expect(mockSitConfig_updateSection).toHaveBeenCalledTimes(2);
         expect(mockSitConfig_updateSection.mock.calls[0][0]).toBe('remote.origin');
@@ -158,7 +158,7 @@ describe('SitRepo', () => {
         expect(mockModel__createDistFile).toHaveBeenCalledTimes(1);
         expect(mockModel__createDistFile.mock.calls[0][0]).toEqual([
           ['日本語', '英語', 'キー'],
-          ['こんにちは', 'hello', 'greetiing.hello']
+          ['こんにちは', 'hello', 'greetiing.hello'],
         ]);
         expect(mockModel__createDistFile.mock.calls[0][1]).toEqual(true);
 
@@ -183,7 +183,7 @@ describe('SitRepo', () => {
           'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0',
           '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b',
           '日本語,英語,キー\nこんにちは,hello,greeting.hello\nさようなら,good_bye,greeting.good_bye\n歓迎します,wellcome,greeting.welcome\nおやすみ,good night,greeting.good_night',
-          { type: 'GoogleSpreadSheet' }
+          { type: 'GoogleSpreadSheet' },
         );
         expect(mkdirSyncRecursive).toHaveBeenCalledTimes(1);
         expect(mkdirSyncRecursive.mock.calls[0][0]).toEqual('do_not_exist');
@@ -237,8 +237,8 @@ describe('SitRepo', () => {
           expect(csvData).toEqual(
             [
               ['日本語', '英語', 'キー'],
-              ['こんにちは', 'hello', 'common.greeting.hello']
-            ]
+              ['こんにちは', 'hello', 'common.greeting.hello'],
+            ],
           );
 
           expect(mockModel__refBlob).toHaveBeenCalledTimes(1);
@@ -726,8 +726,8 @@ first commit`;
       it('should return correctly', (done) => {
         recursive.mockReturnValueOnce(Promise.resolve(
           ['test/localRepo/.sit/refs/remotes/origin/master',
-            'test/localRepo/.sit/refs/remotes/origin/test'
-          ])
+            'test/localRepo/.sit/refs/remotes/origin/test',
+          ]),
         );
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model);
         jest.spyOn(model, '_writeLog').mockReturnValue(model);
@@ -737,7 +737,7 @@ first commit`;
           prune: false,
           remoteRefs: { 'test-1': '1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16', 'test-2': '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' },
           remoteBranches: ['test-1', 'test-2'],
-          type: 'GoogleSpreadSheet'
+          type: 'GoogleSpreadSheet',
         }).then(() => {
           expect(recursive).toHaveBeenCalledTimes(1);
           expect(recursive.mock.calls[0]).toEqual(['test/localRepo/.sit/refs/remotes/origin']);
@@ -776,8 +776,8 @@ first commit`;
       it('should return correctly', (done) => {
         recursive.mockReturnValueOnce(Promise.resolve(
           ['test/localRepo/.sit/refs/remotes/origin/master',
-            'test/localRepo/.sit/refs/remotes/origin/test'
-          ])
+            'test/localRepo/.sit/refs/remotes/origin/test',
+          ]),
         );
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model);
         jest.spyOn(model, '_writeLog').mockReturnValue(model);
@@ -788,7 +788,7 @@ first commit`;
           prune: true,
           remoteRefs: { 'test-1': '1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16', 'test-2': '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' },
           remoteBranches: ['test-1', 'test-2'],
-          type: 'GoogleSpreadSheet'
+          type: 'GoogleSpreadSheet',
         }).then(() => {
 
           expect(recursive).toHaveBeenCalledTimes(1);
@@ -1313,8 +1313,8 @@ ${colorize('4e2b7c4', 'info')} HEAD@{3}: clone: from https://docs.google.com/spr
           'test/localRepo/.sit/refs/remotes/origin/HEAD',
           'test/localRepo/.sit/refs/remotes/origin/master',
           'test/localRepo/.sit/refs/remotes/origin/test',
-          'test/localRepo/.sit/refs/stash'
-        ])
+          'test/localRepo/.sit/refs/stash',
+        ]),
       );
 
       model.showRef();
@@ -1370,7 +1370,7 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
           header,
           ['こんにちは', 'hello', 'common.greeting.hello'],
           ['さようなら', 'goodbye', 'common.greeting.good_bye'],
-          ['おはよう', 'good morning', 'common.greeting.good_morning']
+          ['おはよう', 'good morning', 'common.greeting.good_morning'],
         ];
         const fromData = [
           header,
@@ -1389,8 +1389,8 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
               ['message', ''],
               ['labels', ''],
               ['projects', ''],
-              ['milestone', '']
-            ]
+              ['milestone', ''],
+            ],
           );
         });
       });
@@ -1403,14 +1403,14 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
           header,
           ['こんにちは', 'hello', 'common.greeting.hello'],
           ['さようなら', 'goodbye', 'common.greeting.good_bye'],
-          ['おはよう', 'good morning', 'common.greeting.good_morning']
+          ['おはよう', 'good morning', 'common.greeting.good_morning'],
         ];
         const fromData = [
           header,
           ['こんにちは', 'hello', 'common.greeting.hello'],
           ['さようなら', 'goodbye', 'common.greeting.good_bye'],
           ['バイバイ', 'bye bye', 'common.greeting.bye_bye'],
-          ['おやすみなさい', 'good night', 'common.greeting.good_night']
+          ['おやすみなさい', 'good night', 'common.greeting.good_night'],
         ];
         model.createPullRequestData(toData, fromData, (result) => {
           expect(result).toEqual(
@@ -1427,8 +1427,8 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
               ['message', ''],
               ['labels', ''],
               ['projects', ''],
-              ['milestone', '']
-            ]
+              ['milestone', ''],
+            ],
           );
         });
       });

@@ -7,7 +7,7 @@ const {
   isExistFile,
   pathJoin,
   pathRelative,
-  currentPath
+  currentPath,
 } = require('../../utils/file');
 
 const SitSetting = require('../../SitSetting');

@@ -63,7 +63,7 @@ function Validator(opts) {
     setErrors,
     isValid,
     isVersion,
-    isURL
+    isURL,
   };
 }
 

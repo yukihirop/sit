@@ -7,7 +7,7 @@ const SitSetting = require('../SitSetting');
 
 const {
   pathJoin,
-  pathDirname
+  pathDirname,
 } = require('../utils/file');
 
 const _createSheetId = (uri, baseURL) => {

@@ -35,15 +35,15 @@ describe('SitBaseConfig', () => {
           {
             branch: {
               master: {
-                merge: 'refs/heads/master', remote: 'origin'
-              }
+                merge: 'refs/heads/master', remote: 'origin',
+              },
             },
             remote: {
               origin: {
-                fetch: '+refs/heads/*:refs/remotes/origin/*', type: 'GoogleSpreadSheet', url: 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0'
-              }
-            }
-          }
+                fetch: '+refs/heads/*:refs/remotes/origin/*', type: 'GoogleSpreadSheet', url: 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0',
+              },
+            },
+          },
         );
       });
     });

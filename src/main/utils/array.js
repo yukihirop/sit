@@ -98,7 +98,7 @@ const diffArray = (to, from) => {
 
   return {
     added: addedOnly,
-    removed: removedOnly
+    removed: removedOnly,
   };
 };
 
@@ -120,5 +120,5 @@ module.exports = {
   csv2JSON,
   overrideCSV,
   diffArray,
-  isEqual
+  isEqual,
 };

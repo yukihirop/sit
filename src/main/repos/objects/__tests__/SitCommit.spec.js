@@ -4,7 +4,7 @@ const SitRepo = require('@main/SitRepo');
 const SitCommit = require('../SitCommit');
 
 const {
-  colorize
+  colorize,
 } = require('@utils/string');
 
 describe('SitCommit', () => {
@@ -51,7 +51,7 @@ Create local repository: .trs`);
           parent: '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc',
           author: 'yukihirop <te108186@gmail.com> 1582125758897 +0900',
           committer: 'GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900',
-          '': 'Merge from GoogleSpreadSheet/master'
+          '': 'Merge from GoogleSpreadSheet/master',
         })).toEqual(`\
 ${colorize('commit 4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'info')} (HEAD -> master)\n\
 Author: yukihirop <te108186@gmail.com>\n\
@@ -69,7 +69,7 @@ Date: Thu Feb 4 00:22:38 2020 +0900 +0900\n\
           parent: '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc',
           author: 'yukihirop <te108186@gmail.com> 1582125758897 +0900',
           committer: 'GoogleSpreadSheet <noreply@googlespreadsheet.com> 1582125758897 +0900',
-          '': 'Merge from GoogleSpreadSheet/master'
+          '': 'Merge from GoogleSpreadSheet/master',
         }, { oneline: true })).toEqual(`\
 ${colorize('4e2b7c4', 'info')} (HEAD -> master) Merge from GoogleSpreadSheet/master`);
       });

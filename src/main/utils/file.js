@@ -253,5 +253,5 @@ module.exports = {
   pathDirname,
   pathRelative,
   currentPath,
-  bufferReplace
+  bufferReplace,
 };

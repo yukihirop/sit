@@ -6,7 +6,7 @@ const {
   isExistFile,
   pathJoin,
   currentPath,
-  pathRelative
+  pathRelative,
 } = require('./utils/file');
 
 const findSitSettting = (path = process.env.SIT_SETTING_DIR || '.', required = false) => {

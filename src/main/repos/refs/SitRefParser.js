@@ -1,11 +1,11 @@
 'use strict';
 
 const {
-  fileSafeLoad
+  fileSafeLoad,
 } = require('../../utils/file');
 
 const {
-  colorize
+  colorize,
 } = require('../../utils/string');
 
 const SitBase = require('../base/SitBase');
@@ -40,11 +40,11 @@ class SitRefParser extends SitBase {
     if (isHeader) {
       return [
         REF_REMOTE_HEADER,
-        [this.branch, hash]
+        [this.branch, hash],
       ];
     } else {
       return [
-        [this.branch, hash]
+        [this.branch, hash],
       ];
     }
   }
