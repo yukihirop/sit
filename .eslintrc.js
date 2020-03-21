@@ -27,6 +27,8 @@ module.exports = {
     "no-param-reassign": "off",
     "jest/no-test-callback": "off",
     "jest/no-disabled-tests": "off",
-    "jest/no-test-prefixes": "off"
+    "jest/no-test-prefixes": "off",
+    "object-curly-newline": "off",
+    "one-var": "off"
   },
 };
