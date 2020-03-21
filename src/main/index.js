@@ -57,14 +57,14 @@ Please make sure you have the correct access rights and the repository exists.`)
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD`);
-                  return;
+                  
                 } else {
                   console.log(`\
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD\n\
   ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`);
-                  return;
+                  
                 }
               })
               .catch(err => {
@@ -99,7 +99,7 @@ From ${repo.remoteRepo(repoName)}
                 if (msg.length >= 1) {
                   msg.unshift(`From ${repo.remoteRepo(repoName)}`);
                   console.log(msg.join('\n'));
-                  return;
+                  
                 }
               });
           });
@@ -179,7 +179,7 @@ To ${repo.remoteRepo(repoName)}`;
                   detailMsg = `\t* [new branch]\t${detailMsg}`;
                 }
                 console.log(`${baseMsg}\n${detailMsg}`);
-                return;
+                
               });
             });
           }).catch(err => {
@@ -252,10 +252,10 @@ remote: done.`);
     if (result) {
       console.log(`created local repo: ${repo.localRepo}`);
       console.log(`created dist file: ${repo.distFilePath}`);
-      return;
+      
     } else {
       console.log(`already exist local repo: ${repo.localRepo}`);
-      return;
+      
     }
   };
 
@@ -273,13 +273,13 @@ remote: done.`);
 
         if (type) {
           console.log(result.fmt);
-          return;
+          
         } else if (size) {
           console.log(result.size);
-          return;
+          
         } else if (prettyPrint) {
           console.log(result.serialize().toString());
-          return;
+          
         } else {
           die(`Do not support options ${opts}`);
         }
@@ -397,7 +397,7 @@ To ${repo.remoteRepo(repoName)}`;
 
             const detailMsg = `\tPlease look at sheet: '${prBranch}' in ${type}`;
             console.log(`${baseMsg}\n${detailMsg}`);
-            return;
+            
           });
         });
       });

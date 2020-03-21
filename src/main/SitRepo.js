@@ -67,7 +67,7 @@ class SitRepo extends SitBaseRepo {
       rmDirSync(localRepo);
     } else {
       console.log(`Do not exist local repo: ${localRepo}`);
-      return;
+      
     }
   }
 
@@ -173,7 +173,7 @@ class SitRepo extends SitBaseRepo {
             ._deleteSyncFile(`refs/heads/${deleteBranch}`);
 
           console.log(`Deleted branch ${deleteBranch} ( was ${deleteHash.slice(0, 7)})`);
-          return;
+          
         });
       }
 
@@ -216,7 +216,7 @@ class SitRepo extends SitBaseRepo {
             return acc;
           }, []);
           console.log(result.join('\n'));
-          return;
+          
         })
         .catch(err => {
           die(err.message);
@@ -255,7 +255,7 @@ Please make sure you have the correct access rights and the repository exists.`)
     if (!branch && !isRemote) {
       if (name === currentBranch) {
         console.log(`Already on '${name}'`);
-        return;
+        
       } else if (name) {
         this._objectFind(name)
           .then(sha => {
@@ -273,7 +273,7 @@ Please make sure you have the correct access rights and the repository exists.`)
                 });
 
               console.log(`Switched to branch '${name}'`);
-              return;
+              
             }
           })
           .catch(err => {
@@ -325,7 +325,7 @@ Please make sure you have the correct access rights and the repository exists.`)
           ._writeLog(`logs/refs/heads/${branch}`, null, currentHash, 'branch: Created from HEAD');
 
         console.log(`Switched to a new branch '${branch}'`);
-        return;
+        
       }
     }
   }
@@ -353,7 +353,7 @@ Please make sure you have the correct access rights and the repository exists.`)
               .replace(/^\+.*/gm, colorize('$&', 'added'))
               .replace(/^@@.+@@/gm, colorize('$&', 'section'));
             console.log(patch);
-            return;
+            
           }
         });
       });
@@ -378,7 +378,7 @@ Please make sure you have the correct access rights and the repository exists.`)
             .replace(/^\+.*/gm, colorize('$&', 'added'))
             .replace(/^@@.+@@/gm, colorize('$&', 'section'));
           console.log(patch);
-          return;
+          
         }
       });
     }
@@ -399,13 +399,13 @@ On branch ${currentBranch}\n\
 \t${colorize(modified, 'mark')}\n\
 
 no changes added to commit`);
-      return;
+      
     } else {
       console.log(`\
 On branch ${currentBranch}\n\
 nothing to commit`,
       );
-      return;
+      
     }
   }
 
@@ -439,11 +439,11 @@ nothing to commit`,
       // STEP 8: display info
       // TODO: display insertions(+), deletions(-) info
       console.log(`[${branch} ${afterHEADHash.slice(0, 7)}] ${message}`);
-      return;
+      
 
     } else if (isExistMessage && !isChangeHash) {
       console.log(`On branch ${branch}\nnothing to commit`);
-      return;
+      
     } else {
       die('Need message to commit');
     }
@@ -707,7 +707,7 @@ Please, commit your changes before you merge.`);
 Two-way-merging ${this.distFilePath}
 CONFLICT (content): Merge conflict in ${this.distFilePath}
 two-way-merge failed; fix conflicts and then commit the result.`);
-              return;
+              
 
             } else {
               const headBranch = this._branchResolve('HEAD');
@@ -729,7 +729,7 @@ Updating ${headHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\n
 Fast-forward
   ${this.distFilePath}
   1 file changed`);
-              return;
+              
             }
           });
         });
@@ -799,7 +799,7 @@ Fast-forward
 
       if (blobHEADHash === calculateBlobHash) {
         console.log('No local changes to save');
-        return;
+        
       } else {
         const commitStash = this._refResolve('refs/stash');
         const commitHEADHash = this._refResolve('HEAD');
@@ -851,7 +851,7 @@ Fast-forward
             console.log(`\
 Two-way-merging ${this.distFilePath}
 CONFLICT (content): Merge conflict in ${this.distFilePath}`);
-            return;
+            
 
           } else {
 
@@ -865,7 +865,7 @@ Changes not staged for commit:
 \tmodified:\t${this.distFilePath}
 
 no changes added to commit`);
-              return;
+              
             }
           }
         });
@@ -888,7 +888,7 @@ Changes not staged for commit:
 \tmodified:\t${this.distFilePath}
 
 Dropped ${stashKey} (${stashCommitHash})`);
-        return;
+        
       };
 
       this.stash('apply', { stashKey, popHandler });
