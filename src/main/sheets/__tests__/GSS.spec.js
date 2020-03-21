@@ -54,7 +54,7 @@ describe('GSS', () => {
     it('should return correctly', () => {
       const header = ['日本語', '英語', 'キー'];
       const mockRows = [
-        { '日本語': 'こんにちは', '英語': 'hello', 'キー': 'greeting.hello' }
+        { 日本語: 'こんにちは', 英語: 'hello', キー: 'greeting.hello' }
       ];
       expect(model._rows2CSV(mockRows, header)).toEqual([['日本語', '英語', 'キー'], ['こんにちは', 'hello', 'greeting.hello']]);
     });

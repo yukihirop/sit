@@ -90,8 +90,8 @@ describe('SitLogParser', () => {
             .mockReturnValueOnce('8b58f3891ae3e4d274972a39d27fd460aaeaa6cc');
 
           expect(model.parseToJSON()).toEqual([
-            { 'aftersha': '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', 'beforesha': '0000000000000000000000000000000000000000', 'branch': 'master', 'email': '<te108186@gmail.com>', 'message': 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0', 'timezone': '+0900', 'unixtime': '1580961933681', 'username': 'yukihirop' },
-            { 'aftersha': '2938ad2ab5722adf9b48ff5bac74989eaa2d144c', 'beforesha': '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', 'branch': 'master', 'email': '<te108186@gmail.com>', 'message': 'commit Add good_bye', 'timezone': '+0900', 'unixtime': '1583639422044', 'username': 'yukihirop' }
+            { aftersha: '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', beforesha: '0000000000000000000000000000000000000000', branch: 'master', email: '<te108186@gmail.com>', message: 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0', timezone: '+0900', unixtime: '1580961933681', username: 'yukihirop' },
+            { aftersha: '2938ad2ab5722adf9b48ff5bac74989eaa2d144c', beforesha: '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', branch: 'master', email: '<te108186@gmail.com>', message: 'commit Add good_bye', timezone: '+0900', unixtime: '1583639422044', username: 'yukihirop' }
           ]);
         });
       });
@@ -101,8 +101,8 @@ describe('SitLogParser', () => {
           model = new SitLogParser(repo, 'master', 'logs/refs/stash');
 
           expect(model.parseToJSON(false)).toEqual([
-            { 'aftersha': '3df8acdb918794c2bda15ae45fec2c5929ca4929', 'beforesha': '0000000000000000000000000000000000000000', 'branch': 'master', 'email': '<te108186@gmail.com>', 'message': 'WIP on master: 4e2b7c4 Add good_bye', 'timezone': '+0900', 'unixtime': '1583663621190', 'username': 'yukihirop' },
-            { 'aftersha': '00fa2d2f5b497b41e288f8c9bce3bf61515d3101', 'beforesha': '3df8acdb918794c2bda15ae45fec2c5929ca4929', 'branch': 'master', 'email': '<te108186@gmail.com>', 'message': 'On master: stash message', 'timezone': '+0900', 'unixtime': '1583747819860', 'username': 'yukihirop' }
+            { aftersha: '3df8acdb918794c2bda15ae45fec2c5929ca4929', beforesha: '0000000000000000000000000000000000000000', branch: 'master', email: '<te108186@gmail.com>', message: 'WIP on master: 4e2b7c4 Add good_bye', timezone: '+0900', unixtime: '1583663621190', username: 'yukihirop' },
+            { aftersha: '00fa2d2f5b497b41e288f8c9bce3bf61515d3101', beforesha: '3df8acdb918794c2bda15ae45fec2c5929ca4929', branch: 'master', email: '<te108186@gmail.com>', message: 'On master: stash message', timezone: '+0900', unixtime: '1583747819860', username: 'yukihirop' }
           ]);
         });
       });
@@ -138,24 +138,24 @@ describe('SitLogParser', () => {
         model = new SitLogParser(repo, 'master', 'logs/refs/stash');
         expect(model.parseForIndex('stash')).toEqual({
           'stash@{0}': {
-            'aftersha': '00fa2d2f5b497b41e288f8c9bce3bf61515d3101',
-            'beforesha': '3df8acdb918794c2bda15ae45fec2c5929ca4929',
-            'branch': 'master',
-            'email': '<te108186@gmail.com>',
-            'message': 'On master: stash message',
-            'timezone': '+0900',
-            'unixtime': '1583747819860',
-            'username': 'yukihirop'
+            aftersha: '00fa2d2f5b497b41e288f8c9bce3bf61515d3101',
+            beforesha: '3df8acdb918794c2bda15ae45fec2c5929ca4929',
+            branch: 'master',
+            email: '<te108186@gmail.com>',
+            message: 'On master: stash message',
+            timezone: '+0900',
+            unixtime: '1583747819860',
+            username: 'yukihirop'
           },
           'stash@{1}': {
-            'aftersha': '3df8acdb918794c2bda15ae45fec2c5929ca4929',
-            'beforesha': '0000000000000000000000000000000000000000',
-            'branch': 'master',
-            'email': '<te108186@gmail.com>',
-            'message': 'WIP on master: 4e2b7c4 Add good_bye',
-            'timezone': '+0900',
-            'unixtime': '1583663621190',
-            'username': 'yukihirop',
+            aftersha: '3df8acdb918794c2bda15ae45fec2c5929ca4929',
+            beforesha: '0000000000000000000000000000000000000000',
+            branch: 'master',
+            email: '<te108186@gmail.com>',
+            message: 'WIP on master: 4e2b7c4 Add good_bye',
+            timezone: '+0900',
+            unixtime: '1583663621190',
+            username: 'yukihirop',
           }
         });
       });

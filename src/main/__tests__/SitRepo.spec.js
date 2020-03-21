@@ -137,9 +137,9 @@ describe('SitRepo', () => {
         );
         expect(mockSitConfig_updateSection).toHaveBeenCalledTimes(2);
         expect(mockSitConfig_updateSection.mock.calls[0][0]).toBe('remote.origin');
-        expect(mockSitConfig_updateSection.mock.calls[0][1]).toEqual({ 'fetch': '+refs/heads/*:refs/remotes/origin/*', 'type': 'GoogleSpreadSheet', 'url': 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0' });
+        expect(mockSitConfig_updateSection.mock.calls[0][1]).toEqual({ fetch: '+refs/heads/*:refs/remotes/origin/*', type: 'GoogleSpreadSheet', url: 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0' });
         expect(mockSitConfig_updateSection.mock.calls[1][0]).toBe('branch.master');
-        expect(mockSitConfig_updateSection.mock.calls[1][1]).toEqual({ 'merge': 'refs/heads/master', 'remote': 'origin' });
+        expect(mockSitConfig_updateSection.mock.calls[1][1]).toEqual({ merge: 'refs/heads/master', remote: 'origin' });
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2);
         expect(mockModel__writeSyncFile.mock.calls[0][0]).toBe('refs/heads/master');
@@ -258,7 +258,7 @@ describe('SitRepo', () => {
       expect(model._add(path, {})).toEqual(sha1);
       expect(mockModel_hashObject).toHaveBeenCalledTimes(1);
       expect(mockModel_hashObject.mock.calls[0][0]).toEqual('test/sit.js');
-      expect(mockModel_hashObject.mock.calls[0][1]).toEqual({ 'type': 'blob', 'write': true });
+      expect(mockModel_hashObject.mock.calls[0][1]).toEqual({ type: 'blob', write: true });
     });
   });
 
@@ -459,7 +459,7 @@ Merge from GoogleSpreadSheet/develop`;
           model.checkout('origin', 'test', {});
 
           expect(mockSitConfig_updateSection).toHaveBeenCalledTimes(1);
-          expect(mockSitConfig_updateSection.mock.calls[0]).toEqual(['branch.test', { 'merge': 'refs/heads/test', 'remote': 'origin' }]);
+          expect(mockSitConfig_updateSection.mock.calls[0]).toEqual(['branch.test', { merge: 'refs/heads/test', remote: 'origin' }]);
 
           expect(mockModel__fileCopySync).toHaveBeenCalledTimes(1);
           expect(mockModel__fileCopySync.mock.calls[0]).toEqual(['refs/remotes/origin/test', 'refs/heads/test']);
@@ -601,7 +601,7 @@ no changes added to commit`);
         expect(mockModel__refResolve.mock.calls[0]).toEqual(['HEAD']);
 
         expect(mockModel_hashObject).toHaveBeenCalledTimes(1);
-        expect(mockModel_hashObject.mock.calls[0]).toEqual(['test/dist/test_data.csv', { 'type': 'blob' }]);
+        expect(mockModel_hashObject.mock.calls[0]).toEqual(['test/dist/test_data.csv', { type: 'blob' }]);
 
         expect(console.log).toHaveBeenCalledTimes(1);
         expect(console.log.mock.calls[0]).toEqual(['On branch master\nnothing to commit']);
@@ -655,7 +655,7 @@ first commit`;
         expect(mockModel__refResolve.mock.calls[0]).toEqual(['HEAD']);
 
         expect(mockModel__add).toHaveBeenCalledTimes(1);
-        expect(mockModel__add.mock.calls[0]).toEqual(['test/dist/test_data.csv', { 'message': 'first commit' }]);
+        expect(mockModel__add.mock.calls[0]).toEqual(['test/dist/test_data.csv', { message: 'first commit' }]);
 
         expect(mockModel__createCommit).toHaveBeenCalledTimes(1);
         expect(mockModel__createCommit.mock.calls[0]).toEqual(['8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', 'first commit']);
@@ -687,7 +687,7 @@ first commit`;
 
         model.push('origin', 'develop', { HEADBlobHash: '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' })
           .then(result => {
-            expect(result).toEqual({ 'afterHash': '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'beforeHash': '0000000000000000000000000000000000000000' });
+            expect(result).toEqual({ afterHash: '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', beforeHash: '0000000000000000000000000000000000000000' });
 
             expect(mockModel__writeLog).toHaveBeenCalledTimes(1);
             expect(mockModel__writeLog.mock.calls[0]).toEqual(['logs/refs/remotes/origin/develop', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'update by push']);
@@ -755,7 +755,7 @@ first commit`;
           .mockReturnValueOnce('47af1af6722639322ccf17ea5f873d0e483c364f');
         model.fetch('origin', 'test', { remoteHash: '47af1af6722639322ccf17ea5f873d0e483c364f', type: 'GoogleSpreadSheet' })
           .then(result => {
-            expect(result).toEqual({ 'beforeHash': '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'branchCount': 1, 'afterHash': '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b' });
+            expect(result).toEqual({ beforeHash: '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', branchCount: 1, afterHash: '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b' });
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2);
             expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(['FETCH_HEAD', "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b		branch 'test' of origin"]);
@@ -983,7 +983,7 @@ Please, commit your changes before you merge.`]);
         model.remote('add', 'origin', url, { type: 'GoogleSpreadSheet' });
 
         expect(SitConfig.prototype.updateSection).toHaveBeenCalledTimes(1);
-        expect(SitConfig.prototype.updateSection.mock.calls[0]).toEqual(['remote.origin', { 'fetch': '+refs/heads/*:refs/remotes/origin/*', 'type': 'GoogleSpreadSheet', 'url': 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0' }]);
+        expect(SitConfig.prototype.updateSection.mock.calls[0]).toEqual(['remote.origin', { fetch: '+refs/heads/*:refs/remotes/origin/*', type: 'GoogleSpreadSheet', url: 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0' }]);
       });
     });
 
@@ -1033,7 +1033,7 @@ Please, commit your changes before you merge.`]);
           expect(mockModel__refBlob.mock.calls[0]).toEqual(['HEAD']);
 
           expect(mockModel_hashObject).toHaveBeenCalledTimes(1);
-          expect(mockModel_hashObject.mock.calls[0]).toEqual(['test/dist/test_data.csv', { 'type': 'blob' }]);
+          expect(mockModel_hashObject.mock.calls[0]).toEqual(['test/dist/test_data.csv', { type: 'blob' }]);
 
           expect(console.log).toHaveBeenCalledTimes(1);
           expect(console.log.mock.calls[0]).toEqual(['No local changes to save']);
@@ -1072,8 +1072,8 @@ WIP on master: 47af1af Add good_bye`;
           expect(mockModel__refBlob.mock.calls[0]).toEqual(['HEAD']);
 
           expect(mockModel_hashObject).toHaveBeenCalledTimes(2);
-          expect(mockModel_hashObject.mock.calls[0]).toEqual(['test/dist/test_data.csv', { 'type': 'blob' }]);
-          expect(mockModel_hashObject.mock.calls[1]).toEqual(['test/dist/test_data.csv', { 'type': 'blob', 'write': true }]);
+          expect(mockModel_hashObject.mock.calls[0]).toEqual(['test/dist/test_data.csv', { type: 'blob' }]);
+          expect(mockModel_hashObject.mock.calls[1]).toEqual(['test/dist/test_data.csv', { type: 'blob', write: true }]);
 
           expect(mockModel__refResolve).toHaveBeenCalledTimes(3);
           expect(mockModel__refResolve.mock.calls[0]).toEqual(['refs/stash']);
@@ -1245,7 +1245,7 @@ Dropped stash@{1} (3df8acdb918794c2bda15ae45fec2c5929ca4929)`);
           model.stash('show', { print: true });
 
           expect(mockModel_diff).toHaveBeenCalledTimes(1);
-          expect(mockModel_diff.mock.calls[0]).toEqual([{ 'compareBlobHash': 'b6f2667d13461fb6c521c1975018124db2e2d1e3' }]);
+          expect(mockModel_diff.mock.calls[0]).toEqual([{ compareBlobHash: 'b6f2667d13461fb6c521c1975018124db2e2d1e3' }]);
         });
       });
     });

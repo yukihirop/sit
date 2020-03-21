@@ -270,14 +270,14 @@ test data`;
   describe('#_iniParse', () => {
     it('should return correctly', () => {
       expect(model._iniParse('config')).toEqual({
-        'branch': {
-          'master': {
-            'merge': 'refs/heads/master', 'remote': 'origin'
+        branch: {
+          master: {
+            merge: 'refs/heads/master', remote: 'origin'
           }
         },
-        'remote': {
-          'origin': {
-            'fetch': '+refs/heads/*:refs/remotes/origin/*', 'type': 'GoogleSpreadSheet', 'url': 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0'
+        remote: {
+          origin: {
+            fetch: '+refs/heads/*:refs/remotes/origin/*', type: 'GoogleSpreadSheet', url: 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0'
           }
         }
       });

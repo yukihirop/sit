@@ -40,7 +40,7 @@ describe('Clasp', () => {
 
         expect(fileCopySync).toHaveBeenCalledTimes(2);
         expect(fileCopySync.mock.calls[0]).toEqual([`${currentPath}/src/clasp/.claspignore`, `${currentPath}/.claspignore`]);
-        expect(fileCopySync.mock.calls[1]).toEqual([`${currentPath}/src/clasp`, `${currentPath}/test/localRepo/.sit/scripts/clasp`, { 'mkdirp': true }]);
+        expect(fileCopySync.mock.calls[1]).toEqual([`${currentPath}/src/clasp`, `${currentPath}/test/localRepo/.sit/scripts/clasp`, { mkdirp: true }]);
 
         expect(appendFile).toHaveBeenCalledTimes(1);
         expect(appendFile.mock.calls[0]).toEqual([`${currentPath}/.claspignore`, '!.sit/scripts/clasp/**/*.js']);

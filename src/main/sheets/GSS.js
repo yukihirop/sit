@@ -174,10 +174,10 @@ class GSS {
     const rowCount = Math.ceil(dataLength / header.length);
 
     await sheet.loadCells({
-      'startRowIndex': 0,
-      'endRowIndex': rowCount,
-      'startColumnIndex': 0,
-      'endColumnIndex': header.length
+      startRowIndex: 0,
+      endRowIndex: rowCount,
+      startColumnIndex: 0,
+      endColumnIndex: header.length
     });
 
     // i is itemIndex

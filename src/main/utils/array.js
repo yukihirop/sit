@@ -97,8 +97,8 @@ const diffArray = (to, from) => {
   const removedOnly = _getUniqueValues([...removedData, ...sharedData]);
 
   return {
-    'added': addedOnly,
-    'removed': removedOnly
+    added: addedOnly,
+    removed: removedOnly
   };
 };
 

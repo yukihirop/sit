@@ -17,7 +17,7 @@ class SitBaseConfig extends SitBase {
   constructor(type) {
     super();
 
-    const configPaths = { 'global': `${SitBase.homeDir()}/.sitconfig`, 'local': `${this.localRepo}/config` };
+    const configPaths = { global: `${SitBase.homeDir()}/.sitconfig`, local: `${this.localRepo}/config` };
 
     this.type = type;
     this.configPath = configPaths[type];
