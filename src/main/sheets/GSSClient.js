@@ -21,8 +21,8 @@ function GSSClient(uri, opts) {
   const sheetId = _createSheetId(uri, baseURL);
   const doc = new GoogleSpreadsheet(sheetId);
 
-  const {credPath} = SitSetting.sheet.gss.auth
-    , {settingPath} = SitSetting._internal_
+  const { credPath } = SitSetting.sheet.gss.auth
+    , { settingPath } = SitSetting._internal_
     , creds = jsonSafeLoad(pathJoin(pathDirname(settingPath), credPath));
 
   return new Promise((resolve, reject) => {

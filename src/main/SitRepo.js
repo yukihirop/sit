@@ -61,7 +61,7 @@ class SitRepo extends SitBaseRepo {
   }
 
   rollback() {
-    const {localRepo} = this;
+    const { localRepo } = this;
 
     if (isExistFile(localRepo)) {
       rmDirSync(localRepo);
@@ -750,7 +750,7 @@ Fast-forward
     this.catFile(commitHash).then(obj => {
       if (obj instanceof SitCommit) {
         const commitData = obj.humanizeKVLM();
-        const {parent} = commitData;
+        const { parent } = commitData;
         this.commits.push(obj.createCommitLog(commitHash, commitData, { oneline }));
 
         if (parent === this._INITIAL_HASH()) {

@@ -53,8 +53,8 @@ class SitBaseRepo extends SitBase {
   }
 
   username() {
-    const {localConfig} = this;
-    const {globalConfig} = this;
+    const { localConfig } = this;
+    const { globalConfig } = this;
     const defaultName = 'anonymous';
     let result;
 
@@ -88,8 +88,8 @@ class SitBaseRepo extends SitBase {
   }
 
   email() {
-    const {localConfig} = this;
-    const {globalConfig} = this;
+    const { localConfig } = this;
+    const { globalConfig } = this;
     const defaultEmail = 'anonymous@example.com';
     let result;
 

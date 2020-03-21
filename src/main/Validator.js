@@ -8,7 +8,7 @@ const SitConfig = require('./repos/SitConfig');
 function Validator(opts) {
   const { type, baseURL } = opts;
 
-  const {version} = SitSetting;
+  const { version } = SitSetting;
   const _errors = [];
 
   const getErrors = () => {

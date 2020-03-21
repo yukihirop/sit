@@ -73,8 +73,8 @@ const uniq = (array) => {
 const diffArray = (to, from) => {
   const diff = Diff.diffArrays(to, from);
   const data = diff.reduce((acc, item) => {
-    const {added} = item;
-    const {removed} = item;
+    const { added } = item;
+    const { removed } = item;
 
     if (added) {
       acc.added = acc.added || [];
