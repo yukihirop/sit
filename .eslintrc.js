@@ -21,6 +21,7 @@ module.exports = {
     "no-console": "off",
     "arrow-parens": "off",
     "arrow-body-style": "off",
-    "comma-style": "off"
+    "comma-style": "off",
+    "no-else-return": "off"
   },
 };
