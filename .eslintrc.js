@@ -18,6 +18,9 @@ module.exports = {
   rules: {
     "semi": ["error", "always"],
     "no-underscore-dangle": "off",
-    "no-console": "off"
+    "no-console": "off",
+    "arrow-parens": "off",
+    "arrow-body-style": "off",
+    "comma-style": "off"
   },
 };
