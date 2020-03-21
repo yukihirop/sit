@@ -6,12 +6,12 @@ Command.prototype.useSubcommand = function (subCommand) {
   if (this._args.length > 0) throw Error('useSubcommand cannot be applied to a command with explicit args');
   if (!subCommand._name) throw Error('subCommand name is not specified');
 
-  var listener = function (args, unknown) {
+  let listener = function (args, unknown) {
     // Parse any so-far unknown options
     args = args || [];
     unknown = unknown || [];
 
-    var parsed = subCommand.parseOptions(unknown);
+    let parsed = subCommand.parseOptions(unknown);
     if (parsed.args.length) args = parsed.args.concat(args);
     unknown = parsed.unknown;
 
@@ -46,8 +46,8 @@ Command.prototype.useSubcommand = function (subCommand) {
  */
 
 Command.prototype.collectAllOptions = function () {
-  var allOpts = {};
-  var node = this;
+  let allOpts = {};
+  let node = this;
   while (node) {
     allOpts = node.options
       .map(o => o.attributeName())

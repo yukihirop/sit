@@ -54,25 +54,25 @@ const mkdirSyncRecursive = (dir) => {
 };
 
 const yamlSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {
-  var loadPath = file;
+  let loadPath = file;
 
   if (isRelative) {
     loadPath = path.resolve(currentPath, file);
   }
 
-  var yamlText = fs.readFileSync(loadPath, encoding)
+  let yamlText = fs.readFileSync(loadPath, encoding)
     , yamlData = yaml.safeLoad(yamlText);
   return yamlData;
 };
 
 const rootYamlSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {
-  var loadPath = file;
+  let loadPath = file;
 
   if (isRelative) {
     loadPath = path.resolve(rootPath, file);
   }
 
-  var yamlText = fs.readFileSync(loadPath, encoding)
+  let yamlText = fs.readFileSync(loadPath, encoding)
     , yamlData = yaml.safeLoad(yamlText);
   return yamlData;
 };
