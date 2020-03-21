@@ -1176,7 +1176,7 @@ WIP on master: 47af1af Add good_bye`;
           model.stash('pop');
 
           expect(mockModel_hashObjectFromData).toHaveBeenCalledTimes(1);
-          expect(mockModel_hashObjectFromData.mock.calls[0][0]).toEqual(result);
+          expect(mockModel_hashObjectFromData.mock.calls[0][0]).toEqual(stashResult);
           expect(mockModel_hashObjectFromData.mock.calls[0][1]).toEqual({ type: 'blob', write: true });
 
           expect(writeSyncFile).toHaveBeenCalledTimes(1);
@@ -1188,7 +1188,7 @@ WIP on master: 47af1af Add good_bye`;
           expect(mockModel__writeSyncFile.mock.calls[0][0]).toEqual('3df8acdb918794c2bda15ae45fec2c5929ca4929');
 
           expect(mockModel__deleteLineLog).toHaveBeenCalledTimes(1);
-          exepct(mockModel__deleteLineLog.mock.calls[0]).toEqual('logs/refs/stash', 'stash@{0}');
+          expect(mockModel__deleteLineLog.mock.calls[0]).toEqual('logs/refs/stash', 'stash@{0}');
 
           expect(console.log).toHaveBeenCalledTimes(1);
           expect(console.log.mock.calls[0]).toEqual(`\
@@ -1215,7 +1215,7 @@ Dropped stash@{0} (00fa2d2f5b497b41e288f8c9bce3bf61515d3101)`);
           model.stash('pop', 'stash@{1}');
 
           expect(mockModel_hashObjectFromData).toHaveBeenCalledTimes(1);
-          expect(mockModel_hashObjectFromData.mock.calls[0][0]).toEqual(result);
+          expect(mockModel_hashObjectFromData.mock.calls[0][0]).toEqual(stashResult);
           expect(mockModel_hashObjectFromData.mock.calls[0][1]).toEqual({ type: 'blob', write: true });
 
           expect(writeSyncFile).toHaveBeenCalledTimes(1);
@@ -1223,7 +1223,7 @@ Dropped stash@{0} (00fa2d2f5b497b41e288f8c9bce3bf61515d3101)`);
           expect(writeSyncFile.mock.calls[0][1]).toEqual(stashResult);
 
           expect(mockModel__deleteLineLog).toHaveBeenCalledTimes(1);
-          exepct(mockModel__deleteLineLog.mock.calls[0]).toEqual('logs/refs/stash', 'stash@{1}');
+          expect(mockModel__deleteLineLog.mock.calls[0]).toEqual('logs/refs/stash', 'stash@{1}');
 
           expect(console.log).toHaveBeenCalledTimes(1);
           expect(console.log.mock.calls[0]).toEqual(`\
