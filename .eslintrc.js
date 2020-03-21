@@ -22,6 +22,7 @@ module.exports = {
     "arrow-parens": "off",
     "arrow-body-style": "off",
     "comma-style": "off",
-    "no-else-return": "off"
+    "no-else-return": "off",
+    "no-shadow": "off"
   },
 };
