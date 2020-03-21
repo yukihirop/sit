@@ -1382,7 +1382,14 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
               ["日本語", "英語", "キー", "Index", "Status"],
               ["こんにちは", "hello", "common.greeting.hello", 0, ""],
               ["さようなら", "goodbye", "common.greeting.good_bye", 1, "±"],
-              ["おはよう", "good morning", "common.greeting.good_morning", 2, "±"]
+              ["おはよう", "good morning", "common.greeting.good_morning", 2, "±"],
+              [''],
+              ['reviewers', ''],
+              ['assignees', 'yukihirop'],
+              ['message', ''],
+              ['labels', ''],
+              ['projects', ''],
+              ['milestone', '']
             ]
           )
         })
@@ -1413,7 +1420,14 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
               ["さようなら", "goodbye", "common.greeting.good_bye", 1, ""],
               ["おはよう", "good morning", "common.greeting.good_morning", 2, "-"],
               ["バイバイ", "bye bye", "common.greeting.bye_bye", 2, "+"],
-              ["おやすみなさい", "good night", "common.greeting.good_night", 3, "+"]
+              ["おやすみなさい", "good night", "common.greeting.good_night", 3, "+"],
+              [''],
+              ['reviewers', ''],
+              ['assignees', 'yukihirop'],
+              ['message', ''],
+              ['labels', ''],
+              ['projects', ''],
+              ['milestone', '']
             ]
           )
         })

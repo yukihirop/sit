@@ -1006,6 +1006,14 @@ Dropped ${stashKey} (${stashCommitHash})`)
         return acc;
       }, [header]);
 
+      data.push([''])
+      data.push(['reviewers', ''])
+      data.push(['assignees', this.username()])
+      data.push(['message', ''])
+      data.push(['labels', ''])
+      data.push(['projects', ''])
+      data.push(['milestone', ''])
+
       callback(data);
     })
   }
