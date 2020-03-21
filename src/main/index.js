@@ -41,8 +41,7 @@ fatal: '${repoName}' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`);
-    } else {
-      if (branch) {
+    } else if (branch) {
         sheet.getRows(repoName, branch)
           .then(data => {
             const remoteHash = repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
@@ -103,7 +102,6 @@ From ${repo.remoteRepo(repoName)}
           die(`fatal: Couldn't find remote ref '${branch}'`);
         });
       }
-    }
   };
 
   Repo.push = (repoName, branch, opts = {}) => {
@@ -117,8 +115,7 @@ fatal: '${repoName}' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`);
-    } else {
-      if (branch) {
+    } else if (branch) {
         // Fetch refs/remotes from sheet
         sheet.getRows(repoName, 'refs/remotes', ['branch', 'sha1']).then(data => {
           const json = csv2JSON(data);
@@ -183,7 +180,6 @@ To ${repo.remoteRepo(repoName)}`;
       } else {
         die('branch is required');
       }
-    }
   };
 
   Repo.clone = (repoName, url, opts) => {

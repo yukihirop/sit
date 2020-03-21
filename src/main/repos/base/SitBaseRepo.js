@@ -61,8 +61,7 @@ class SitBaseRepo extends SitBase {
     if (localConfig.user) {
       if (localConfig.user.name) {
         result = localConfig.user.name;
-      } else {
-        if (globalConfig.user) {
+      } else if (globalConfig.user) {
           if (globalConfig.user.name) {
             result = globalConfig.user.name;
           } else {
@@ -71,9 +70,7 @@ class SitBaseRepo extends SitBase {
         } else {
           result = defaultName;
         }
-      }
-    } else {
-      if (globalConfig.user) {
+    } else if (globalConfig.user) {
         if (globalConfig.user.name) {
           result = globalConfig.user.name;
         } else {
@@ -82,7 +79,6 @@ class SitBaseRepo extends SitBase {
       } else {
         result = defaultName;
       }
-    }
 
     return result;
   }
@@ -96,8 +92,7 @@ class SitBaseRepo extends SitBase {
     if (localConfig.user) {
       if (localConfig.user.email) {
         result = localConfig.user.email;
-      } else {
-        if (globalConfig.user) {
+      } else if (globalConfig.user) {
           if (globalConfig.user.email) {
             result = globalConfig.user.email;
           } else {
@@ -106,9 +101,7 @@ class SitBaseRepo extends SitBase {
         } else {
           result = defaultEmail;
         }
-      }
-    } else {
-      if (globalConfig.user) {
+    } else if (globalConfig.user) {
         if (globalConfig.user.email) {
           result = globalConfig.user.email;
         } else {
@@ -117,7 +110,6 @@ class SitBaseRepo extends SitBase {
       } else {
         result = defaultEmail;
       }
-    }
 
     return result;
   }
@@ -354,8 +346,7 @@ class SitBaseRepo extends SitBase {
           item.from.push(line.from);
           arr[currentItemIndex] = item;
           currentConflict = true;
-        } else {
-          if (currentConflict) {
+        } else if (currentConflict) {
             currentItemIndex++;
             item = arr[currentItemIndex] || JSON.parse(JSON.stringify(initialItem));
             item.startIndex = index;
@@ -370,7 +361,6 @@ class SitBaseRepo extends SitBase {
             arr[currentItemIndex] = item;
             currentItemIndex++;
           }
-        }
       });
 
       const data = [];

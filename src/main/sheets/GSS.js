@@ -189,11 +189,9 @@ class GSS {
 
         if (typeof el !== 'undefined') {
           cell.value = el.value;
-        } else {
-          if (clear) {
+        } else if (clear) {
             cell.value = '';
           }
-        }
       }
     }
 

@@ -821,8 +821,7 @@ Fast-forward
             console.log(`\
 Two-way-merging ${this.distFilePath}
 CONFLICT (content): Merge conflict in ${this.distFilePath}`);
-          } else {
-            if (popHandler) {
+          } else if (popHandler) {
               popHandler(stashKey, stashCommitHash);
             } else {
               console.log(`\
@@ -833,7 +832,6 @@ Changes not staged for commit:
 
 no changes added to commit`);
             }
-          }
         });
       });
     } else if (subcommand === 'pop') {
@@ -952,8 +950,7 @@ Dropped ${stashKey} (${stashCommitHash})`);
           if (item.to === null) {
             item.from.push(index, '+');
             acc.push(item.from);
-          } else {
-            if (item.from === null) {
+          } else if (item.from === null) {
               item.to.push(index, '±');
               acc.push(item.to);
             } else {
@@ -962,7 +959,6 @@ Dropped ${stashKey} (${stashCommitHash})`);
               acc.push(item.to);
               acc.push(item.from);
             }
-          }
         } else {
           item.to.push(index, '');
           acc.push(item.to);
