@@ -437,7 +437,7 @@ Merge from GoogleSpreadSheet/master`);
   });
 
   describe('#_objectWrite', () => {
-    let obj = new SitBlob(model, '日本語,英語,キー\nこんにちは,hello,greeting.hello', 60);
+    const obj = new SitBlob(model, '日本語,英語,キー\nこんにちは,hello,greeting.hello', 60);
 
     describe('when do not write file', () => {
       it('should return correctly', () => {

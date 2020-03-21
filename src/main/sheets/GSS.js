@@ -57,7 +57,7 @@ class GSS {
       const sheetNames = await sheets.reduce(async (pacc, sheet) => {
         await sheet.loadHeaderRow();
 
-        let acc = await pacc;
+        const acc = await pacc;
 
         if (isEqual(sheet.headerValues, this.header())) {
           acc.push(sheet._rawProperties.title);
@@ -101,7 +101,7 @@ class GSS {
         if (sheet) {
           sheet.getRows()
             .then(rows => {
-              let oldData = this._rows2CSV(rows, header);
+              const oldData = this._rows2CSV(rows, header);
               let newData;
 
               if (clear) {
@@ -110,8 +110,8 @@ class GSS {
                 newData = overrideCSV(oldData, data, specifyIndex);
               }
 
-              let oldCSVData = worksheet.csvData(oldData);
-              let newCSVData = worksheet.csvData(newData);
+              const oldCSVData = worksheet.csvData(oldData);
+              const newCSVData = worksheet.csvData(newData);
 
               if (clear) {
                 this._bulkPushRow(sheet, oldCSVData, newCSVData, header, true);
@@ -131,7 +131,7 @@ class GSS {
             },
           })
             .then((newSheet) => {
-              let csvData = worksheet.csvData(data);
+              const csvData = worksheet.csvData(data);
               this._bulkPushRow(newSheet, csvData, csvData, header, false);
               resolve(csvData);
             })
@@ -151,10 +151,10 @@ class GSS {
   }
 
   _rows2CSV(rows, header = this.header()) {
-    let result = [];
+    const result = [];
 
     rows.forEach(row => {
-      let rowResult = [];
+      const rowResult = [];
 
       header.forEach(header => {
         rowResult.push(row[header]);
@@ -170,7 +170,7 @@ class GSS {
   // private
 
   async _bulkPushRow(sheet, oldData, newData, header, clear = false) {
-    let dataLength = Object.keys(oldData).length + Object.keys(newData).length;
+    const dataLength = Object.keys(oldData).length + Object.keys(newData).length;
     const rowCount = Math.ceil(dataLength / header.length);
 
     await sheet.loadCells({

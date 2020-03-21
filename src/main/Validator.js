@@ -10,7 +10,7 @@ function Validator(opts) {
   const { type, baseURL } = opts;
 
   const version = SitSetting.version;
-  let _errors = [];
+  const _errors = [];
 
   const getErrors = () => {
     return _errors;
@@ -42,8 +42,8 @@ function Validator(opts) {
         const remotes = new SitConfig('local').config.remote;
         if (remotes) {
           Object.keys(remotes).forEach((name) => {
-            let url = remotes[name];
-            let validator = new GSSValidator(url, baseURL);
+            const url = remotes[name];
+            const validator = new GSSValidator(url, baseURL);
             result = validator.isSpreadSheetURL();
             if (!result) {
               setErrors(...validator.getErrors());

@@ -1,7 +1,7 @@
 'use strict';
 
-let GSSValidator = function (uri, baseURL) {
-  let _errors = [];
+const GSSValidator = function (uri, baseURL) {
+  const _errors = [];
 
   const getErrors = () => {
     return _errors;

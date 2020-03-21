@@ -23,9 +23,9 @@ function sit(opts) {
   process.env.SIT_DIR = (process.env.SIT_DIR === undefined) ? '.' : process.env.SIT_DIR;
   process.env.SIT_SETTING_DIR = (process.env.SIT_SETTING_DIR === undefined) ? '.' : process.env.SIT_SETTING_DIR;
 
-  let gopts = Object.assign({}, defaultOpts, opts);
+  const gopts = Object.assign({}, defaultOpts, opts);
 
-  let Sheet = {}
+  const Sheet = {}
     , Repo = {}
     , Clasp = {};
 
@@ -210,7 +210,7 @@ To ${repo.remoteRepo(repoName)}`;
           sheet.getRows(repoName, 'master').then(data => {
             try {
               // Initialize local repo
-              let result = repo.init();
+              const result = repo.init();
 
               if (!result) {
                 throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`);
@@ -219,7 +219,7 @@ To ${repo.remoteRepo(repoName)}`;
               // Copy clasp scripts
               clasp.update();
 
-              let sha = repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
+              const sha = repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
 
               // Update local repo
               repo.clone(repoName, url, sha, data, opts);

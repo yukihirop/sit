@@ -22,12 +22,13 @@ class SitLogParser extends SitBase {
     this.logFile = `${this.localRepo}/${logFile}`;
   }
 
+  /* eslint-disable prefer-const */
   parseToCSV(replaceBlob = true) {
     if (isExistFile(this.logFile)) {
       const { err, data } = fileSafeLoad(this.logFile);
       if (err) die(err.message);
       const lines = data.trim().split('\n');
-      let result = [];
+      const result = [];
 
       lines.forEach(line => {
         let [other, message] = line.split('\t');
@@ -55,6 +56,7 @@ class SitLogParser extends SitBase {
       throw new Error(`Do not exist file: ${this.logFile}`);
     }
   }
+  /* eslint-enable prefer-const */
 
   parseToJSON(replaceBlob = true) {
     const csv = this.parseToCSV(replaceBlob);
@@ -63,7 +65,7 @@ class SitLogParser extends SitBase {
 
     const result = data.reduce((acc, item) => {
       const json = item.reduce((childAcc, el, index) => {
-        let key = header[index];
+        const key = header[index];
         childAcc[key] = el;
         return childAcc;
       }, {});
@@ -87,7 +89,7 @@ class SitLogParser extends SitBase {
 
     delete json[key];
 
-    if(num > 0) json[`${type}@{${num - 1}}`].beforesha = targetBeforeSHA;
+    if (num > 0) json[`${type}@{${num - 1}}`].beforesha = targetBeforeSHA;
 
     return Object.values(json).reduce((acc, item) => {
       acc = acc + logger.createLogData(item);
@@ -137,7 +139,7 @@ class SitLogParser extends SitBase {
 
   _keytoTypeNum(key) {
     const atIndex = key.indexOf('@');
-    let result, type, num;
+    let type, num;
 
     if (atIndex !== -1) {
       type = key.slice(0, atIndex);
@@ -147,8 +149,7 @@ class SitLogParser extends SitBase {
       num = 0;
     }
 
-    result = [type, num];
-    return result;
+    return [type, num];
   }
 }
 

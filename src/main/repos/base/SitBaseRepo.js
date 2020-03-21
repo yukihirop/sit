@@ -128,7 +128,7 @@ class SitBaseRepo extends SitBase {
   }
 
   _refBlob(ref) {
-    let commitHash = this._refResolve(ref);
+    const commitHash = this._refResolve(ref);
     let blobHash = null;
 
     if (commitHash === this._INITIAL_HASH()) {
@@ -203,6 +203,7 @@ class SitBaseRepo extends SitBase {
     return [logData[0], logData.slice(-1)[0]];
   }
 
+  /* eslint-disable prefer-const */
   _HEAD() {
     let { err, data } = fileSafeLoad(this.__repoFile(false, 'HEAD'));
     if (err) die(err.message);
@@ -214,13 +215,16 @@ class SitBaseRepo extends SitBase {
       throw new Error('Invalid format HEAD');
     }
   }
+  /* eslint-enable prefer-const */
 
+  /* eslint-disable prefer-const */
   _COMMIT_EDITMSG() {
     let { err, data } = fileSafeLoad(this.__repoFile(false, 'COMMIT_EDITMSG'));
     if (err) die(err.message);
     data = data.trim();
     return data;
   }
+  /* eslint-enable prefer-const */
 
   _isExistFile(path) {
     return isExistFile(`${this.localRepo}/${path}`);
@@ -335,13 +339,13 @@ class SitBaseRepo extends SitBase {
     const fromMark = '>>>>>>>';
 
     this.__createtwoWayMergeData(toData, fromData, result => {
-      let arr = [];
+      const arr = [];
       let currentItemIndex = 0;
       let currentConflict = false;
       const initialItem = { startIndex: 0, conflictLength: 0, to: [], from: [] };
 
       Object.keys(result).forEach((key, index) => {
-        let line = result[key];
+        const line = result[key];
         let item = arr[currentItemIndex] || JSON.parse(JSON.stringify(initialItem));
 
         if (line.conflict) {
@@ -370,7 +374,7 @@ class SitBaseRepo extends SitBase {
         }
       });
 
-      let data = [];
+      const data = [];
       let isConflict = false;
       arr.forEach(item => {
         // conflict
@@ -447,7 +451,7 @@ class SitBaseRepo extends SitBase {
   _objectRead(sha) {
     // TODO:
     // Add SHA1 validation
-    let path = this.__repoFile(false, 'objects', sha.slice(0, 2), sha.slice(2));
+    const path = this.__repoFile(false, 'objects', sha.slice(0, 2), sha.slice(2));
     let err = null;
     let obj = null;
 
@@ -512,7 +516,7 @@ class SitBaseRepo extends SitBase {
           }, '').trim()}`));
         }
 
-        let sha = shaArr[0];
+        const sha = shaArr[0];
 
         if (follow) {
           resolve(sha);
@@ -568,11 +572,11 @@ class SitBaseRepo extends SitBase {
           const fullPath = this.__findOrCreateDir(false, 'objects', prefix);
 
           if (isExistFile(fullPath)) {
-            let rem = name.slice(2);
+            const rem = name.slice(2);
 
             recursive(fullPath).then(files => {
-              let candidates = files.map(file => {
-                let fileName = fileBasename(file);
+              const candidates = files.map(file => {
+                const fileName = fileBasename(file);
 
                 if (fileName.startsWith(rem)) {
                   return prefix + fileName;
@@ -603,6 +607,7 @@ class SitBaseRepo extends SitBase {
     });
   }
 
+  /* eslint-disable prefer-const */
   _refResolve(ref) {
     const fullRefPath = this.__repoFile(false, ref);
 
@@ -622,6 +627,7 @@ class SitBaseRepo extends SitBase {
       return this._INITIAL_HASH();
     }
   }
+  /* eslint-enable prefer-const */
 
   _refStash(stashKey, next = false) {
     const parser = new SitLogParser(this, this.currentBranch(), 'logs/refs/stash');
@@ -638,14 +644,13 @@ class SitBaseRepo extends SitBase {
   }
 
   _nextKey(key) {
-    let type, num;
-
     const atIndex = key.indexOf('@');
-    type = key.slice(0, atIndex);
-    num = parseInt(key.slice(atIndex + 2, atIndex + 3));
+    const type = key.slice(0, atIndex);
+    const num = parseInt(key.slice(atIndex + 2, atIndex + 3));
     return `${type}@{${num + 1}}`;
   }
 
+  /* eslint-disable prefer-const */
   _branchResolve(name) {
     if (name === 'HEAD') {
       const fullRefPath = this.__repoFile(false, name);
@@ -671,14 +676,15 @@ class SitBaseRepo extends SitBase {
       }
     }
   }
+  /* eslint-enable prefer-const */
 
   // private
   __createtwoWayMergeData(toData, fromData, callback) {
-    let result = {};
+    const result = {};
     let index = 0;
     while ((toData.length !== 0) || (fromData.length !== 0)) {
-      let toLine = toData.shift() || null;
-      let fromLine = fromData.shift() || null;
+      const toLine = toData.shift() || null;
+      const fromLine = fromData.shift() || null;
 
       if (isEqual(toLine, fromLine)) {
         result[index] = { conflict: false, to: toLine, from: fromLine };

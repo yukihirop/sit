@@ -3,11 +3,11 @@
 const Diff = require('diff');
 
 const csv2JSON = (csvData) => {
-  let result = {};
+  const result = {};
 
   csvData.forEach(line => {
-    let key = line[0];
-    let lineSize = line.length;
+    const key = line[0];
+    const lineSize = line.length;
 
     if (lineSize > 3) {
       result[key] = line.slice(1);
@@ -38,7 +38,7 @@ const overrideCSV = (csvTo, csvFrom, specifyIndex) => {
     const allKeys = uniq([...toKeys, ...fromKeys]);
 
     result = allKeys.map((key) => {
-      let line = toData[key];
+      const line = toData[key];
 
       if (line === undefined) {
         return fromData[key];
@@ -73,11 +73,9 @@ const uniq = (array) => {
 
 const diffArray = (to, from) => {
   const diff = Diff.diffArrays(to, from);
-  let addedData, removedData;
-
   const data = diff.reduce((acc, item) => {
-    let added = item.added;
-    let removed = item.removed;
+    const added = item.added;
+    const removed = item.removed;
 
     if (added) {
       acc['added'] = acc['added'] || [];
@@ -90,8 +88,8 @@ const diffArray = (to, from) => {
     return acc;
   }, {});
 
-  addedData = data['added'] || [];
-  removedData = data['removed'] || [];
+  const addedData = data['added'] || [];
+  const removedData = data['removed'] || [];
   const sharedData = _getDuplicateValues([...addedData, ...removedData]);
   const addedOnly = _getUniqueValues([...addedData, ...sharedData]);
   const removedOnly = _getUniqueValues([...removedData, ...sharedData]);

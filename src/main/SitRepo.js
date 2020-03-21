@@ -169,7 +169,7 @@ class SitRepo extends SitBaseRepo {
 
           // STEP 1: Delete logs/refs/heads/<deleteBranch>
           // STEP 2: Delete refs/heads/<deleteBranch>
-          let deleteHash = this._refResolve(`refs/heads/${deleteBranch}`);
+          const deleteHash = this._refResolve(`refs/heads/${deleteBranch}`);
           this._deleteSyncFile(`logs/refs/heads/${deleteBranch}`)
             ._deleteSyncFile(`refs/heads/${deleteBranch}`);
 
@@ -502,11 +502,11 @@ error: failed to push some refs to '${repoName}'`));
             .then(files => {
               const localBranches = files.map(file => fileBasename(file));
               const diffBranches = diffArray(localBranches, remoteBranches);
-              let msg = [];
-              let added = [];
+              const msg = [];
+              const added = [];
 
               Object.keys(diffBranches).forEach(status => {
-                let branches = diffBranches[status];
+                const branches = diffBranches[status];
 
                 switch (status) {
                   case 'added':
@@ -591,10 +591,10 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
         console.log('hint: Waiting for your editor to close the file...');
         process.stdin.pause();
 
-        let beforeMTime = mTimeMs(file);
-        let watcher = chokidar.watch(file);
+        const beforeMTime = mTimeMs(file);
+        const watcher = chokidar.watch(file);
         watcher.on('change', (path) => {
-          let afterMTime = mTimeMs(path);
+          const afterMTime = mTimeMs(path);
 
           if (beforeMTime !== afterMTime) {
             const { err, data } = fileSafeLoad(`${this.localRepo}/MERGE_MSG`).split('\n')[0];
@@ -828,13 +828,14 @@ Fast-forward
 
     } else if (subcommand === 'apply') {
 
-      let { stashKey, popHandler } = opts;
+      let { stashKey } = opts;
+      const { popHandler } = opts;
       if (!stashKey) stashKey = 'stash@{0}';
 
       const stashCommitHash = this._refStash(stashKey, false);
       const stashBlobHash = this._refBlobFromCommitHash(stashCommitHash);
       this.catFile(stashBlobHash).then(obj => {
-        let { err, data } = fileSafeLoad(this.distFilePath);
+        const { err, data } = fileSafeLoad(this.distFilePath);
         if (err) die(err.message);
 
         const distData = data.split('\n');
@@ -903,7 +904,8 @@ Dropped ${stashKey} (${stashCommitHash})`);
         console.log('stash list is nothing');
       }
     } else if (subcommand === 'show') {
-      let { print, stashKey } = opts;
+      let { stashKey } = opts;
+      const { print } = opts;
       if (!stashKey) stashKey = 'stash@{0}';
 
       const stashCommitHash = this._refStash(stashKey, false);
@@ -978,7 +980,7 @@ Dropped ${stashKey} (${stashCommitHash})`);
 
   createPullRequestData(toData, fromData, callback) {
     this.__createtwoWayMergeData(toData, fromData, (result) => {
-      let header = result['0']['to'];
+      const header = result['0']['to'];
       header.push('Index', 'Status');
 
       delete result['0'];
