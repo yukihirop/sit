@@ -60,7 +60,7 @@ const yamlSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {
     loadPath = path.resolve(currentPath, file);
   }
 
-  let yamlText = fs.readFileSync(loadPath, encoding)
+  const yamlText = fs.readFileSync(loadPath, encoding)
     , yamlData = yaml.safeLoad(yamlText);
   return yamlData;
 };
@@ -72,7 +72,7 @@ const rootYamlSafeLoad = (file, isRelative = true, encoding = 'utf-8') => {
     loadPath = path.resolve(rootPath, file);
   }
 
-  let yamlText = fs.readFileSync(loadPath, encoding)
+  const yamlText = fs.readFileSync(loadPath, encoding)
     , yamlData = yaml.safeLoad(yamlText);
   return yamlData;
 };

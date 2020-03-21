@@ -15,7 +15,7 @@ function Worksheet() {
 
     csvData.forEach((row, rowIndex) => {
       row.forEach((cellValue, colIndex) => {
-        let itemResult = {}
+        const itemResult = {}
           , key = `${rowIndex}${delimiter}${colIndex}`;
 
         itemResult[key] = {};
