@@ -791,7 +791,6 @@ first commit`;
           remoteBranches: ['test-1', 'test-2'],
           type: 'GoogleSpreadSheet',
         }).then(() => {
-
           expect(recursive).toHaveBeenCalledTimes(1);
           expect(recursive.mock.calls[0]).toEqual(['test/localRepo/.sit/refs/remotes/origin']);
           done();
@@ -1303,7 +1302,6 @@ ${colorize('4e2b7c4', 'info')} HEAD@{3}: clone: from https://docs.google.com/spr
   });
 
   describe('#showRef', () => {
-
     xit('should return correctly', () => {
       console.log = jest.fn();
 

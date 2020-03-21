@@ -57,14 +57,12 @@ Please make sure you have the correct access rights and the repository exists.`)
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD`);
-                  
                 } else {
                   console.log(`\
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD\n\
   ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`);
-                  
                 }
               })
               .catch(err => {
@@ -74,7 +72,6 @@ From ${repo.remoteRepo(repoName)}
           .catch(_err => {
             die(`fatal: Couldn't find remote ref '${branch}'`);
           });
-
       } else {
         if (!repo._isExistFile(`refs/remotes/${repoName}`)) return;
 
@@ -99,11 +96,9 @@ From ${repo.remoteRepo(repoName)}
                 if (msg.length >= 1) {
                   msg.unshift(`From ${repo.remoteRepo(repoName)}`);
                   console.log(msg.join('\n'));
-                  
                 }
               });
           });
-
         }).catch(_err => {
           die(`fatal: Couldn't find remote ref '${branch}'`);
         });
@@ -179,7 +174,6 @@ To ${repo.remoteRepo(repoName)}`;
                   detailMsg = `\t* [new branch]\t${detailMsg}`;
                 }
                 console.log(`${baseMsg}\n${detailMsg}`);
-                
               });
             });
           }).catch(err => {
@@ -227,7 +221,6 @@ To ${repo.remoteRepo(repoName)}`;
 Cloning into ... '${repo.distFilePath}'\n\
 remote: Total 1\n\
 remote: done.`);
-
             } catch (err) {
               repo.rollback();
               die(err.message);
@@ -252,10 +245,8 @@ remote: done.`);
     if (result) {
       console.log(`created local repo: ${repo.localRepo}`);
       console.log(`created dist file: ${repo.distFilePath}`);
-      
     } else {
       console.log(`already exist local repo: ${repo.localRepo}`);
-      
     }
   };
 
@@ -270,20 +261,15 @@ remote: done.`);
 
     repo.catFile(obj)
       .then(result => {
-
         if (type) {
           console.log(result.fmt);
-          
         } else if (size) {
           console.log(result.size);
-          
         } else if (prettyPrint) {
           console.log(result.serialize().toString());
-          
         } else {
           die(`Do not support options ${opts}`);
         }
-
       })
       .catch(err => {
         die(err.message);
@@ -397,7 +383,6 @@ To ${repo.remoteRepo(repoName)}`;
 
             const detailMsg = `\tPlease look at sheet: '${prBranch}' in ${type}`;
             console.log(`${baseMsg}\n${detailMsg}`);
-            
           });
         });
       });

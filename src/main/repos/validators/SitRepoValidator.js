@@ -8,7 +8,6 @@ const RESERVED_BRANCH = [
 ];
 
 class SitRepoValidator extends SitBase {
-
   constructor(opts) {
     super(opts);
     this.errors = [];

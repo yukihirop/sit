@@ -27,7 +27,6 @@ jest.mock('@main/sheets/GSS', () => {
 });
 
 describe('sit', () => {
-
   afterEach(() => {
     jest.restoreAllMocks();
   });

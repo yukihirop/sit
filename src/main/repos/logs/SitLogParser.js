@@ -43,7 +43,6 @@ class SitLogParser extends SitBase {
 
         let lineData = [this.branch, ...other, message];
         if (lineData.length === REF_LOG_HEADER.length) {
-
           result.push(lineData);
         }
       });
