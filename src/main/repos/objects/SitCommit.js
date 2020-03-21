@@ -29,7 +29,7 @@ class SitCommit extends SitObject {
   }
 
   blobHash() {
-    const bufData = JSON.parse(JSON.stringify(this.kvlm['blob']))['data'];
+    const bufData = JSON.parse(JSON.stringify(this.kvlm.blob)).data;
     return Buffer.from(bufData, 'utf8').toString();
   }
 
@@ -37,7 +37,7 @@ class SitCommit extends SitObject {
     let result = '';
     let logBaseTitle;
     const { oneline } = opts;
-    const [author, email, unixtime, timezone] = commitData['author'].split(' ');
+    const [author, email, unixtime, timezone] = commitData.author.split(' ');
     const commitMsg = commitData[''];
     const currentBranch = this.repo._branchResolve('HEAD');
     const isHEAD = this.repo._refResolve('HEAD') === commitHash;

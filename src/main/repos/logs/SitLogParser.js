@@ -122,13 +122,13 @@ class SitLogParser extends SitBase {
     switch (type) {
       case 'stash':
         result = json.reduce((acc, item, index) => {
-          acc = acc + `${colorize(item['aftersha'].slice(0, 7), 'info')} stash@{${logCount - 1 - index}}: ${item['message']}\n`;
+          acc = acc + `${colorize(item.aftersha.slice(0, 7), 'info')} stash@{${logCount - 1 - index}}: ${item.message}\n`;
           return acc;
         }, '');
         break;
       case 'HEAD':
         result = json.reduce((acc, item, index) => {
-          acc = acc + `${colorize(item['aftersha'].slice(0, 7), 'info')} HEAD@{${logCount - 1 - index}}: ${item['message']}\n`;
+          acc = acc + `${colorize(item.aftersha.slice(0, 7), 'info')} HEAD@{${logCount - 1 - index}}: ${item.message}\n`;
           return acc;
         }, '');
         break;

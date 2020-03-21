@@ -66,7 +66,7 @@ class GSS {
       }, Promise.resolve([]));
 
       const diff = diffArray(IGNORE_SHEETS, sheetNames);
-      callback(diff['added']);
+      callback(diff.added);
     });
   }
 
@@ -145,7 +145,7 @@ class GSS {
     const sheetSchema = SitSetting.sheet.gss.openAPIV3Schema.properties;
     const keys = Object.keys(sheetSchema);
     const result = keys.map(key => {
-      return sheetSchema[key]['description'];
+      return sheetSchema[key].description;
     });
     return result;
   }

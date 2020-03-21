@@ -201,7 +201,7 @@ To ${repo.remoteRepo(repoName)}`;
       if (url) {
         sheet.getRows(repoName, 'refs/remotes', ['branch', 'sha1']).then(data => {
           const json = csv2JSON(data);
-          const remoteHash = json['master'];
+          const remoteHash = json.master;
 
           if (remoteHash === undefined) {
             die(`This Spreadsheet may not be repository.\nPlease visit ${url}\nMake sure that this Spreadsheet is rpeository.`);

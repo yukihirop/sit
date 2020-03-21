@@ -78,18 +78,18 @@ const diffArray = (to, from) => {
     const removed = item.removed;
 
     if (added) {
-      acc['added'] = acc['added'] || [];
-      acc['added'].push(...item.value);
+      acc.added = acc.added || [];
+      acc.added.push(...item.value);
     } else if (removed) {
-      acc['removed'] = acc['removed'] || [];
-      acc['removed'].push(...item.value);
+      acc.removed = acc.removed || [];
+      acc.removed.push(...item.value);
     }
 
     return acc;
   }, {});
 
-  const addedData = data['added'] || [];
-  const removedData = data['removed'] || [];
+  const addedData = data.added || [];
+  const removedData = data.removed || [];
   const sharedData = _getDuplicateValues([...addedData, ...removedData]);
   const addedOnly = _getUniqueValues([...addedData, ...sharedData]);
   const removedOnly = _getUniqueValues([...removedData, ...sharedData]);

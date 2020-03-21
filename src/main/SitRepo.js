@@ -763,7 +763,7 @@ Fast-forward
         config.updateSection(`remote.${repoName}`, null);
         break;
       case 'get-url':
-        console.log(config.config['remote'][repoName]['url']);
+        console.log(config.config.remote[repoName].url);
         break;
       default:
         console.log(`Do not support subcommand: '${subcommand}'`);
@@ -777,7 +777,7 @@ Fast-forward
     this.catFile(commitHash).then(obj => {
       if (obj instanceof SitCommit) {
         const commitData = obj.humanizeKVLM();
-        const parent = commitData['parent'];
+        const parent = commitData.parent;
         this.commits.push(obj.createCommitLog(commitHash, commitData, { oneline }));
 
         if (parent === this._INITIAL_HASH()) {
@@ -980,30 +980,30 @@ Dropped ${stashKey} (${stashCommitHash})`);
 
   createPullRequestData(toData, fromData, callback) {
     this.__createtwoWayMergeData(toData, fromData, (result) => {
-      const header = result['0']['to'];
+      const header = result['0'].to;
       header.push('Index', 'Status');
 
       delete result['0'];
 
       const data = Object.values(result).reduce((acc, item, index) => {
         if (item.conflict) {
-          if (item['to'] === null) {
-            item['from'].push(index, '+');
-            acc.push(item['from']);
+          if (item.to === null) {
+            item.from.push(index, '+');
+            acc.push(item.from);
           } else {
-            if (item['from'] === null) {
-              item['to'].push(index, '±');
-              acc.push(item['to']);
+            if (item.from === null) {
+              item.to.push(index, '±');
+              acc.push(item.to);
             } else {
-              item['to'].push(index, '-');
-              item['from'].push(index, '+');
-              acc.push(item['to']);
-              acc.push(item['from']);
+              item.to.push(index, '-');
+              item.from.push(index, '+');
+              acc.push(item.to);
+              acc.push(item.from);
             }
           }
         } else {
-          item['to'].push(index, '');
-          acc.push(item['to']);
+          item.to.push(index, '');
+          acc.push(item.to);
         }
         return acc;
       }, [header]);
