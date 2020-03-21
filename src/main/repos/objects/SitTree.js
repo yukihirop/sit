@@ -1,5 +1,4 @@
 
-
 const SitObject = require('./SitObject');
 
 class SitTree extends SitObject {

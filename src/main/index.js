@@ -1,5 +1,4 @@
 
-
 require('./utils/global');
 
 const AppSheet = require('./Sheet');

@@ -1,7 +1,6 @@
 /* eslint-disable  camelcase, import/no-unresolved */
 
 
-
 const SitBase = require('../SitBase');
 
 describe('SitBase', () => {

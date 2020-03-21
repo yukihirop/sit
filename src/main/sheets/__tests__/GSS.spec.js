@@ -1,7 +1,6 @@
 /* eslint-disable  camelcase, import/no-unresolved */
 
 
-
 const GSS = require('@sheets/GSS');
 
 describe('GSS', () => {

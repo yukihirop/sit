@@ -1,5 +1,4 @@
 
-
 const GSS = require('./sheets/GSS');
 
 function Sheet(opts) {

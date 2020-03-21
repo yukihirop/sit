@@ -1,5 +1,4 @@
 
-
 const Diff = require('diff');
 
 const csv2JSON = (csvData) => {

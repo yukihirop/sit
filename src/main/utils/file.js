@@ -1,5 +1,4 @@
 
-
 const fs = require('fs')
   , fsExtra = require('fs-extra')
   , path = require('path')

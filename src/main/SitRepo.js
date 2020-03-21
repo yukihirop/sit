@@ -1,5 +1,4 @@
 
-
 require('./utils/global');
 
 const jsdiff = require('diff')

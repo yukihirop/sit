@@ -1,5 +1,4 @@
 
-
 const SitObject = require('./SitObject');
 
 class SitBlob extends SitObject {

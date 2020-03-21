@@ -1,5 +1,4 @@
 
-
 class SitObject {
   constructor(repo, data, size = 0) {
     this.repo = repo;

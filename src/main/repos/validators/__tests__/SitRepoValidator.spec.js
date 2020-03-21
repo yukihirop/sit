@@ -1,7 +1,6 @@
 /* eslint-disable  camelcase, import/no-unresolved */
 
 
-
 const SitRepoValidator = require('@repos/validators/SitRepoValidator');
 
 describe('SitRepoValidator', () => {

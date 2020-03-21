@@ -1,5 +1,4 @@
 
-
 // Copy from https://github.com/tj/commander.js/pull/1024/files
 const { Command } = require('commander');
 

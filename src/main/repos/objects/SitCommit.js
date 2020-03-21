@@ -1,5 +1,4 @@
 
-
 const {
   bufferReplace,
 } = require('../../utils/file');
@@ -155,4 +154,3 @@ class SitCommit extends SitObject {
 }
 
 module.exports = SitCommit;
-

@@ -1,5 +1,4 @@
 
-
 // Copy from https://github.com/millermedeiros/disparity/blob/master/disparity.js
 
 const ansi = require('ansi-styles');
