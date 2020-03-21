@@ -1,4 +1,4 @@
-/* eslint-disable  camelcase */
+/* eslint-disable  camelcase, import/no-unresolved */
 
 const SitBaseRepo = require('@repos/base/SitBaseRepo');
 const SitBlob = require('@repos/objects/SitBlob');

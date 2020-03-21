@@ -1,4 +1,4 @@
-/* eslint-disable  camelcase */
+/* eslint-disable  camelcase, import/no-unresolved */
 
 'use strict';
 
