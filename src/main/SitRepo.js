@@ -895,7 +895,7 @@ Dropped ${stashKey} (${stashCommitHash})`);
     }
   }
 
-  reflog(opts = {}) {
+  reflog() {
     try {
       const currentBranch = this._branchResolve('HEAD');
       const parser = new SitLogParser(this, currentBranch, 'logs/HEAD');
@@ -907,7 +907,7 @@ Dropped ${stashKey} (${stashCommitHash})`);
     }
   }
 
-  showRef(opts = {}) {
+  showRef() {
     const currentBranch = this._branchResolve('HEAD');
 
     recursive(`${this.localRepo}/refs`).then(files => {

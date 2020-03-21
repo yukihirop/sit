@@ -30,7 +30,7 @@ function sit(opts) {
 
   let sheet = new AppSheet(gopts);
   const repo = new AppRepo(gopts)
-    , clasp = new AppClasp(gopts);
+    , clasp = new AppClasp();
 
   Repo.fetch = (repoName, branch, opts = {}) => {
     const { prune, verbose, type } = opts;
@@ -69,7 +69,7 @@ From ${repo.remoteRepo(repoName)}
                 die(err.message);
               });
           })
-          .catch(_err => {
+          .catch(() => {
             die(`fatal: Couldn't find remote ref '${branch}'`);
           });
       } else {
@@ -85,7 +85,7 @@ From ${repo.remoteRepo(repoName)}
                   .then(data => {
                     repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
                   })
-                  .catch(_err => {
+                  .catch(() => {
                     die(`fatal: Couldn't find remote ref '${branch}'`);
                   });
               });
@@ -99,7 +99,7 @@ From ${repo.remoteRepo(repoName)}
                 }
               });
           });
-        }).catch(_err => {
+        }).catch(() => {
           die(`fatal: Couldn't find remote ref '${branch}'`);
         });
       }
@@ -225,10 +225,10 @@ remote: done.`);
               repo.rollback();
               die(err.message);
             }
-          }).catch(_err => {
+          }).catch(() => {
             die('fatal: Couldn\'t find remote ref \'master\'');
           });
-        }).catch(_err => {
+        }).catch(() => {
           die(`fatal: repository '${url}' not found`);
         });
       } else {
@@ -329,12 +329,12 @@ remote: done.`);
     return repo.stash(subcommand, opts);
   };
 
-  Repo.reflog = (opts = {}) => {
-    return repo.reflog(opts);
+  Repo.reflog = () => {
+    return repo.reflog();
   };
 
-  Repo.showRef = (opts = {}) => {
-    return repo.showRef(opts);
+  Repo.showRef = () => {
+    return repo.showRef();
   };
 
   Repo.revParse = (obj, opts = {}) => {

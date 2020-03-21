@@ -477,7 +477,7 @@ Merge from GoogleSpreadSheet/develop`;
 
       describe('when remote branch do not exists', () => {
         it('should return correctly', () => {
-          const mockModel__isExistFile = jest.spyOn(model, '_isExistFile').mockReturnValueOnce(false);
+          jest.spyOn(model, '_isExistFile').mockReturnValueOnce(false);
           console.error = jest.fn();
           jest.spyOn(process, 'exit').mockImplementation(() => {
             throw new Error('process.exit() was called.');
@@ -611,14 +611,6 @@ no changes added to commit`);
   });
 
   describe('#commit', () => {
-    const commitData = `\
-tree 1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16
-parent 8b58f3891ae3e4d274972a39d27fd460aaeaa6cc
-author yukihirop <te108186@gmail.com> 1582127655803 +0900
-committer yukihirop <te108186@gmail.com> 1582127655803 +0900
-
-first commit`;
-
     describe('when can commit', () => {
       it('should return correctly', () => {
         console.log = jest.fn();

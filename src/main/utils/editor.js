@@ -7,7 +7,7 @@ const { spawn } = require('child_process');
 
 const open = (file, callback) => {
   const editor = process.env.EDITOR || 'vim';
-  const child = spawn(editor, [file], {
+  spawn(editor, [file], {
     cwd: process.cwd(),
     customFds: [0, 1, 2],
   });

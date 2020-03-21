@@ -191,7 +191,7 @@ const rmDirSync = (file, isRelative = true) => {
     loadPath = path.resolve(currentPath, file);
   }
 
-  rmdir(loadPath, (err, dirs, files) => {
+  rmdir(loadPath, (err) => {
     if (err) throw err;
   });
 };

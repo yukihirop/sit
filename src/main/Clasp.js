@@ -16,7 +16,7 @@ const {
 const SitSetting = require('./SitSetting');
 
 class Clasp {
-  constructor(opts) {
+  constructor() {
     this.localRepoName = SitSetting.repo.local;
     this.localRepo = this.findLocalRepo() || `./${this.localRepoName}`;
     this.claspPath = `${this.localRepo}/scripts/clasp`;

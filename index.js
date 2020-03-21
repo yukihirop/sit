@@ -232,15 +232,15 @@ program
 program
   .command('reflog')
   .description('Shows the ref logs')
-  .action((options) => {
-    sit().Repo.reflog(options)
+  .action(() => {
+    sit().Repo.reflog()
   });
 
 program
   .command('show-ref')
   .description('Show refs')
-  .action((options) => {
-    sit().Repo.showRef(options)
+  .action(() => {
+    sit().Repo.showRef()
   })
 
 program

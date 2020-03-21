@@ -19,7 +19,7 @@ class SitBaseLogger extends SitBase {
   }
 
   write(file, beforesha, aftersha, message, mkdir) {
-    const data = this.createLogData({ beforesha, aftersha, message }, mkdir);
+    const data = this.createLogData({ beforesha, aftersha, message });
 
     if (mkdir) {
       const fullDirPath = this.localRepo + '/' + file.split('/').slice(0, -1).join('/');
@@ -32,7 +32,7 @@ class SitBaseLogger extends SitBase {
     appendFile(`${this.localRepo}/${file}`, data);
   }
 
-  createLogData({ beforesha, aftersha, username, email, unixtime, timezone, message }, mkdir) {
+  createLogData({ beforesha, aftersha, username, email, unixtime, timezone, message }) {
     const space = ' ';
     beforesha = beforesha || this._INITIAL_HASH();
     username = username || this.username();

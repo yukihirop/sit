@@ -48,10 +48,12 @@ class SitRefParser extends SitBase {
     }
   }
 
+  /* eslint-disable no-unused-vars */
   parseForLog() {
-    const [[ _, commitHash]] = this.parseToCSV(false, false);
+    const [[_, commitHash]] = this.parseToCSV(false, false);
     return `${commitHash} ${this.relativeRefFile}`;
   }
+  /* eslint-enable no-unused-vars */
 
   isRemote() {
     return this.refFile.indexOf('refs/remotes') !== -1;
