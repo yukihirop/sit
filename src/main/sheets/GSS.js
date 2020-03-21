@@ -90,7 +90,7 @@ class GSS {
             ['さようなら', 'good bye', 'greeting.good_bye']]
   */
   pushRows(repoName, sheetName, data, { clear, specifyIndex }) {
-    const worksheet = this.worksheet;
+    const {worksheet} = this;
 
     return this.loadInfo(repoName, (doc, sheets) => {
       const sheet = sheets.filter(sheet => sheet._rawProperties.title == sheetName)[0];
