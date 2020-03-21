@@ -134,7 +134,7 @@ test data`;
         expect(model._refBlobFromCommitHash('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b')).toEqual('5b1cf86e97c6633e9a2dd85567e33d636dd3748a');
 
         expect(mockModel__objectRead).toHaveBeenCalledTimes(1);
-        expect(mockModel__objectRead.mock.calls[0]).toEqual([`4e2b7c47eb492ab07c5d176dccff3009c1ebc79b`]);
+        expect(mockModel__objectRead.mock.calls[0]).toEqual(['4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']);
 
         expect(mockObj_blobHash).toHaveBeenCalledTimes(1);
         expect(mockObj_blobHash.mock.calls[0]).toEqual([]);
@@ -203,13 +203,13 @@ test data`;
     describe('when repoName exists', () => {
       it('should return correctly', () => {
         mockSitLogParser_parseToCSV.mockReturnValueOnce([
-          ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
-          ["master", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "update by push"]
+          ['branch', 'beforesha', 'aftersha', 'username', 'email', 'unixtime', 'timezone', 'message'],
+          ['master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'update by push']
         ]);
 
         expect(model._refLastLogCSVData('master', 'origin')).toEqual([
-          ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
-          ["master", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "update by push"]
+          ['branch', 'beforesha', 'aftersha', 'username', 'email', 'unixtime', 'timezone', 'message'],
+          ['master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'update by push']
         ]);
 
         expect(mockSitLogParser_parseToCSV).toHaveBeenCalledTimes(1);
@@ -220,13 +220,13 @@ test data`;
     describe('when repoName do not exists', () => {
       it('should return correctly', () => {
         mockSitLogParser_parseToCSV.mockReturnValueOnce([
-          ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
-          ["master", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]
+          ['branch', 'beforesha', 'aftersha', 'username', 'email', 'unixtime', 'timezone', 'message'],
+          ['master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0']
         ]);
 
         expect(model._refLastLogCSVData('master')).toEqual([
-          ["branch", "beforesha", "aftersha", "username", "email", "unixtime", "timezone", "message"],
-          ["master", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "yukihirop", "<te108186@gmail.com>", "1580961933681", "+0900", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]
+          ['branch', 'beforesha', 'aftersha', 'username', 'email', 'unixtime', 'timezone', 'message'],
+          ['master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'yukihirop', '<te108186@gmail.com>', '1580961933681', '+0900', 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0']
         ]);
 
         expect(mockSitLogParser_parseToCSV).toHaveBeenCalledTimes(1);
@@ -244,13 +244,13 @@ test data`;
   describe('#_isExistFile', () => {
     describe('when file do not exist', () => {
       it('should return correctly', () => {
-        expect(model._isExistFile("hoge")).toEqual(false);
+        expect(model._isExistFile('hoge')).toEqual(false);
       });
     });
 
     describe('when file exist', () => {
       it('should return correctly', () => {
-        expect(model._isExistFile("config")).toEqual(true);
+        expect(model._isExistFile('config')).toEqual(true);
       });
     });
   });
@@ -270,14 +270,14 @@ test data`;
   describe('#_iniParse', () => {
     it('should return correctly', () => {
       expect(model._iniParse('config')).toEqual({
-        "branch": {
-          "master": {
-            "merge": "refs/heads/master", "remote": "origin"
+        'branch': {
+          'master': {
+            'merge': 'refs/heads/master', 'remote': 'origin'
           }
         },
-        "remote": {
-          "origin": {
-            "fetch": "+refs/heads/*:refs/remotes/origin/*", "type": "GoogleSpreadSheet", "url": "https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"
+        'remote': {
+          'origin': {
+            'fetch': '+refs/heads/*:refs/remotes/origin/*', 'type': 'GoogleSpreadSheet', 'url': 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0'
           }
         }
       });
@@ -321,7 +321,7 @@ Update test data`;
       expect(model._createCommit(blobHash, parentHash, message)).toEqual('08ef09cfca228224c55a0875928b3af2ff89c3d3');
 
       expect(mockModel__createCommitMessage).toHaveBeenCalledTimes(1);
-      expect(mockModel__createCommitMessage.mock.calls[0]).toEqual(["2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "47af1af6722639322ccf17ea5f873d0e483c364f", "Update test data"]);
+      expect(mockModel__createCommitMessage.mock.calls[0]).toEqual(['2938ad2ab5722adf9b48ff5bac74989eaa2d144c', '47af1af6722639322ccf17ea5f873d0e483c364f', 'Update test data']);
 
       expect(mockModel__objectHash).toHaveBeenCalledTimes(1);
       expect(mockModel__objectHash.mock.calls[0][0]).toEqual(`\
@@ -375,7 +375,7 @@ Merge from GoogleSpreadSheet/master`;
       expect(model._createMergeCommit(blobHash, parentHash, branch, type)).toEqual('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b');
 
       expect(mockModel__createMergeCommitMessage).toHaveBeenCalledTimes(1);
-      expect(mockModel__createMergeCommitMessage.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "master", "GoogleSpreadSheet"]);
+      expect(mockModel__createMergeCommitMessage.mock.calls[0]).toEqual(['4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'master', 'GoogleSpreadSheet']);
 
       expect(mockModel__objectHash).toHaveBeenCalledTimes(1);
       expect(mockModel__objectHash.mock.calls[0][0]).toEqual(`\
@@ -402,17 +402,17 @@ Merge from GoogleSpreadSheet/master`);
         expect(data).toEqual([
           1,
           2,
-          "<<<<<<< HEAD",
+          '<<<<<<< HEAD',
           3,
           4,
           5,
           6,
-          "=======",
+          '=======',
           2,
           2,
           3,
           4,
-          ">>>>>>> origin/master",
+          '>>>>>>> origin/master',
           7,
           8,
           9,
@@ -435,7 +435,7 @@ Merge from GoogleSpreadSheet/master`);
   });
 
   describe('#_objectWrite', () => {
-    let obj = new SitBlob(model, "日本語,英語,キー\nこんにちは,hello,greeting.hello", 60);
+    let obj = new SitBlob(model, '日本語,英語,キー\nこんにちは,hello,greeting.hello', 60);
 
     describe('when do not write file', () => {
       it('should return correctly', () => {

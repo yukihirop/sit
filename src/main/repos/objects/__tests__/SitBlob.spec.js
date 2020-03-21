@@ -4,7 +4,7 @@ const SitBlob = require('../SitBlob');
 
 describe('SitBlob', () => {
   const mockRepo = jest.fn();
-  const model = new SitBlob(mockRepo, "1,2,3\n4,5,6", 7);
+  const model = new SitBlob(mockRepo, '1,2,3\n4,5,6', 7);
 
   describe('constructor', () => {
     it('should return correctly', () => {

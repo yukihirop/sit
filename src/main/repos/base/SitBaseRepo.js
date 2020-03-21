@@ -208,10 +208,10 @@ class SitBaseRepo extends SitBase {
     if (err) die(err.message);
     data = data.trim();
 
-    if (data.startsWith("ref: ")) {
+    if (data.startsWith('ref: ')) {
       return data.slice(5);
     } else {
-      throw new Error(`Invalid format HEAD`);
+      throw new Error('Invalid format HEAD');
     }
   }
 
@@ -318,7 +318,7 @@ class SitBaseRepo extends SitBase {
     result += `parent${space}${parentHash}\n`;
     result += `author${space}${author}${space}<${author_email}>${space}${timewithZone}\n`;
     result += `committer${space}${committer}${space}<${committer_email}>${space}${timewithZone}\n`;
-    result += `\n`;
+    result += '\n';
     result += mergeMessage;
 
     return result;
@@ -433,7 +433,7 @@ class SitBaseRepo extends SitBase {
     const sha = shasum.digest('hex');
 
     if (write) {
-      const fullPath = this.__repoFile(write, "objects", sha.slice(0, 2), sha.slice(2));
+      const fullPath = this.__repoFile(write, 'objects', sha.slice(0, 2), sha.slice(2));
       writeSyncFile(fullPath, fileDeflateSync(store));
     }
 
@@ -447,7 +447,7 @@ class SitBaseRepo extends SitBase {
   _objectRead(sha) {
     // TODO:
     // Add SHA1 validation
-    let path = this.__repoFile(false, "objects", sha.slice(0, 2), sha.slice(2));
+    let path = this.__repoFile(false, 'objects', sha.slice(0, 2), sha.slice(2));
     let err = null;
     let obj = null;
 
@@ -546,14 +546,14 @@ class SitBaseRepo extends SitBase {
         resolve(null);
       }
 
-      if (name === "HEAD") {
-        resolve([this._refResolve("HEAD")]);
-      } else if (name === "ORIG_HEAD") {
-        resolve([this._refResolve("ORIG_HEAD")]);
-      } else if (name === "REMOTE_HEAD") {
-        resolve([this._refResolve("REMOTE_HEAD")]);
-      } else if (name === "FETCH_HEAD") {
-        resolve([this._refResolve("FETCH_HEAD")]);
+      if (name === 'HEAD') {
+        resolve([this._refResolve('HEAD')]);
+      } else if (name === 'ORIG_HEAD') {
+        resolve([this._refResolve('ORIG_HEAD')]);
+      } else if (name === 'REMOTE_HEAD') {
+        resolve([this._refResolve('REMOTE_HEAD')]);
+      } else if (name === 'FETCH_HEAD') {
+        resolve([this._refResolve('FETCH_HEAD')]);
       }
 
       if (name.match(hashRE)) {
@@ -565,7 +565,7 @@ class SitBaseRepo extends SitBase {
           // THis limit is documented in man sit-rev-parse
           name = name.toLowerCase();
           const prefix = name.slice(0, 2);
-          const fullPath = this.__findOrCreateDir(false, "objects", prefix);
+          const fullPath = this.__findOrCreateDir(false, 'objects', prefix);
 
           if (isExistFile(fullPath)) {
             let rem = name.slice(2);
@@ -611,9 +611,9 @@ class SitBaseRepo extends SitBase {
       if (err) die(err.message);
       data = data.trim();
 
-      if (data.startsWith("ref: ")) {
+      if (data.startsWith('ref: ')) {
         return this._refResolve(data.slice(5));
-      } else if (ref === "FETCH_HEAD") {
+      } else if (ref === 'FETCH_HEAD') {
         return data.split('\t')[0];
       } else {
         return data;
@@ -653,7 +653,7 @@ class SitBaseRepo extends SitBase {
       if (err) die(err.message);
       data = data.trim();
 
-      if (data.startsWith("ref: ")) {
+      if (data.startsWith('ref: ')) {
         return data.slice(5).split('/').slice(-1)[0];
       } else {
         return 'master';

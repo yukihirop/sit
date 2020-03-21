@@ -84,7 +84,7 @@ Please make sure you have the correct access rights and the repository exists.`]
           sit().Repo.fetch('origin', 'master');
 
           expect(mockGSS_getRows).toHaveBeenCalledTimes(1);
-          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "master"]);
+          expect(mockGSS_getRows.mock.calls[0]).toEqual(['origin', 'master']);
         });
       });
 
@@ -97,7 +97,7 @@ Please make sure you have the correct access rights and the repository exists.`]
           sit().Repo.fetch('origin', null);
 
           expect(mockGSS_getRows).toHaveBeenCalledTimes(1);
-          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes", ["branch", "sha1"]]);
+          expect(mockGSS_getRows.mock.calls[0]).toEqual(['origin', 'refs/remotes', ['branch', 'sha1']]);
         });
       });
     });
@@ -139,7 +139,7 @@ Please make sure you have the correct access rights and the repository exists.`]
           sit().Repo.push('origin', 'master');
 
           expect(mockGSS_getRows).toHaveBeenCalledTimes(1);
-          expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes", ["branch", "sha1"]]);
+          expect(mockGSS_getRows.mock.calls[0]).toEqual(['origin', 'refs/remotes', ['branch', 'sha1']]);
         });
       });
 
@@ -154,7 +154,7 @@ Please make sure you have the correct access rights and the repository exists.`]
 
           expect(() => sit().Repo.push('origin', null)).toThrow('process.exit() was called.');
           expect(console.error).toHaveBeenCalledTimes(1);
-          expect(console.error.mock.calls[0]).toEqual(["branch is required"]);
+          expect(console.error.mock.calls[0]).toEqual(['branch is required']);
         });
       });
     });
@@ -182,7 +182,7 @@ Please make sure you have the correct access rights and the repository exists.`]
 
             sit().Repo.clone('origin', 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0');
             expect(mockGSS_getRows).toHaveBeenCalledTimes(1);
-            expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes", ["branch", "sha1"]]);
+            expect(mockGSS_getRows.mock.calls[0]).toEqual(['origin', 'refs/remotes', ['branch', 'sha1']]);
 
             // do not called by bug.
             // expect(console.error).toHaveBeenCalledTimes(1)
@@ -207,7 +207,7 @@ Please make sure you have the correct access rights and the repository exists.`]
             sit().Repo.clone('origin', 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0');
 
             expect(mockGSS_getRows).toHaveBeenCalledTimes(1);
-            expect(mockGSS_getRows.mock.calls[0]).toEqual(["origin", "refs/remotes", ["branch", "sha1"]]);
+            expect(mockGSS_getRows.mock.calls[0]).toEqual(['origin', 'refs/remotes', ['branch', 'sha1']]);
 
             // https://github.com/facebook/jest/issues/6671#issuecomment-404171584
             // Mock information of processing in promise cannot be taken
@@ -229,7 +229,7 @@ Please make sure you have the correct access rights and the repository exists.`]
 
           expect(() => sit().Repo.clone('origin', null)).toThrow('process.exit() was called.');
           expect(console.error).toHaveBeenCalledTimes(1);
-          expect(console.error.mock.calls[0]).toEqual(["url is required"]);
+          expect(console.error.mock.calls[0]).toEqual(['url is required']);
         });
       });
     });
@@ -243,7 +243,7 @@ Please make sure you have the correct access rights and the repository exists.`]
         expect(() => sit().Repo.clone(null, 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0')).toThrow('process.exit() was called.');
 
         expect(console.error).toHaveBeenCalledTimes(1);
-        expect(console.error.mock.calls[0]).toEqual(["repository is required"]);
+        expect(console.error.mock.calls[0]).toEqual(['repository is required']);
       });
     });
   });
@@ -258,7 +258,7 @@ Please make sure you have the correct access rights and the repository exists.`]
         sit().Repo.init();
 
         expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log.mock.calls[0]).toEqual(["already exist local repo: test/localRepo/.sit"]);
+        expect(console.log.mock.calls[0]).toEqual(['already exist local repo: test/localRepo/.sit']);
       });
     });
 
@@ -270,8 +270,8 @@ Please make sure you have the correct access rights and the repository exists.`]
       sit().Repo.init();
 
       expect(console.log).toHaveBeenCalledTimes(2);
-      expect(console.log.mock.calls[0]).toEqual(["created local repo: test/localRepo/.sit"]);
-      expect(console.log.mock.calls[1]).toEqual(["created dist file: test/dist/test_data.csv"]);
+      expect(console.log.mock.calls[0]).toEqual(['created local repo: test/localRepo/.sit']);
+      expect(console.log.mock.calls[1]).toEqual(['created dist file: test/dist/test_data.csv']);
     });
   });
 
@@ -288,7 +288,7 @@ Please make sure you have the correct access rights and the repository exists.`]
 
         expect(() => sit().Repo.checkLocalRepo()).toThrow('process.exit() was called.');
         expect(console.error).toHaveBeenCalledTimes(1);
-        expect(console.error.mock.calls[0]).toEqual(["fatal: not a sit repository (or any of the parent directories): test/localRepo/.sit"]);
+        expect(console.error.mock.calls[0]).toEqual(['fatal: not a sit repository (or any of the parent directories): test/localRepo/.sit']);
       });
     });
   });
@@ -303,7 +303,7 @@ Please make sure you have the correct access rights and the repository exists.`]
         sit().Repo.catFile('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', { type: true });
 
         expect(mockSitRepo_catFile).toHaveBeenCalledTimes(1);
-        expect(mockSitRepo_catFile.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"]);
+        expect(mockSitRepo_catFile.mock.calls[0]).toEqual(['4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']);
       });
     });
   });
@@ -315,7 +315,7 @@ Please make sure you have the correct access rights and the repository exists.`]
       sit().Repo.hashObject('test/dist/test_data.csv');
 
       expect(mockSitRepo_hashObject).toHaveBeenCalledTimes(1);
-      expect(mockSitRepo_hashObject.mock.calls[0]).toEqual(["test/dist/test_data.csv", {}]);
+      expect(mockSitRepo_hashObject.mock.calls[0]).toEqual(['test/dist/test_data.csv', {}]);
     });
   });
 
@@ -392,7 +392,7 @@ Please make sure you have the correct access rights and the repository exists.`]
       sit().Repo.browseRemote('origin');
 
       expect(mockSitRepo_browseRemote).toHaveBeenCalledTimes(1);
-      expect(mockSitRepo_browseRemote.mock.calls[0]).toEqual(["origin"]);
+      expect(mockSitRepo_browseRemote.mock.calls[0]).toEqual(['origin']);
     });
   });
 
@@ -405,7 +405,7 @@ Please make sure you have the correct access rights and the repository exists.`]
         sit().Repo.config('user.name', 'yukihirop', { global: true });
 
         expect(mockSitConfig_update).toHaveBeenCalledTimes(1);
-        expect(mockSitConfig_update.mock.calls[0]).toEqual(["user.name", "yukihirop"]);
+        expect(mockSitConfig_update.mock.calls[0]).toEqual(['user.name', 'yukihirop']);
       });
     });
 
@@ -417,7 +417,7 @@ Please make sure you have the correct access rights and the repository exists.`]
         sit().Repo.config('user.email', 'test@example.com', { local: true });
 
         expect(mockSitConfig_update).toHaveBeenCalledTimes(1);
-        expect(mockSitConfig_update.mock.calls[0]).toEqual(["user.email", "test@example.com"]);
+        expect(mockSitConfig_update.mock.calls[0]).toEqual(['user.email', 'test@example.com']);
       });
     });
   });
@@ -429,7 +429,7 @@ Please make sure you have the correct access rights and the repository exists.`]
       sit().Repo.remote('add', 'origin', 'https://test.co.jp');
 
       expect(mockSitRepo_remote).toHaveBeenCalledTimes(1);
-      expect(mockSitRepo_remote.mock.calls[0]).toEqual(["add", "origin", "https://test.co.jp", {}]);
+      expect(mockSitRepo_remote.mock.calls[0]).toEqual(['add', 'origin', 'https://test.co.jp', {}]);
     });
   });
 

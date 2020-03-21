@@ -43,7 +43,7 @@ describe('GSS', () => {
       it('should return correctly', (done) => {
         model.getRows('origin', 'do_not_exist')
           .catch(err => {
-            expect(err.message).toEqual("Do not exist sheet: do_not_exist");
+            expect(err.message).toEqual('Do not exist sheet: do_not_exist');
             done();
           });
       });
@@ -56,7 +56,7 @@ describe('GSS', () => {
       const mockRows = [
         { '日本語': 'こんにちは', '英語': 'hello', 'キー': 'greeting.hello' }
       ];
-      expect(model._rows2CSV(mockRows, header)).toEqual([["日本語", "英語", "キー"], ["こんにちは", "hello", "greeting.hello"]]);
+      expect(model._rows2CSV(mockRows, header)).toEqual([['日本語', '英語', 'キー'], ['こんにちは', 'hello', 'greeting.hello']]);
     });
   });
 });

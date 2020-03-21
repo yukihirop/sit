@@ -44,15 +44,15 @@ class SitRepo extends SitBaseRepo {
       return false;
     } else {
       this._mkdirSyncRecursive()
-        ._mkdirSyncRecursive("refs/heads")
-        ._mkdirSyncRecursive("refs/remotes")
-        ._mkdirSyncRecursive("objects")
-        ._mkdirSyncRecursive("logs/refs/heads")
-        ._mkdirSyncRecursive("logs/refs/remotes")
-        ._writeSyncFile("HEAD", "ref: refs/heads/master", true)
-        ._writeSyncFile("config", "", true);
+        ._mkdirSyncRecursive('refs/heads')
+        ._mkdirSyncRecursive('refs/remotes')
+        ._mkdirSyncRecursive('objects')
+        ._mkdirSyncRecursive('logs/refs/heads')
+        ._mkdirSyncRecursive('logs/refs/remotes')
+        ._writeSyncFile('HEAD', 'ref: refs/heads/master', true)
+        ._writeSyncFile('config', '', true);
 
-      writeSyncFile(`${this.homeDir}/.sitconfig`, "", true);
+      writeSyncFile(`${this.homeDir}/.sitconfig`, '', true);
 
       // Create distFile
       this._createDistFile(data);
@@ -78,7 +78,7 @@ class SitRepo extends SitBaseRepo {
     // STEP 1: Update config
     const config = new SitConfig('local');
     config.updateSection(`remote.${repoName}`, { type: type, url: url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` });
-    config.updateSection(`branch.master`, { remote: 'origin', merge: 'refs/heads/master' });
+    config.updateSection('branch.master', { remote: 'origin', merge: 'refs/heads/master' });
 
     // STEP 2: Create Merge Commit Object
     // STEP 3: Update refs/heads/master
@@ -87,11 +87,11 @@ class SitRepo extends SitBaseRepo {
     // STEP 6: Update logs/refs/remotes/origin/HEAD
     // STEP 7: Update logs/HEAD
     const mergeCommitHash = this._createMergeCommit(masterHash, this._INITIAL_HASH(), 'master', type);
-    this._writeSyncFile("refs/heads/master", mergeCommitHash)
+    this._writeSyncFile('refs/heads/master', mergeCommitHash)
       ._writeSyncFile(`refs/remotes/${repoName}/HEAD`, `ref: refs/remotes/${repoName}/master`)
-      ._writeLog("logs/refs/heads/master", this._INITIAL_HASH(), mergeCommitHash, `clone: from ${url}`)
+      ._writeLog('logs/refs/heads/master', this._INITIAL_HASH(), mergeCommitHash, `clone: from ${url}`)
       ._writeLog(`logs/refs/remotes/${repoName}/HEAD`, this._INITIAL_HASH(), mergeCommitHash, `clone: from ${url}`)
-      ._writeLog("logs/HEAD", this._INITIAL_HASH(), mergeCommitHash, `clone: from ${url}`);
+      ._writeLog('logs/HEAD', this._INITIAL_HASH(), mergeCommitHash, `clone: from ${url}`);
 
     // STEP 8: Update dist file instead of Update index
     this._createDistFile(masterData, true);
@@ -189,8 +189,8 @@ class SitRepo extends SitBaseRepo {
       // STEP 6: Delete logs/refs/heads/<currentBranch>
       this._fileCopySync(`refs/heads/${currentBranch}`, `refs/heads/${moveBranch}`)
         ._fileCopySync(`logs/refs/heads/${currentBranch}`, `logs/refs/heads/${moveBranch}`)
-        ._writeLog("logs/HEAD", currentHash, currentHash, `Branch: renamed refs/heads/origin to refs/heads/${moveBranch}`)
-        ._writeSyncFile(`HEAD`, `ref: refs/heads/${moveBranch}`, false)
+        ._writeLog('logs/HEAD', currentHash, currentHash, `Branch: renamed refs/heads/origin to refs/heads/${moveBranch}`)
+        ._writeSyncFile('HEAD', `ref: refs/heads/${moveBranch}`, false)
         ._deleteSyncFile(`refs/heads/${currentBranch}`)
         ._deleteSyncFile(`logs/refs/heads/${currentBranch}`);
 
@@ -227,7 +227,7 @@ class SitRepo extends SitBaseRepo {
 
   checkout(repoName, name, opts = {}) {
     const { branch } = opts;
-    const currentBranch = this._branchResolve(`HEAD`);
+    const currentBranch = this._branchResolve('HEAD');
     const currentHash = this._refResolve('HEAD');
     let isRemote;
 
@@ -267,8 +267,8 @@ Please make sure you have the correct access rights and the repository exists.`)
               // STEP 3: Update dist file instead of Update index
               const blobHash = this._refBlobFromCommitHash(sha);
 
-              this._writeSyncFile(`HEAD`, `ref: refs/heads/${name}`, false)
-                ._writeLog("logs/HEAD", currentHash, sha, `checkout: moving from ${currentBranch} to ${name}`)
+              this._writeSyncFile('HEAD', `ref: refs/heads/${name}`, false)
+                ._writeLog('logs/HEAD', currentHash, sha, `checkout: moving from ${currentBranch} to ${name}`)
                 .catFile(blobHash).then(obj => {
                   writeSyncFile(this.distFilePath, obj.serialize().toString());
                 });
@@ -320,10 +320,10 @@ Please make sure you have the correct access rights and the repository exists.`)
         // STEP 2: Update refs/heads/<branch>
         // STEP 3: Append logs/HEAD
         // STEP 4: Append logs/refs/heads/<branch>
-        this._writeSyncFile(`HEAD`, `ref: refs/heads/${branch}`, false)
+        this._writeSyncFile('HEAD', `ref: refs/heads/${branch}`, false)
           ._writeSyncFile(`refs/heads/${branch}`, currentHash, false)
-          ._writeLog("logs/HEAD", currentHash, currentHash, `checkout: moving from ${currentBranch} to ${branch}`)
-          ._writeLog(`logs/refs/heads/${branch}`, null, currentHash, "branch: Created from HEAD");
+          ._writeLog('logs/HEAD', currentHash, currentHash, `checkout: moving from ${currentBranch} to ${branch}`)
+          ._writeLog(`logs/refs/heads/${branch}`, null, currentHash, 'branch: Created from HEAD');
 
         console.log(`Switched to a new branch '${branch}'`);
         return;
@@ -431,7 +431,7 @@ nothing to commit`
       this._writeSyncFile('COMMIT_EDITMSG', message)
         ._writeSyncFile('ORIG_HEAD', beforeHEADHash)
         ._writeSyncFile(refBranch, afterHEADHash)
-        ._writeLog("logs/HEAD", beforeHEADHash, afterHEADHash, `commit ${message}`)
+        ._writeLog('logs/HEAD', beforeHEADHash, afterHEADHash, `commit ${message}`)
         ._writeLog(`logs/${refBranch}`, beforeHEADHash, afterHEADHash, `commit ${message}`);
 
       // STEP 7: Update index
@@ -464,9 +464,9 @@ nothing to commit`
         // STEP 1: Update logs/refs/remotes/<repoName>/<branch>
         // STEP 2: Update refs/remotes/<repoName>/<branch>
         // STEP 3: Update REMOTE_HAD
-        this._writeLog(logPath, beforeHash, afterHash, `update by push`)
+        this._writeLog(logPath, beforeHash, afterHash, 'update by push')
           ._writeSyncFile(refPath, afterHash)
-          ._writeSyncFile("REMOTE_HEAD", HEADBlobHash);
+          ._writeSyncFile('REMOTE_HEAD', HEADBlobHash);
 
         resolve({ beforeHash: beforeHash, afterHash: afterHash });
       } else {
@@ -492,7 +492,7 @@ error: failed to push some refs to '${repoName}'`));
           // STEP 2: Update logs/refs/remotes/<repoName>/<branch>
           // STEP 3: Update refs/remotes/<repoName>/<branch>
           const afterHash = this._createMergeCommit(remoteHash, beforeHash, branch, type);
-          this._writeSyncFile("FETCH_HEAD", `${afterHash}\t\tbranch '${branch}' of ${repoName}`)
+          this._writeSyncFile('FETCH_HEAD', `${afterHash}\t\tbranch '${branch}' of ${repoName}`)
             ._writeSyncFile(refPath, afterHash)
             ._writeLog(logPath, beforeHash, afterHash, `fetch ${repoName} ${branch}: fast-forward`);
 
@@ -538,7 +538,7 @@ error: failed to push some refs to '${repoName}'`));
             });
         }
       } else {
-        reject(new Error("repository is required"));
+        reject(new Error('repository is required'));
       }
     });
   }
@@ -601,11 +601,11 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
             const commitMsg = data;
             if (err) die(err.message);
 
-            const HEADHash = this._refResolve("HEAD");
+            const HEADHash = this._refResolve('HEAD');
             const calculateHash = this._add(this.distFilePath, {});
             const mergeCommitHash = this._createMergeCommit(calculateHash, HEADHash, branch, type);
             const refBranch = this._HEAD();
-            const remoteHead = this._refResolve("MERGE_HEAD");
+            const remoteHead = this._refResolve('MERGE_HEAD');
 
             // STEP 3: Update logs/HEAD
             // STEP 4: Update logs/refs/heads/<HEAD-branch>
@@ -615,11 +615,11 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
             // STEP 9: Delete MERGE_MODE
             // STEP 10: Delete MERGE_MSG
             // STEP 11: Delete MERGE_HEAD
-            this._writeLog("logs/HEAD", this.beforeHEADHash(), this.afterHEADHash(), `commit (merge): ${commitMsg} into ${this.currentBranch()}`)
+            this._writeLog('logs/HEAD', this.beforeHEADHash(), this.afterHEADHash(), `commit (merge): ${commitMsg} into ${this.currentBranch()}`)
               ._writeLog(`logs/refs/heads/${this.currentBranch()}`, this.beforeHEADHash(), this.afterHEADHash(), `commit (merge): ${commitMsg} into ${this.currentBranch()}`)
               ._writeSyncFile('ORIG_HEAD', HEADHash)
               ._writeSyncFile(refBranch, mergeCommitHash)
-              ._writeSyncFile("REMOTE_HEAD", remoteHead)
+              ._writeSyncFile('REMOTE_HEAD', remoteHead)
               ._deleteSyncFile('MERGE_MODE')
               ._deleteSyncFile('MERGE_MSG')
               ._deleteSyncFile('MERGE_HEAD');
@@ -635,11 +635,11 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
       });
 
     } else if (this._isExistFile('MERGE_HEAD') && !stat && !abort && branch) {
-      die(`\
+      die('\
 error: Merging is not possible because you have unmerged files.\n\
-hint: Fix them up in the work tree, and then use 'sit merge --continue'\n\
+hint: Fix them up in the work tree, and then use \'sit merge --continue\'\n\
 hint: as appropriate to mark resolution and make a commit.\n\
-fatal: Existing because of an unresolved conflict.`);
+fatal: Existing because of an unresolved conflict.');
     }
 
     // --abort
@@ -651,7 +651,7 @@ fatal: Existing because of an unresolved conflict.`);
         // STEP 4: Delete MERGE_HEAD
         // STEP 5: Update dist file
         const origHEADHash = this._refResolve('ORIG_HEAD');
-        this._writeLog("logs/HEAD", origHEADHash, origHEADHash, "reset: moving to HEAD")
+        this._writeLog('logs/HEAD', origHEADHash, origHEADHash, 'reset: moving to HEAD')
           ._deleteSyncFile('MERGE_MODE')
           ._deleteSyncFile('MERGE_MSG')
           ._deleteSyncFile('MERGE_HEAD')
@@ -671,13 +671,13 @@ fatal: Existing because of an unresolved conflict.`);
 fatal: You have not concluded your merge (MERGE_HEAD exists)
 Please, commit your changes before you merge.`);
       } else {
-        console.log("Already up to date.");
+        console.log('Already up to date.');
         return;
       }
     }
 
     if (repoName && branch) {
-      const headHash = this._refResolve("HEAD");
+      const headHash = this._refResolve('HEAD');
       const remoteHash = this._refResolve(`refs/remotes/${repoName}/${branch}`);
 
       this.catFile(remoteHash).then(remoteObj => {
@@ -687,7 +687,7 @@ Please, commit your changes before you merge.`);
           const remoteData = remoteStream.split('\n');
           const headData = headStream.split('\n');
 
-          this._twoWayMerge(headData, remoteData, "HEAD", `${repoName}/${branch}`, result => {
+          this._twoWayMerge(headData, remoteData, 'HEAD', `${repoName}/${branch}`, result => {
             // Conflict
             if (result.conflict) {
               // STEP 1: Update MERGE_HEAD
@@ -840,7 +840,7 @@ Fast-forward
         const distData = data.split('\n');
         const stashData = obj.serialize().toString().split('\n');
 
-        this._twoWayMerge(distData, stashData, "Updated upstream", "Stashed changes", result => {
+        this._twoWayMerge(distData, stashData, 'Updated upstream', 'Stashed changes', result => {
           // STEP 1: Create sit object(blob)
           this.hashObjectFromData(result.data.join('\n'), { type: 'blob', write: true });
           // STEP 2: Update dist file

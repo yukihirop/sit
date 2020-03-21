@@ -29,7 +29,7 @@ class SitCommit extends SitObject {
   }
 
   blobHash() {
-    const bufData = JSON.parse(JSON.stringify(this.kvlm["blob"]))["data"];
+    const bufData = JSON.parse(JSON.stringify(this.kvlm['blob']))['data'];
     return Buffer.from(bufData, 'utf8').toString();
   }
 

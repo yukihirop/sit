@@ -79,7 +79,7 @@ From ${repo.remoteRepo(repoName)}
       } else {
         if (!repo._isExistFile(`refs/remotes/${repoName}`)) return;
 
-        sheet.getRows(repoName, "refs/remotes", ['branch', 'sha1']).then(data => {
+        sheet.getRows(repoName, 'refs/remotes', ['branch', 'sha1']).then(data => {
           sheet.getSheetNames(repoName, remoteBranches => {
             const remoteRefs = csv2JSON(data.slice(1));
 
@@ -126,7 +126,7 @@ Please make sure you have the correct access rights and the repository exists.`)
     } else {
       if (branch) {
         // Fetch refs/remotes from sheet
-        sheet.getRows(repoName, "refs/remotes", ['branch', 'sha1']).then(data => {
+        sheet.getRows(repoName, 'refs/remotes', ['branch', 'sha1']).then(data => {
           const json = csv2JSON(data);
           const remoteHash = json[branch];
 
@@ -141,11 +141,11 @@ Please make sure you have the correct access rights and the repository exists.`)
 To ${repo.remoteRepo(repoName)}\n\
 ${colorize('! [rejected]', 'error')}\t\t${branch} -> ${branch} (non-fast-forward)\n\
 ${colorize(`error: failed to push some refs to '${repo.remoteRepo(repoName)}'`, 'error')}\n\
-${colorize(`\
+${colorize('\
 hint: Updates wre rejected because the tip of your current branch is behind\n\
 hint: its remote counterpart. Integrate the remote changes (e.q.\n\
-hint: 'sit pull ...' before pushing again.\n\
-hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`, 'info')}`);
+hint: \'sit pull ...\' before pushing again.\n\
+hint: See the \'Note abount fast-forwards\' in \'sit push --help\' for details.', 'info')}`);
           }
 
           // Update local repo
@@ -154,14 +154,14 @@ hint: See the 'Note abount fast-forwards' in 'sit push --help' for details.`, 'i
             const { beforeHash, afterHash } = hashData;
 
             if (!force && (remoteHash !== undefined) && (beforeHash === afterHash)) {
-              console.log(`Everything up-to-date`);
+              console.log('Everything up-to-date');
               return;
             }
 
             repo._HEADCSVData(csvData => {
               const updateBranchPromise = sheet.pushRows(repoName, branch, csvData, { clear: true });
-              const updateRefRemotePromise = sheet.pushRows(repoName, "refs/remotes", repo._refCSVData(branch, repoName), { clear: false, specifyIndex: 0 });
-              const updateRefLogRemotePromise = sheet.pushRows(repoName, "logs/refs/remotes", repo._refLastLogCSVData(branch, repoName), { clear: false });
+              const updateRefRemotePromise = sheet.pushRows(repoName, 'refs/remotes', repo._refCSVData(branch, repoName), { clear: false, specifyIndex: 0 });
+              const updateRefLogRemotePromise = sheet.pushRows(repoName, 'logs/refs/remotes', repo._refLastLogCSVData(branch, repoName), { clear: false });
 
               return Promise.all([updateRefRemotePromise, updateRefLogRemotePromise, updateBranchPromise]).then(() => {
                 const baseMsg = `\
@@ -188,7 +188,7 @@ To ${repo.remoteRepo(repoName)}`;
           });
         });
       } else {
-        die("branch is required");
+        die('branch is required');
       }
     }
   };
@@ -234,7 +234,7 @@ remote: done.`);
               die(err.message);
             }
           }).catch(_err => {
-            die(`fatal: Couldn't find remote ref 'master'`);
+            die('fatal: Couldn\'t find remote ref \'master\'');
           });
         }).catch(_err => {
           die(`fatal: repository '${url}' not found`);

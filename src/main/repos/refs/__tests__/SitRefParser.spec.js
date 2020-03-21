@@ -20,8 +20,8 @@ describe('SitRefParser', () => {
         jest.spyOn(repo, '_refBlobFromCommitHash').mockReturnValueOnce('4e2b7c47eb492ab07c5d176dccff3009c1ebc79b');
         model = new SitRefParser(repo, 'master', 'refs/heads/master');
         expect(model.parseToCSV()).toEqual([
-          ["branch", "sha1"],
-          ["master", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"]
+          ['branch', 'sha1'],
+          ['master', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']
         ]);
       });
     });
@@ -47,7 +47,7 @@ describe('SitRefParser', () => {
     describe("refFile include 'refs/remotes'", () => {
       it('should return correctly', () => {
         model = new SitRefParser(repo, 'origin/develop', 'refs/remotes/origin/develop');
-        expect(model.displayedBranch()).toEqual(colorize("remotes/origin/develop", 'mark'));
+        expect(model.displayedBranch()).toEqual(colorize('remotes/origin/develop', 'mark'));
       });
     });
 

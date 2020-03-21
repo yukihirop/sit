@@ -69,7 +69,7 @@ describe('SitBaseLogger', () => {
     model.bulkOverWrite('logs/refs/stash', data);
 
     expect(writeSyncFile).toHaveBeenCalledTimes(1);
-    expect(writeSyncFile.mock.calls[0]).toEqual(["test/localRepo/.sit/logs/refs/stash", data, false]);
+    expect(writeSyncFile.mock.calls[0]).toEqual(['test/localRepo/.sit/logs/refs/stash', data, false]);
   });
 
   // FIXME: mock global .sitconfig

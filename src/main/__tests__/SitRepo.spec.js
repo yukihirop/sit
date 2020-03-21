@@ -80,14 +80,14 @@ describe('SitRepo', () => {
         expect(mockModel__mkdirSyncRecursive.mock.calls[5]).toEqual(['logs/refs/remotes']);
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2);
-        expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["HEAD", "ref: refs/heads/master", true]);
-        expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["config", "", true]);
+        expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(['HEAD', 'ref: refs/heads/master', true]);
+        expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(['config', '', true]);
 
         expect(writeSyncFile).toHaveBeenCalledTimes(1);
-        expect(writeSyncFile.mock.calls[0]).toEqual(["./test/homeDir/.sitconfig", "", true]);
+        expect(writeSyncFile.mock.calls[0]).toEqual(['./test/homeDir/.sitconfig', '', true]);
 
         expect(mockModel__createDistFile).toHaveBeenCalledTimes(1);
-        expect(mockModel__createDistFile.mock.calls[0]).toEqual([["日本語", "英語", "キー"]]);
+        expect(mockModel__createDistFile.mock.calls[0]).toEqual([['日本語', '英語', 'キー']]);
       });
     });
   });
@@ -137,9 +137,9 @@ describe('SitRepo', () => {
         );
         expect(mockSitConfig_updateSection).toHaveBeenCalledTimes(2);
         expect(mockSitConfig_updateSection.mock.calls[0][0]).toBe('remote.origin');
-        expect(mockSitConfig_updateSection.mock.calls[0][1]).toEqual({ "fetch": "+refs/heads/*:refs/remotes/origin/*", "type": "GoogleSpreadSheet", "url": "https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0" });
+        expect(mockSitConfig_updateSection.mock.calls[0][1]).toEqual({ 'fetch': '+refs/heads/*:refs/remotes/origin/*', 'type': 'GoogleSpreadSheet', 'url': 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0' });
         expect(mockSitConfig_updateSection.mock.calls[1][0]).toBe('branch.master');
-        expect(mockSitConfig_updateSection.mock.calls[1][1]).toEqual({ "merge": "refs/heads/master", "remote": "origin" });
+        expect(mockSitConfig_updateSection.mock.calls[1][1]).toEqual({ 'merge': 'refs/heads/master', 'remote': 'origin' });
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2);
         expect(mockModel__writeSyncFile.mock.calls[0][0]).toBe('refs/heads/master');
@@ -149,11 +149,11 @@ describe('SitRepo', () => {
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(3);
         expect(mockModel__writeLog.mock.calls[0][0]).toBe('logs/refs/heads/master');
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/master", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]);
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(['logs/refs/heads/master', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0']);
         expect(mockModel__writeLog.mock.calls[1][0]).toBe('logs/refs/remotes/origin/HEAD');
-        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/remotes/origin/HEAD", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]);
+        expect(mockModel__writeLog.mock.calls[1]).toEqual(['logs/refs/remotes/origin/HEAD', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0']);
         expect(mockModel__writeLog.mock.calls[2][0]).toBe('logs/HEAD');
-        expect(mockModel__writeLog.mock.calls[2]).toEqual(["logs/HEAD", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]);
+        expect(mockModel__writeLog.mock.calls[2]).toEqual(['logs/HEAD', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'clone: from https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0']);
 
         expect(mockModel__createDistFile).toHaveBeenCalledTimes(1);
         expect(mockModel__createDistFile.mock.calls[0][0]).toEqual([
@@ -163,7 +163,7 @@ describe('SitRepo', () => {
         expect(mockModel__createDistFile.mock.calls[0][1]).toEqual(true);
 
         expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1);
-        expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "0000000000000000000000000000000000000000", "master", "GoogleSpreadSheet"]);
+        expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(['4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', '0000000000000000000000000000000000000000', 'master', 'GoogleSpreadSheet']);
       });
     });
 
@@ -189,7 +189,7 @@ describe('SitRepo', () => {
         expect(mkdirSyncRecursive.mock.calls[0][0]).toEqual('do_not_exist');
 
         expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1);
-        expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "0000000000000000000000000000000000000000", "master", "GoogleSpreadSheet"]);
+        expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(['4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', '0000000000000000000000000000000000000000', 'master', 'GoogleSpreadSheet']);
       });
     });
   });
@@ -236,8 +236,8 @@ describe('SitRepo', () => {
         model._HEADCSVData(csvData => {
           expect(csvData).toEqual(
             [
-              ["日本語", "英語", "キー"],
-              ["こんにちは", "hello", "common.greeting.hello"]
+              ['日本語', '英語', 'キー'],
+              ['こんにちは', 'hello', 'common.greeting.hello']
             ]
           );
 
@@ -257,8 +257,8 @@ describe('SitRepo', () => {
 
       expect(model._add(path, {})).toEqual(sha1);
       expect(mockModel_hashObject).toHaveBeenCalledTimes(1);
-      expect(mockModel_hashObject.mock.calls[0][0]).toEqual("test/sit.js");
-      expect(mockModel_hashObject.mock.calls[0][1]).toEqual({ "type": "blob", "write": true });
+      expect(mockModel_hashObject.mock.calls[0][0]).toEqual('test/sit.js');
+      expect(mockModel_hashObject.mock.calls[0][1]).toEqual({ 'type': 'blob', 'write': true });
     });
   });
 
@@ -309,13 +309,13 @@ describe('SitRepo', () => {
 
   // (node:48137) UnhandledPromiseRejectionWarning: Error: process.exit() was called.
   describe('#branch', () => {
-    describe("when do not specify nothiing", () => {
+    describe('when do not specify nothiing', () => {
       it('should return correctly', () => {
         recursive.mockReturnValueOnce(Promise.resolve(['files']));
         model.branch();
 
         expect(recursive).toHaveBeenCalledTimes(1);
-        expect(recursive.mock.calls[0]).toEqual(["test/localRepo/.sit/refs/heads"]);
+        expect(recursive.mock.calls[0]).toEqual(['test/localRepo/.sit/refs/heads']);
       });
     });
 
@@ -325,7 +325,7 @@ describe('SitRepo', () => {
         model.branch({ all: true });
 
         expect(recursive).toHaveBeenCalledTimes(1);
-        expect(recursive.mock.calls[0]).toEqual(["test/localRepo/.sit/refs"]);
+        expect(recursive.mock.calls[0]).toEqual(['test/localRepo/.sit/refs']);
       });
     });
 
@@ -388,7 +388,7 @@ describe('SitRepo', () => {
     });
 
     describe("when specify 'moveBranch' option", () => {
-      it("should return correctly", () => {
+      it('should return correctly', () => {
         const mockModel__fileCopySync = jest.spyOn(model, '_fileCopySync').mockReturnValue(model);
         const mockModel__writeLog = jest.spyOn(model, '_writeLog').mockReturnValue(model);
         const mockModel__writeSyncFile = jest.spyOn(model, '_writeSyncFile').mockReturnValue(model);
@@ -396,18 +396,18 @@ describe('SitRepo', () => {
 
         model.branch({ moveBranch: 'new_branch' });
         expect(mockModel__fileCopySync).toHaveBeenCalledTimes(2);
-        expect(mockModel__fileCopySync.mock.calls[0]).toEqual(["refs/heads/master", "refs/heads/new_branch"]);
-        expect(mockModel__fileCopySync.mock.calls[1]).toEqual(["logs/refs/heads/master", "logs/refs/heads/new_branch"]);
+        expect(mockModel__fileCopySync.mock.calls[0]).toEqual(['refs/heads/master', 'refs/heads/new_branch']);
+        expect(mockModel__fileCopySync.mock.calls[1]).toEqual(['logs/refs/heads/master', 'logs/refs/heads/new_branch']);
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(1);
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "Branch: renamed refs/heads/origin to refs/heads/new_branch"]);
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(['logs/HEAD', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'Branch: renamed refs/heads/origin to refs/heads/new_branch']);
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(1);
-        expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["HEAD", "ref: refs/heads/new_branch", false]);
+        expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(['HEAD', 'ref: refs/heads/new_branch', false]);
 
         expect(mockModel__deleteSyncFile).toHaveBeenCalledTimes(2);
-        expect(mockModel__deleteSyncFile.mock.calls[0]).toEqual(["refs/heads/master"]);
-        expect(mockModel__deleteSyncFile.mock.calls[1]).toEqual(["logs/refs/heads/master"]);
+        expect(mockModel__deleteSyncFile.mock.calls[0]).toEqual(['refs/heads/master']);
+        expect(mockModel__deleteSyncFile.mock.calls[1]).toEqual(['logs/refs/heads/master']);
       });
     });
   });
@@ -459,18 +459,18 @@ Merge from GoogleSpreadSheet/develop`;
           model.checkout('origin', 'test', {});
 
           expect(mockSitConfig_updateSection).toHaveBeenCalledTimes(1);
-          expect(mockSitConfig_updateSection.mock.calls[0]).toEqual(["branch.test", { "merge": "refs/heads/test", "remote": "origin" }]);
+          expect(mockSitConfig_updateSection.mock.calls[0]).toEqual(['branch.test', { 'merge': 'refs/heads/test', 'remote': 'origin' }]);
 
           expect(mockModel__fileCopySync).toHaveBeenCalledTimes(1);
-          expect(mockModel__fileCopySync.mock.calls[0]).toEqual(["refs/remotes/origin/test", "refs/heads/test"]);
+          expect(mockModel__fileCopySync.mock.calls[0]).toEqual(['refs/remotes/origin/test', 'refs/heads/test']);
 
           expect(mockModel__writeLog).toHaveBeenCalledTimes(1);
-          expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/heads/test", null, "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "branch: Created from refs/remotes/origin/test"]);
+          expect(mockModel__writeLog.mock.calls[0]).toEqual(['logs/refs/heads/test', null, '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'branch: Created from refs/remotes/origin/test']);
 
           // checkout test (2 times)
 
           expect(mockModel__objectFind).toHaveBeenCalledTimes(1);
-          expect(mockModel__objectFind.mock.calls[0]).toEqual(["test"]);
+          expect(mockModel__objectFind.mock.calls[0]).toEqual(['test']);
         });
       });
 
@@ -513,12 +513,12 @@ Merge from GoogleSpreadSheet/develop`;
             model.checkout(null, null, { branch: 'new_branch' });
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2);
-            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["HEAD", "ref: refs/heads/new_branch", false]);
-            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/heads/new_branch", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", false]);
+            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(['HEAD', 'ref: refs/heads/new_branch', false]);
+            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(['refs/heads/new_branch', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', false]);
 
             expect(mockModel__writeLog).toHaveBeenCalledTimes(2);
-            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "checkout: moving from master to new_branch"]);
-            expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/new_branch", null, "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "branch: Created from HEAD"]);
+            expect(mockModel__writeLog.mock.calls[0]).toEqual(['logs/HEAD', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'checkout: moving from master to new_branch']);
+            expect(mockModel__writeLog.mock.calls[1]).toEqual(['logs/refs/heads/new_branch', null, '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'branch: Created from HEAD']);
 
             expect(console.log).toHaveBeenCalledTimes(1);
             expect(console.log.mock.calls[0]).toEqual(["Switched to a new branch 'new_branch'"]);
@@ -570,7 +570,7 @@ Please make sure you have the correct access rights and the repository exists.`]
       expect(mockModel__refBlob.mock.calls[0]).toEqual(['HEAD']);
 
       expect(mockModel_catFile).toHaveBeenCalledTimes(1);
-      expect(mockModel_catFile.mock.calls[0]).toEqual(["8b58f3891ae3e4d274972a39d27fd460aaeaa6cc"]);
+      expect(mockModel_catFile.mock.calls[0]).toEqual(['8b58f3891ae3e4d274972a39d27fd460aaeaa6cc']);
     });
   });
 
@@ -598,10 +598,10 @@ no changes added to commit`);
         model.status();
 
         expect(mockModel__refResolve).toHaveBeenCalledTimes(1);
-        expect(mockModel__refResolve.mock.calls[0]).toEqual(["HEAD"]);
+        expect(mockModel__refResolve.mock.calls[0]).toEqual(['HEAD']);
 
         expect(mockModel_hashObject).toHaveBeenCalledTimes(1);
-        expect(mockModel_hashObject.mock.calls[0]).toEqual(["test/dist/test_data.csv", { "type": "blob" }]);
+        expect(mockModel_hashObject.mock.calls[0]).toEqual(['test/dist/test_data.csv', { 'type': 'blob' }]);
 
         expect(console.log).toHaveBeenCalledTimes(1);
         expect(console.log.mock.calls[0]).toEqual(['On branch master\nnothing to commit']);
@@ -627,19 +627,19 @@ first commit`;
         model.commit({ message: 'first commit' });
 
         expect(mockModel__createCommit).toHaveBeenCalledTimes(1);
-        expect(mockModel__createCommit.mock.calls[0]).toEqual(["2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "first commit"]);
+        expect(mockModel__createCommit.mock.calls[0]).toEqual(['2938ad2ab5722adf9b48ff5bac74989eaa2d144c', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'first commit']);
 
         expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(3);
-        expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["COMMIT_EDITMSG", "first commit"]);
-        expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["ORIG_HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"]);
-        expect(mockModel__writeSyncFile.mock.calls[2]).toEqual(["refs/heads/master", "7463de958ff72479adf6c7d6e37c744cc9dc283a"]);
+        expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(['COMMIT_EDITMSG', 'first commit']);
+        expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(['ORIG_HEAD', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']);
+        expect(mockModel__writeSyncFile.mock.calls[2]).toEqual(['refs/heads/master', '7463de958ff72479adf6c7d6e37c744cc9dc283a']);
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(2);
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "7463de958ff72479adf6c7d6e37c744cc9dc283a", "commit first commit"]);
-        expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/heads/master", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "7463de958ff72479adf6c7d6e37c744cc9dc283a", "commit first commit"]);
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(['logs/HEAD', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', '7463de958ff72479adf6c7d6e37c744cc9dc283a', 'commit first commit']);
+        expect(mockModel__writeLog.mock.calls[1]).toEqual(['logs/refs/heads/master', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', '7463de958ff72479adf6c7d6e37c744cc9dc283a', 'commit first commit']);
 
         expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log.mock.calls[0]).toEqual(["[master 7463de9] first commit"]);
+        expect(console.log.mock.calls[0]).toEqual(['[master 7463de9] first commit']);
       });
     });
 
@@ -652,13 +652,13 @@ first commit`;
         model.commit({ message: 'first commit' });
 
         expect(mockModel__refResolve).toHaveBeenCalledTimes(1);
-        expect(mockModel__refResolve.mock.calls[0]).toEqual(["HEAD"]);
+        expect(mockModel__refResolve.mock.calls[0]).toEqual(['HEAD']);
 
         expect(mockModel__add).toHaveBeenCalledTimes(1);
-        expect(mockModel__add.mock.calls[0]).toEqual(["test/dist/test_data.csv", { "message": "first commit" }]);
+        expect(mockModel__add.mock.calls[0]).toEqual(['test/dist/test_data.csv', { 'message': 'first commit' }]);
 
         expect(mockModel__createCommit).toHaveBeenCalledTimes(1);
-        expect(mockModel__createCommit.mock.calls[0]).toEqual(["8b58f3891ae3e4d274972a39d27fd460aaeaa6cc", "8b58f3891ae3e4d274972a39d27fd460aaeaa6cc", "first commit"]);
+        expect(mockModel__createCommit.mock.calls[0]).toEqual(['8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc', 'first commit']);
 
         expect(console.log).toHaveBeenCalledTimes(1);
         expect(console.log.mock.calls[0]).toEqual(['On branch master\nnothing to commit']);
@@ -674,7 +674,7 @@ first commit`;
 
         expect(() => model.commit()).toThrow('process.exit() was called.');
         expect(console.error).toHaveBeenCalledTimes(1);
-        expect(console.error.mock.calls[0]).toEqual(["Need message to commit"]);
+        expect(console.error.mock.calls[0]).toEqual(['Need message to commit']);
       });
     });
   });
@@ -687,14 +687,14 @@ first commit`;
 
         model.push('origin', 'develop', { HEADBlobHash: '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' })
           .then(result => {
-            expect(result).toEqual({ "afterHash": "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "beforeHash": "0000000000000000000000000000000000000000" });
+            expect(result).toEqual({ 'afterHash': '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'beforeHash': '0000000000000000000000000000000000000000' });
 
             expect(mockModel__writeLog).toHaveBeenCalledTimes(1);
-            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/develop", "0000000000000000000000000000000000000000", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "update by push"]);
+            expect(mockModel__writeLog.mock.calls[0]).toEqual(['logs/refs/remotes/origin/develop', '0000000000000000000000000000000000000000', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'update by push']);
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2);
-            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["refs/remotes/origin/develop", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"]);
-            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["REMOTE_HEAD", "8b58f3891ae3e4d274972a39d27fd460aaeaa6cc"]);
+            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(['refs/remotes/origin/develop', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']);
+            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(['REMOTE_HEAD', '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc']);
             done();
           });
       });
@@ -716,7 +716,7 @@ first commit`;
       it('should return correctly', (done) => {
         model.fetch(null, 'develop', { remoteHash: '1aee2e5b6b3c9b571f867b1ff6cbde3a060d6d16' })
           .catch(err => {
-            expect(err.message).toEqual("repository is required");
+            expect(err.message).toEqual('repository is required');
             done();
           });
       });
@@ -725,8 +725,8 @@ first commit`;
     describe('when branch is blank', () => {
       it('should return correctly', (done) => {
         recursive.mockReturnValueOnce(Promise.resolve(
-          ["test/localRepo/.sit/refs/remotes/origin/master",
-            "test/localRepo/.sit/refs/remotes/origin/test"
+          ['test/localRepo/.sit/refs/remotes/origin/master',
+            'test/localRepo/.sit/refs/remotes/origin/test'
           ])
         );
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model);
@@ -740,7 +740,7 @@ first commit`;
           type: 'GoogleSpreadSheet'
         }).then(() => {
           expect(recursive).toHaveBeenCalledTimes(1);
-          expect(recursive.mock.calls[0]).toEqual(["test/localRepo/.sit/refs/remotes/origin"]);
+          expect(recursive.mock.calls[0]).toEqual(['test/localRepo/.sit/refs/remotes/origin']);
           done();
         });
       });
@@ -755,17 +755,17 @@ first commit`;
           .mockReturnValueOnce('47af1af6722639322ccf17ea5f873d0e483c364f');
         model.fetch('origin', 'test', { remoteHash: '47af1af6722639322ccf17ea5f873d0e483c364f', type: 'GoogleSpreadSheet' })
           .then(result => {
-            expect(result).toEqual({ "beforeHash": "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "branchCount": 1, "afterHash": "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b" });
+            expect(result).toEqual({ 'beforeHash': '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'branchCount': 1, 'afterHash': '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b' });
 
             expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2);
-            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["FETCH_HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b		branch 'test' of origin"]);
-            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/remotes/origin/test", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"]);
+            expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(['FETCH_HEAD', "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b		branch 'test' of origin"]);
+            expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(['refs/remotes/origin/test', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']);
 
             expect(mockModel__writeLog).toHaveBeenCalledTimes(1);
-            expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/refs/remotes/origin/test", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "fetch origin test: fast-forward"]);
+            expect(mockModel__writeLog.mock.calls[0]).toEqual(['logs/refs/remotes/origin/test', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'fetch origin test: fast-forward']);
 
             expect(mockModel__createMergeCommit).toHaveBeenCalledTimes(1);
-            expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(["47af1af6722639322ccf17ea5f873d0e483c364f", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "test", "GoogleSpreadSheet"]);
+            expect(mockModel__createMergeCommit.mock.calls[0]).toEqual(['47af1af6722639322ccf17ea5f873d0e483c364f', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'test', 'GoogleSpreadSheet']);
 
             done();
           });
@@ -775,8 +775,8 @@ first commit`;
     describe('when fetch --prune', () => {
       it('should return correctly', (done) => {
         recursive.mockReturnValueOnce(Promise.resolve(
-          ["test/localRepo/.sit/refs/remotes/origin/master",
-            "test/localRepo/.sit/refs/remotes/origin/test"
+          ['test/localRepo/.sit/refs/remotes/origin/master',
+            'test/localRepo/.sit/refs/remotes/origin/test'
           ])
         );
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model);
@@ -792,7 +792,7 @@ first commit`;
         }).then(() => {
 
           expect(recursive).toHaveBeenCalledTimes(1);
-          expect(recursive.mock.calls[0]).toEqual(["test/localRepo/.sit/refs/remotes/origin"]);
+          expect(recursive.mock.calls[0]).toEqual(['test/localRepo/.sit/refs/remotes/origin']);
           done();
         });
       });
@@ -821,10 +821,10 @@ first commit`;
         expect(() => model.merge(null, null, { continue: true })).toThrow('process.exit() was called.');
 
         expect(mockModel__isExistFile).toHaveBeenCalledTimes(1);
-        expect(mockModel__isExistFile.mock.calls[0]).toEqual(["MERGE_HEAD"]);
+        expect(mockModel__isExistFile.mock.calls[0]).toEqual(['MERGE_HEAD']);
 
         expect(console.error).toHaveBeenCalledTimes(1);
-        expect(console.error.mock.calls[0]).toEqual(["fatal: There is no merge in progress (MERGE_HEAD missing)"]);
+        expect(console.error.mock.calls[0]).toEqual(['fatal: There is no merge in progress (MERGE_HEAD missing)']);
       });
     });
 
@@ -863,7 +863,7 @@ Merge remote-tracking branch 'origin/test'
 `);
 
         expect(editor.open).toHaveBeenCalledTimes(1);
-        expect(editor.open.mock.calls[0][0]).toEqual("test/localRepo/.sit/COMMIT_EDITMSG");
+        expect(editor.open.mock.calls[0][0]).toEqual('test/localRepo/.sit/COMMIT_EDITMSG');
       });
     });
 
@@ -893,15 +893,15 @@ fatal: Existing because of an unresolved conflict.`]);
         model.merge(null, null, { abort: true });
 
         expect(mockModel__writeLog).toHaveBeenCalledTimes(1);
-        expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "reset: moving to HEAD"]);
+        expect(mockModel__writeLog.mock.calls[0]).toEqual(['logs/HEAD', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'reset: moving to HEAD']);
 
         expect(mockModel__deleteSyncFile).toHaveBeenCalledTimes(3);
-        expect(mockModel__deleteSyncFile.mock.calls[0]).toEqual(["MERGE_MODE"]);
-        expect(mockModel__deleteSyncFile.mock.calls[1]).toEqual(["MERGE_MSG"]);
-        expect(mockModel__deleteSyncFile.mock.calls[2]).toEqual(["MERGE_HEAD"]);
+        expect(mockModel__deleteSyncFile.mock.calls[0]).toEqual(['MERGE_MODE']);
+        expect(mockModel__deleteSyncFile.mock.calls[1]).toEqual(['MERGE_MSG']);
+        expect(mockModel__deleteSyncFile.mock.calls[2]).toEqual(['MERGE_HEAD']);
 
         expect(mockModel_catFile).toHaveBeenCalledTimes(1);
-        expect(mockModel_catFile.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"]);
+        expect(mockModel_catFile.mock.calls[0]).toEqual(['4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']);
       });
     });
 
@@ -927,11 +927,11 @@ Please, commit your changes before you merge.`]);
         model.merge(null, null, { stat: true });
 
         expect(mockModel__isExistFile).toHaveBeenCalledTimes(2);
-        expect(mockModel__isExistFile.mock.calls[0]).toEqual(["MERGE_HEAD"]);
-        expect(mockModel__isExistFile.mock.calls[1]).toEqual(["MERGE_HEAD"]);
+        expect(mockModel__isExistFile.mock.calls[0]).toEqual(['MERGE_HEAD']);
+        expect(mockModel__isExistFile.mock.calls[1]).toEqual(['MERGE_HEAD']);
 
         expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log.mock.calls[0]).toEqual(["Already up to date."]);
+        expect(console.log.mock.calls[0]).toEqual(['Already up to date.']);
       });
     });
 
@@ -946,10 +946,10 @@ Please, commit your changes before you merge.`]);
         model.merge('origin', 'master');
 
         expect(mockModel__isExistFile).toHaveBeenCalledTimes(1);
-        expect(mockModel__isExistFile.mock.calls[0]).toEqual(["MERGE_HEAD"]);
+        expect(mockModel__isExistFile.mock.calls[0]).toEqual(['MERGE_HEAD']);
 
         expect(mockModel_catFile).toHaveBeenCalledTimes(1);
-        expect(mockModel_catFile.mock.calls[0]).toEqual(["4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"]);
+        expect(mockModel_catFile.mock.calls[0]).toEqual(['4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']);
       });
     });
   });
@@ -960,7 +960,7 @@ Please, commit your changes before you merge.`]);
         model.browseRemote();
 
         expect(opener).toHaveBeenCalledTimes(1);
-        expect(opener.mock.calls[0]).toEqual(["https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]);
+        expect(opener.mock.calls[0]).toEqual(['https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0']);
       });
     });
 
@@ -969,13 +969,13 @@ Please, commit your changes before you merge.`]);
         model.browseRemote('origin');
 
         expect(opener).toHaveBeenCalledTimes(1);
-        expect(opener.mock.calls[0]).toEqual(["https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]);
+        expect(opener.mock.calls[0]).toEqual(['https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0']);
       });
     });
   });
 
   describe('#remote', () => {
-    const url = "https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0";
+    const url = 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0';
 
     describe('when subcommand is add', () => {
       it('should return correctly', () => {
@@ -983,7 +983,7 @@ Please, commit your changes before you merge.`]);
         model.remote('add', 'origin', url, { type: 'GoogleSpreadSheet' });
 
         expect(SitConfig.prototype.updateSection).toHaveBeenCalledTimes(1);
-        expect(SitConfig.prototype.updateSection.mock.calls[0]).toEqual(["remote.origin", { "fetch": "+refs/heads/*:refs/remotes/origin/*", "type": "GoogleSpreadSheet", "url": "https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0" }]);
+        expect(SitConfig.prototype.updateSection.mock.calls[0]).toEqual(['remote.origin', { 'fetch': '+refs/heads/*:refs/remotes/origin/*', 'type': 'GoogleSpreadSheet', 'url': 'https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0' }]);
       });
     });
 
@@ -993,7 +993,7 @@ Please, commit your changes before you merge.`]);
         model.remote('rm', 'origin', url, { type: 'GoogleSpreadSheet' });
 
         expect(SitConfig.prototype.updateSection).toHaveBeenCalledTimes(1);
-        expect(SitConfig.prototype.updateSection.mock.calls[0]).toEqual(["remote.origin", null]);
+        expect(SitConfig.prototype.updateSection.mock.calls[0]).toEqual(['remote.origin', null]);
       });
     });
 
@@ -1003,7 +1003,7 @@ Please, commit your changes before you merge.`]);
         model.remote('get-url', 'origin', url, { type: 'GoogleSpreadSheet' });
 
         expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log.mock.calls[0]).toEqual(["https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0"]);
+        expect(console.log.mock.calls[0]).toEqual(['https://docs.google.com/spreadsheets/d/1jihJ2crH31nrAxFVJtuC6fwlioCi1EbnzMwCDqqhJ7k/edit#gid=0']);
       });
     });
 
@@ -1033,10 +1033,10 @@ Please, commit your changes before you merge.`]);
           expect(mockModel__refBlob.mock.calls[0]).toEqual(['HEAD']);
 
           expect(mockModel_hashObject).toHaveBeenCalledTimes(1);
-          expect(mockModel_hashObject.mock.calls[0]).toEqual(["test/dist/test_data.csv", { "type": "blob" }]);
+          expect(mockModel_hashObject.mock.calls[0]).toEqual(['test/dist/test_data.csv', { 'type': 'blob' }]);
 
           expect(console.log).toHaveBeenCalledTimes(1);
-          expect(console.log.mock.calls[0]).toEqual(["No local changes to save"]);
+          expect(console.log.mock.calls[0]).toEqual(['No local changes to save']);
         });
       });
 
@@ -1072,8 +1072,8 @@ WIP on master: 47af1af Add good_bye`;
           expect(mockModel__refBlob.mock.calls[0]).toEqual(['HEAD']);
 
           expect(mockModel_hashObject).toHaveBeenCalledTimes(2);
-          expect(mockModel_hashObject.mock.calls[0]).toEqual(["test/dist/test_data.csv", { "type": "blob" }]);
-          expect(mockModel_hashObject.mock.calls[1]).toEqual(["test/dist/test_data.csv", { "type": "blob", "write": true }]);
+          expect(mockModel_hashObject.mock.calls[0]).toEqual(['test/dist/test_data.csv', { 'type': 'blob' }]);
+          expect(mockModel_hashObject.mock.calls[1]).toEqual(['test/dist/test_data.csv', { 'type': 'blob', 'write': true }]);
 
           expect(mockModel__refResolve).toHaveBeenCalledTimes(3);
           expect(mockModel__refResolve.mock.calls[0]).toEqual(['refs/stash']);
@@ -1081,18 +1081,18 @@ WIP on master: 47af1af Add good_bye`;
           expect(mockModel__refResolve.mock.calls[2]).toEqual(['refs/heads/master']);
 
           expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(2);
-          expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["ORIG_HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b"]);
-          expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(["refs/stash", "3df8acdb918794c2bda15ae45fec2c5929ca4929", false]);
+          expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(['ORIG_HEAD', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']);
+          expect(mockModel__writeSyncFile.mock.calls[1]).toEqual(['refs/stash', '3df8acdb918794c2bda15ae45fec2c5929ca4929', false]);
 
           expect(mockModel__writeLog).toHaveBeenCalledTimes(2);
-          expect(mockModel__writeLog.mock.calls[0]).toEqual(["logs/HEAD", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "reset: moving to HEAD", false]);
-          expect(mockModel__writeLog.mock.calls[1]).toEqual(["logs/refs/stash", "47af1af6722639322ccf17ea5f873d0e483c364f", "3df8acdb918794c2bda15ae45fec2c5929ca4929", "WIP on master: 4e2b7c4 Add good_bye", false]);
+          expect(mockModel__writeLog.mock.calls[0]).toEqual(['logs/HEAD', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'reset: moving to HEAD', false]);
+          expect(mockModel__writeLog.mock.calls[1]).toEqual(['logs/refs/stash', '47af1af6722639322ccf17ea5f873d0e483c364f', '3df8acdb918794c2bda15ae45fec2c5929ca4929', 'WIP on master: 4e2b7c4 Add good_bye', false]);
 
           expect(mockModel_catFile).toHaveBeenCalledTimes(1);
-          expect(mockModel_catFile.mock.calls[0]).toEqual(["2938ad2ab5722adf9b48ff5bac74989eaa2d144c"]);
+          expect(mockModel_catFile.mock.calls[0]).toEqual(['2938ad2ab5722adf9b48ff5bac74989eaa2d144c']);
 
           expect(mockModel__createCommit).toHaveBeenCalledTimes(1);
-          expect(mockModel__createCommit.mock.calls[0]).toEqual(["2938ad2ab5722adf9b48ff5bac74989eaa2d144c", "4e2b7c47eb492ab07c5d176dccff3009c1ebc79b", "WIP on master: 4e2b7c4 Add good_bye"]);
+          expect(mockModel__createCommit.mock.calls[0]).toEqual(['2938ad2ab5722adf9b48ff5bac74989eaa2d144c', '4e2b7c47eb492ab07c5d176dccff3009c1ebc79b', 'WIP on master: 4e2b7c4 Add good_bye']);
         });
       });
     });
@@ -1245,7 +1245,7 @@ Dropped stash@{1} (3df8acdb918794c2bda15ae45fec2c5929ca4929)`);
           model.stash('show', { print: true });
 
           expect(mockModel_diff).toHaveBeenCalledTimes(1);
-          expect(mockModel_diff.mock.calls[0]).toEqual([{ "compareBlobHash": "b6f2667d13461fb6c521c1975018124db2e2d1e3" }]);
+          expect(mockModel_diff.mock.calls[0]).toEqual([{ 'compareBlobHash': 'b6f2667d13461fb6c521c1975018124db2e2d1e3' }]);
         });
       });
     });
@@ -1260,13 +1260,13 @@ Dropped stash@{1} (3df8acdb918794c2bda15ae45fec2c5929ca4929)`);
           model.stash('drop');
 
           expect(mockModel__writeSyncFile).toHaveBeenCalledTimes(1);
-          expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(["refs/stash", "3df8acdb918794c2bda15ae45fec2c5929ca4929"]);
+          expect(mockModel__writeSyncFile.mock.calls[0]).toEqual(['refs/stash', '3df8acdb918794c2bda15ae45fec2c5929ca4929']);
 
           expect(mockModel__deleteLineLog).toHaveBeenCalledTimes(1);
-          expect(mockModel__deleteLineLog.mock.calls[0]).toEqual(["logs/refs/stash", "stash@{0}"]);
+          expect(mockModel__deleteLineLog.mock.calls[0]).toEqual(['logs/refs/stash', 'stash@{0}']);
 
           expect(console.log).toHaveBeenCalledTimes(1);
-          expect(console.log.mock.calls[0]).toEqual(["Dropped refs/stash@{0} (00fa2d2f5b497b41e288f8c9bce3bf61515d3101)"]);
+          expect(console.log.mock.calls[0]).toEqual(['Dropped refs/stash@{0} (00fa2d2f5b497b41e288f8c9bce3bf61515d3101)']);
         });
       });
 
@@ -1278,10 +1278,10 @@ Dropped stash@{1} (3df8acdb918794c2bda15ae45fec2c5929ca4929)`);
           model.stash('drop', { stashKey: 'stash@{1}' });
 
           expect(mockModel__deleteLineLog).toHaveBeenCalledTimes(1);
-          expect(mockModel__deleteLineLog.mock.calls[0]).toEqual(["logs/refs/stash", "stash@{1}"]);
+          expect(mockModel__deleteLineLog.mock.calls[0]).toEqual(['logs/refs/stash', 'stash@{1}']);
 
           expect(console.log).toHaveBeenCalledTimes(1);
-          expect(console.log.mock.calls[0]).toEqual(["Dropped stash@{1} (3df8acdb918794c2bda15ae45fec2c5929ca4929)"]);
+          expect(console.log.mock.calls[0]).toEqual(['Dropped stash@{1} (3df8acdb918794c2bda15ae45fec2c5929ca4929)']);
         });
       });
     });
@@ -1308,12 +1308,12 @@ ${colorize('4e2b7c4', 'info')} HEAD@{3}: clone: from https://docs.google.com/spr
 
       recursive.mockReturnValueOnce(Promise.resolve(
         [
-          "test/localRepo/.sit/refs/heads/develop",
-          "test/localRepo/.sit/refs/heads/master",
-          "test/localRepo/.sit/refs/remotes/origin/HEAD",
-          "test/localRepo/.sit/refs/remotes/origin/master",
-          "test/localRepo/.sit/refs/remotes/origin/test",
-          "test/localRepo/.sit/refs/stash"
+          'test/localRepo/.sit/refs/heads/develop',
+          'test/localRepo/.sit/refs/heads/master',
+          'test/localRepo/.sit/refs/remotes/origin/HEAD',
+          'test/localRepo/.sit/refs/remotes/origin/master',
+          'test/localRepo/.sit/refs/remotes/origin/test',
+          'test/localRepo/.sit/refs/stash'
         ])
       );
 
@@ -1379,10 +1379,10 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
         model.createPullRequestData(toData, fromData, (result) => {
           expect(result).toEqual(
             [
-              ["日本語", "英語", "キー", "Index", "Status"],
-              ["こんにちは", "hello", "common.greeting.hello", 0, ""],
-              ["さようなら", "goodbye", "common.greeting.good_bye", 1, "±"],
-              ["おはよう", "good morning", "common.greeting.good_morning", 2, "±"],
+              ['日本語', '英語', 'キー', 'Index', 'Status'],
+              ['こんにちは', 'hello', 'common.greeting.hello', 0, ''],
+              ['さようなら', 'goodbye', 'common.greeting.good_bye', 1, '±'],
+              ['おはよう', 'good morning', 'common.greeting.good_morning', 2, '±'],
               [''],
               ['reviewers', ''],
               ['assignees', 'yukihirop'],
@@ -1415,12 +1415,12 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
         model.createPullRequestData(toData, fromData, (result) => {
           expect(result).toEqual(
             [
-              ["日本語", "英語", "キー", "Index", "Status"],
-              ["こんにちは", "hello", "common.greeting.hello", 0, ""],
-              ["さようなら", "goodbye", "common.greeting.good_bye", 1, ""],
-              ["おはよう", "good morning", "common.greeting.good_morning", 2, "-"],
-              ["バイバイ", "bye bye", "common.greeting.bye_bye", 2, "+"],
-              ["おやすみなさい", "good night", "common.greeting.good_night", 3, "+"],
+              ['日本語', '英語', 'キー', 'Index', 'Status'],
+              ['こんにちは', 'hello', 'common.greeting.hello', 0, ''],
+              ['さようなら', 'goodbye', 'common.greeting.good_bye', 1, ''],
+              ['おはよう', 'good morning', 'common.greeting.good_morning', 2, '-'],
+              ['バイバイ', 'bye bye', 'common.greeting.bye_bye', 2, '+'],
+              ['おやすみなさい', 'good night', 'common.greeting.good_night', 3, '+'],
               [''],
               ['reviewers', ''],
               ['assignees', 'yukihirop'],

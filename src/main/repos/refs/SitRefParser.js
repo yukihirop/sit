@@ -27,7 +27,7 @@ class SitRefParser extends SitBase {
     let commitHash = data.trim();
     let hash;
 
-    if (data.startsWith("ref: ")) {
+    if (data.startsWith('ref: ')) {
       commitHash = this.repo._refResolve(data.slice(5));
     }
 

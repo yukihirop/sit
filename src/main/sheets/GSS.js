@@ -11,7 +11,7 @@ const Worksheet = require('./Worksheet');
 const SitSetting = require('../SitSetting');
 const SitConfig = require('../repos/SitConfig');
 
-const IGNORE_SHEETS = ["refs/remotes", "logs/refs/remotes"];
+const IGNORE_SHEETS = ['refs/remotes', 'logs/refs/remotes'];
 
 class GSS {
   constructor(opts = {}) {
