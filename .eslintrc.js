@@ -30,6 +30,9 @@ module.exports = {
     "jest/no-test-prefixes": "off",
     "object-curly-newline": "off",
     "one-var": "off",
-    "max-len": "off"
+    "max-len": "off",
+    "no-tabs": "off",
+    "jest/no-standalone-expect": "off",
+    "prefer-template": "off"
   },
 };
