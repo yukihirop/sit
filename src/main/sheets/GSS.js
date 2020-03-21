@@ -11,7 +11,7 @@ const Worksheet = require('./Worksheet');
 const SitSetting = require('../SitSetting');
 const SitConfig = require('../repos/SitConfig');
 
-const IGNORE_SHEETS = ["refs/remotes", "logs/refs/remotes"]
+const IGNORE_SHEETS = ["refs/remotes", "logs/refs/remotes"];
 
 class GSS {
   constructor(opts = {}) {
@@ -21,18 +21,18 @@ class GSS {
     };
     const gopts = Object.assign({}, defaultOpts, opts);
 
-    this.opts = gopts
-    this.url = opts.url
-    this.worksheet = new Worksheet()
+    this.opts = gopts;
+    this.url = opts.url;
+    this.worksheet = new Worksheet();
   }
 
   loadInfo(repoName, callback) {
     let remoteURL;
 
     if (!this.url) {
-      remoteURL = new SitConfig('local').config.remote[repoName].url
+      remoteURL = new SitConfig('local').config.remote[repoName].url;
     } else {
-      remoteURL = this.url
+      remoteURL = this.url;
     }
 
     return Client(remoteURL, this.opts).then(doc => {
@@ -48,38 +48,38 @@ class GSS {
         }).catch(err => reject(err));
       }).then(sheets => {
         if (callback) callback(doc, sheets);
-      })
+      });
     });
   }
 
   getSheetNames(repoName, callback) {
     this.loadInfo(repoName, async (_, sheets) => {
       const sheetNames = await sheets.reduce(async (pacc, sheet) => {
-        await sheet.loadHeaderRow()
+        await sheet.loadHeaderRow();
 
-        let acc = await pacc
+        let acc = await pacc;
 
         if (isEqual(sheet.headerValues, this.header())) {
-          acc.push(sheet._rawProperties.title)
+          acc.push(sheet._rawProperties.title);
         }
-        return acc
-      }, Promise.resolve([]))
+        return acc;
+      }, Promise.resolve([]));
 
-      const diff = diffArray(IGNORE_SHEETS, sheetNames)
-      callback(diff['added'])
-    })
+      const diff = diffArray(IGNORE_SHEETS, sheetNames);
+      callback(diff['added']);
+    });
   }
 
   getRows(repoName, sheetName, header = this.header()) {
     return new Promise((resolve, reject) => {
       this.loadInfo(repoName, (_, sheets) => {
-        const sheet = sheets.filter(sheet => sheet._rawProperties.title == sheetName)[0]
+        const sheet = sheets.filter(sheet => sheet._rawProperties.title == sheetName)[0];
         if (sheet) {
           sheet.getRows()
             .then(rows => resolve(this._rows2CSV(rows, header)))
-            .catch(err => reject(err))
+            .catch(err => reject(err));
         } else {
-          reject(new Error(`Do not exist sheet: ${sheetName}`))
+          reject(new Error(`Do not exist sheet: ${sheetName}`));
         }
       });
     });
@@ -94,7 +94,7 @@ class GSS {
     const worksheet = this.worksheet;
 
     return this.loadInfo(repoName, (doc, sheets) => {
-      const sheet = sheets.filter(sheet => sheet._rawProperties.title == sheetName)[0]
+      const sheet = sheets.filter(sheet => sheet._rawProperties.title == sheetName)[0];
       new Promise((resolve, reject) => {
         const header = data[0];
 
@@ -143,9 +143,9 @@ class GSS {
 
   header() {
     const sheetSchema = SitSetting.sheet.gss.openAPIV3Schema.properties;
-    const keys = Object.keys(sheetSchema)
+    const keys = Object.keys(sheetSchema);
     const result = keys.map(key => {
-      return sheetSchema[key]['description']
+      return sheetSchema[key]['description'];
     });
     return result;
   }
@@ -157,9 +157,9 @@ class GSS {
       let rowResult = [];
 
       header.forEach(header => {
-        rowResult.push(row[header])
+        rowResult.push(row[header]);
       });
-      result.push(rowResult)
+      result.push(rowResult);
     });
     result.unshift(header);
 

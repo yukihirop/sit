@@ -1,6 +1,6 @@
 'use strict';
 
-require('./utils/global')
+require('./utils/global');
 
 const {
   appendFile,
@@ -18,7 +18,7 @@ const SitSetting = require('./SitSetting');
 
 class Clasp {
   constructor(opts) {
-    this.localRepoName = SitSetting.repo.local
+    this.localRepoName = SitSetting.repo.local;
     this.localRepo = this.findLocalRepo() || `./${this.localRepoName}`;
     this.claspPath = `${this.localRepo}/scripts/clasp`;
   }
@@ -47,20 +47,20 @@ class Clasp {
   }
 
   findLocalRepo(path = process.env.SIT_DIR || '.', required = false) {
-    const apath = absolutePath(path)
-    const repoPath = `${apath}/${this.localRepoName}`
+    const apath = absolutePath(path);
+    const repoPath = `${apath}/${this.localRepoName}`;
     if (isExistFile(repoPath)) {
-      return pathRelative(currentPath, repoPath)
+      return pathRelative(currentPath, repoPath);
     } else {
-      const parent = pathJoin(apath, '..')
+      const parent = pathJoin(apath, '..');
       if (parent === apath) {
         if (required) {
-          throw new Error('No sit directory.')
+          throw new Error('No sit directory.');
         } else {
-          return null
+          return null;
         }
       } else {
-        return this.findLocalRepo(parent, required)
+        return this.findLocalRepo(parent, required);
       }
     }
   }

@@ -41,7 +41,7 @@ class SitRepo extends SitBaseRepo {
     const { data } = opts;
 
     if (isExistFile(this.localRepo)) {
-      return false
+      return false;
     } else {
       this._mkdirSyncRecursive()
         ._mkdirSyncRecursive("refs/heads")
@@ -55,9 +55,9 @@ class SitRepo extends SitBaseRepo {
       writeSyncFile(`${this.homeDir}/.sitconfig`, "", true);
 
       // Create distFile
-      this._createDistFile(data)
+      this._createDistFile(data);
 
-      return true
+      return true;
     }
   }
 
@@ -68,7 +68,7 @@ class SitRepo extends SitBaseRepo {
       rmDirSync(localRepo);
     } else {
       console.log(`Do not exist local repo: ${localRepo}`);
-      return
+      return;
     }
   }
 
@@ -86,7 +86,7 @@ class SitRepo extends SitBaseRepo {
     // STEP 5: Update logs/refs/heads/master
     // STEP 6: Update logs/refs/remotes/origin/HEAD
     // STEP 7: Update logs/HEAD
-    const mergeCommitHash = this._createMergeCommit(masterHash, this._INITIAL_HASH(), 'master', type)
+    const mergeCommitHash = this._createMergeCommit(masterHash, this._INITIAL_HASH(), 'master', type);
     this._writeSyncFile("refs/heads/master", mergeCommitHash)
       ._writeSyncFile(`refs/remotes/${repoName}/HEAD`, `ref: refs/remotes/${repoName}/master`)
       ._writeLog("logs/refs/heads/master", this._INITIAL_HASH(), mergeCommitHash, `clone: from ${url}`)
@@ -94,7 +94,7 @@ class SitRepo extends SitBaseRepo {
       ._writeLog("logs/HEAD", this._INITIAL_HASH(), mergeCommitHash, `clone: from ${url}`);
 
     // STEP 8: Update dist file instead of Update index
-    this._createDistFile(masterData, true)
+    this._createDistFile(masterData, true);
   }
 
   isLocalRepo() {
@@ -114,11 +114,11 @@ class SitRepo extends SitBaseRepo {
 
     this.catFile(blobHash)
       .then(obj => {
-        const stream = obj.serialize().toString()
-        const csvData = stream.split('\n').map(line => { return line.split(',') })
+        const stream = obj.serialize().toString();
+        const csvData = stream.split('\n').map(line => { return line.split(','); });
         callback(csvData);
       })
-      .catch(err => { throw err });
+      .catch(err => { throw err; });
   }
 
   _add(path, opts) {
@@ -133,18 +133,18 @@ class SitRepo extends SitBaseRepo {
     return new Promise((resolve, reject) => {
       this._objectFind(name)
         .then(sha => {
-          const { err, obj } = this._objectRead(sha)
-          if (err) reject(err)
-          resolve(obj)
+          const { err, obj } = this._objectRead(sha);
+          if (err) reject(err);
+          resolve(obj);
         })
         .catch(err => reject(err));
-    })
+    });
   }
 
   hashObject(path, opts) {
     const { type, write } = opts;
     const { err, data } = fileSafeLoad(path);
-    if (err) die(err.message)
+    if (err) die(err.message);
     return this._objectHash(data.trim(), type, write);
   }
 
@@ -164,7 +164,7 @@ class SitRepo extends SitBaseRepo {
       } else {
         this._objectFind(deleteBranch).then((sha) => {
           if (!sha) {
-            die(`error: branch '${deleteBranch}' not found.`)
+            die(`error: branch '${deleteBranch}' not found.`);
           }
 
           // STEP 1: Delete logs/refs/heads/<deleteBranch>
@@ -174,12 +174,12 @@ class SitRepo extends SitBaseRepo {
             ._deleteSyncFile(`refs/heads/${deleteBranch}`);
 
           console.log(`Deleted branch ${deleteBranch} ( was ${deleteHash.slice(0, 7)})`);
-          return
+          return;
         });
       }
 
     } else if (moveBranch) {
-      const currentHash = this._refResolve('HEAD')
+      const currentHash = this._refResolve('HEAD');
 
       // STEP 1: Copy from refs/heads/<currentBranch> to refs/heads/<moveBranch>
       // STEP 2: Copy from logs/refs/heads/<currentBranch> to logs/reefs/heads/<moveBranch>
@@ -192,7 +192,7 @@ class SitRepo extends SitBaseRepo {
         ._writeLog("logs/HEAD", currentHash, currentHash, `Branch: renamed refs/heads/origin to refs/heads/${moveBranch}`)
         ._writeSyncFile(`HEAD`, `ref: refs/heads/${moveBranch}`, false)
         ._deleteSyncFile(`refs/heads/${currentBranch}`)
-        ._deleteSyncFile(`logs/refs/heads/${currentBranch}`)
+        ._deleteSyncFile(`logs/refs/heads/${currentBranch}`);
 
     } else {
 
@@ -205,19 +205,19 @@ class SitRepo extends SitBaseRepo {
       recursive(fullBranchDirPath)
         .then(files => {
           const result = files.reduce((acc, file) => {
-            const refPath = pathRelative(this.localRepo, file)
+            const refPath = pathRelative(this.localRepo, file);
             const branch = this._branchResolve(refPath);
-            const refParser = new SitRefParser(this, branch, refPath)
+            const refParser = new SitRefParser(this, branch, refPath);
 
             if (branch === currentBranch) {
               acc.push(`* ${refParser.displayedBranch()}`);
             } else {
               acc.push(`  ${refParser.displayedBranch()}`);
             }
-            return acc
-          }, [])
+            return acc;
+          }, []);
           console.log(result.join('\n'));
-          return
+          return;
         })
         .catch(err => {
           die(err.message);
@@ -232,14 +232,14 @@ class SitRepo extends SitBaseRepo {
     let isRemote;
 
     if (repoName && name) {
-      isRemote = true
+      isRemote = true;
     } else if (!repoName && name) {
-      isRemote = false
+      isRemote = false;
     } else if (repoName && !name) {
-      isRemote = false
+      isRemote = false;
       // May be repoName mean branch
-      name = repoName
-      repoName = null
+      name = repoName;
+      repoName = null;
     }
 
     if (repoName) {
@@ -256,7 +256,7 @@ Please make sure you have the correct access rights and the repository exists.`)
     if (!branch && !isRemote) {
       if (name === currentBranch) {
         console.log(`Already on '${name}'`);
-        return
+        return;
       } else if (name) {
         this._objectFind(name)
           .then(sha => {
@@ -265,29 +265,29 @@ Please make sure you have the correct access rights and the repository exists.`)
               // STEP 1: Update HEAD
               // STEP 2: Append logs/HEAD
               // STEP 3: Update dist file instead of Update index
-              const blobHash = this._refBlobFromCommitHash(sha)
+              const blobHash = this._refBlobFromCommitHash(sha);
 
               this._writeSyncFile(`HEAD`, `ref: refs/heads/${name}`, false)
                 ._writeLog("logs/HEAD", currentHash, sha, `checkout: moving from ${currentBranch} to ${name}`)
                 .catFile(blobHash).then(obj => {
                   writeSyncFile(this.distFilePath, obj.serialize().toString());
-                })
+                });
 
               console.log(`Switched to branch '${name}'`);
-              return
+              return;
             }
           })
           .catch(err => {
             die(err.message);
-          })
+          });
       }
       // checkout local from remote
     } else if (!branch && isRemote) {
-      const refRemotePath = `refs/remotes/${repoName}/${name}`
+      const refRemotePath = `refs/remotes/${repoName}/${name}`;
 
       if (!this._isExistFile(refRemotePath)) {
-        const err = new Error(`error: pathspec '${name}' did not match any file(s) known to sit`)
-        die(err.message)
+        const err = new Error(`error: pathspec '${name}' did not match any file(s) known to sit`);
+        die(err.message);
       }
 
       const branchHash = this._refResolve(refRemotePath);
@@ -303,11 +303,11 @@ Please make sure you have the correct access rights and the repository exists.`)
         .checkout(null, name);
 
     } else if (branch) {
-      const validator = new SitRepoValidator()
+      const validator = new SitRepoValidator();
 
       if (!validator.isBranch(branch)) {
-        const err = validator.errors[0]
-        die(err.message)
+        const err = validator.errors[0];
+        die(err.message);
       }
 
       const fullCurrentRefPath = this._getPath(`refs/heads/${branch}`);
@@ -326,7 +326,7 @@ Please make sure you have the correct access rights and the repository exists.`)
           ._writeLog(`logs/refs/heads/${branch}`, null, currentHash, "branch: Created from HEAD");
 
         console.log(`Switched to a new branch '${branch}'`);
-        return
+        return;
       }
     }
   }
@@ -354,10 +354,10 @@ Please make sure you have the correct access rights and the repository exists.`)
               .replace(/^\+.*/gm, colorize('$&', 'added'))
               .replace(/^@@.+@@/gm, colorize('$&', 'section'));
             console.log(patch);
-            return
+            return;
           }
-        })
-      })
+        });
+      });
 
     } else {
       const calculateHash = this.hashObject(this.distFilePath, opts);
@@ -368,7 +368,7 @@ Please make sure you have the correct access rights and the repository exists.`)
         const { err, data } = fileSafeLoad(this.distFilePath);
 
         if (err) {
-          die(err.message)
+          die(err.message);
         }
         if (headStream !== data) {
           let patch = jsdiff.createPatch(index, headStream, data, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
@@ -379,7 +379,7 @@ Please make sure you have the correct access rights and the repository exists.`)
             .replace(/^\+.*/gm, colorize('$&', 'added'))
             .replace(/^@@.+@@/gm, colorize('$&', 'section'));
           console.log(patch);
-          return
+          return;
         }
       });
     }
@@ -393,20 +393,20 @@ Please make sure you have the correct access rights and the repository exists.`)
     const calculateHash = this.hashObject(this.distFilePath, opts);
 
     if (currentHash !== calculateHash) {
-      const modified = `modified: ${this.distFilePath}`
+      const modified = `modified: ${this.distFilePath}`;
       console.log(`\
 On branch ${currentBranch}\n\
 
 \t${colorize(modified, 'mark')}\n\
 
 no changes added to commit`);
-      return
+      return;
     } else {
       console.log(`\
 On branch ${currentBranch}\n\
 nothing to commit`
       );
-      return
+      return;
     }
   }
 
@@ -432,7 +432,7 @@ nothing to commit`
         ._writeSyncFile('ORIG_HEAD', beforeHEADHash)
         ._writeSyncFile(refBranch, afterHEADHash)
         ._writeLog("logs/HEAD", beforeHEADHash, afterHEADHash, `commit ${message}`)
-        ._writeLog(`logs/${refBranch}`, beforeHEADHash, afterHEADHash, `commit ${message}`)
+        ._writeLog(`logs/${refBranch}`, beforeHEADHash, afterHEADHash, `commit ${message}`);
 
       // STEP 7: Update index
       // Do not necessary
@@ -440,11 +440,11 @@ nothing to commit`
       // STEP 8: display info
       // TODO: display insertions(+), deletions(-) info
       console.log(`[${branch} ${afterHEADHash.slice(0, 7)}] ${message}`);
-      return
+      return;
 
     } else if (isExistMessage && !isChangeHash) {
       console.log(`On branch ${branch}\nnothing to commit`);
-      return
+      return;
     } else {
       die('Need message to commit');
     }
@@ -472,13 +472,13 @@ nothing to commit`
       } else {
         reject(new Error(`\
 error: src refspec unknown does not match any\n\
-error: failed to push some refs to '${repoName}'`))
+error: failed to push some refs to '${repoName}'`));
       }
     });
   }
 
   fetch(repoName, branch, opts = {}, handler = () => { }) {
-    const { type, prune, remoteHash, remoteRefs, remoteBranches } = opts
+    const { type, prune, remoteHash, remoteRefs, remoteBranches } = opts;
 
     return new Promise((resolve, reject) => {
       if (repoName) {
@@ -491,10 +491,10 @@ error: failed to push some refs to '${repoName}'`))
           // STEP 1: Update FETCH_HEAD
           // STEP 2: Update logs/refs/remotes/<repoName>/<branch>
           // STEP 3: Update refs/remotes/<repoName>/<branch>
-          const afterHash = this._createMergeCommit(remoteHash, beforeHash, branch, type)
+          const afterHash = this._createMergeCommit(remoteHash, beforeHash, branch, type);
           this._writeSyncFile("FETCH_HEAD", `${afterHash}\t\tbranch '${branch}' of ${repoName}`)
             ._writeSyncFile(refPath, afterHash)
-            ._writeLog(logPath, beforeHash, afterHash, `fetch ${repoName} ${branch}: fast-forward`)
+            ._writeLog(logPath, beforeHash, afterHash, `fetch ${repoName} ${branch}: fast-forward`);
 
           resolve({ beforeHash, afterHash, branchCount });
         } else {
@@ -512,8 +512,8 @@ error: failed to push some refs to '${repoName}'`))
                   case 'added':
                     branches.forEach(b => {
                       this.fetch(repoName, b, { type: type, prune: false, verbose: false, remoteHash: remoteRefs[b] });
-                      added.push(b)
-                      msg.push(`* [new branch]\t\t${b}\t\t-> ${repoName}/${b}`)
+                      added.push(b);
+                      msg.push(`* [new branch]\t\t${b}\t\t-> ${repoName}/${b}`);
                     });
                     break;
                   case 'removed':
@@ -522,23 +522,23 @@ error: failed to push some refs to '${repoName}'`))
                       // STEP 1: Delete refs/remotes/<repoName>/<branch>
                       // STEP 2: Delete logs/refs/remotes/<repoName>/<branch>
                       this._deleteSyncFile(`refs/remotes/${repoName}/${b}`)
-                        ._deleteSyncFile(`logs/refs/remotes/${repoName}/${b}`)
+                        ._deleteSyncFile(`logs/refs/remotes/${repoName}/${b}`);
 
-                      msg.push(`- [deleted]\t\t(none)\t\t-> ${repoName}/${b}`)
+                      msg.push(`- [deleted]\t\t(none)\t\t-> ${repoName}/${b}`);
                     });
                     break;
                 }
               });
 
               if (added.length > 1) {
-                handler(repoName, added)
+                handler(repoName, added);
               }
 
               resolve(msg);
-            })
+            });
         }
       } else {
-        reject(new Error("repository is required"))
+        reject(new Error("repository is required"));
       }
     });
   }
@@ -563,8 +563,8 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
 
       // STEP 1: Update COMMIT_EDITMSG (MERGE_MSG + α)
       const { err, data } = fileSafeLoad(`${this.localRepo}/MERGE_MSG`);
-      const mergeMsg = data
-      if (err) die(err.message)
+      const mergeMsg = data;
+      if (err) die(err.message);
 
       let msg = `\
 # It looks like you may be committing a merge.\n\
@@ -581,7 +581,7 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
 #
 # Changes for commit:\n\
 #\tmodified:\t${this.distFilePath}\n\
-#\n`
+#\n`;
 
       msg = `${mergeMsg}\n#\n${msg}`;
       this._writeSyncFile('COMMIT_EDITMSG', msg);
@@ -598,12 +598,12 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
 
           if (beforeMTime !== afterMTime) {
             const { err, data } = fileSafeLoad(`${this.localRepo}/MERGE_MSG`).split('\n')[0];
-            const commitMsg = data
-            if (err) die(err.message)
+            const commitMsg = data;
+            if (err) die(err.message);
 
             const HEADHash = this._refResolve("HEAD");
             const calculateHash = this._add(this.distFilePath, {});
-            const mergeCommitHash = this._createMergeCommit(calculateHash, HEADHash, branch, type)
+            const mergeCommitHash = this._createMergeCommit(calculateHash, HEADHash, branch, type);
             const refBranch = this._HEAD();
             const remoteHead = this._refResolve("MERGE_HEAD");
 
@@ -672,12 +672,12 @@ fatal: You have not concluded your merge (MERGE_HEAD exists)
 Please, commit your changes before you merge.`);
       } else {
         console.log("Already up to date.");
-        return
+        return;
       }
     }
 
     if (repoName && branch) {
-      const headHash = this._refResolve("HEAD")
+      const headHash = this._refResolve("HEAD");
       const remoteHash = this._refResolve(`refs/remotes/${repoName}/${branch}`);
 
       this.catFile(remoteHash).then(remoteObj => {
@@ -699,7 +699,7 @@ Please, commit your changes before you merge.`);
                 ._writeSyncFile('MERGE_MODE', '')
                 ._writeSyncFile('MERGE_MSG', `Merge remote-tracking branch '${repoName}/${branch}'\n\n# Conflict\n#\t${this.distFilePath}`)
                 ._writeSyncFile('ORIG_HEAD', headHash)
-                .hashObjectFromData(result.data.join('\n'), { type: 'blob', write: true })
+                .hashObjectFromData(result.data.join('\n'), { type: 'blob', write: true });
 
               // STEP 6: File update
               writeSyncFile(this.distFilePath, result.data.join('\n'));
@@ -708,7 +708,7 @@ Please, commit your changes before you merge.`);
 Two-way-merging ${this.distFilePath}
 CONFLICT (content): Merge conflict in ${this.distFilePath}
 two-way-merge failed; fix conflicts and then commit the result.`);
-              return
+              return;
 
             } else {
               const headBranch = this._branchResolve('HEAD');
@@ -729,12 +729,12 @@ two-way-merge failed; fix conflicts and then commit the result.`);
 Updating ${headHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\n
 Fast-forward
   ${this.distFilePath}
-  1 file changed`)
-              return
+  1 file changed`);
+              return;
             }
           });
         });
-      })
+      });
     }
   }
 
@@ -753,7 +753,7 @@ Fast-forward
 
   remote(subcommand, repoName, url, opts) {
     const { type } = opts;
-    const config = new SitConfig('local')
+    const config = new SitConfig('local');
 
     switch (subcommand) {
       case 'add':
@@ -766,7 +766,7 @@ Fast-forward
         console.log(config.config['remote'][repoName]['url']);
         break;
       default:
-        console.log(`Do not support subcommand: '${subcommand}'`)
+        console.log(`Do not support subcommand: '${subcommand}'`);
         break;
     }
   }
@@ -776,44 +776,44 @@ Fast-forward
     this.commits = this.commits || [];
     this.catFile(commitHash).then(obj => {
       if (obj instanceof SitCommit) {
-        const commitData = obj.humanizeKVLM()
-        const parent = commitData['parent']
-        this.commits.push(obj.createCommitLog(commitHash, commitData, { oneline }))
+        const commitData = obj.humanizeKVLM();
+        const parent = commitData['parent'];
+        this.commits.push(obj.createCommitLog(commitHash, commitData, { oneline }));
 
         if (parent === this._INITIAL_HASH()) {
-          return console.log(this.commits.join('\n'))
+          return console.log(this.commits.join('\n'));
         } else {
-          return this.log(parent, { oneline })
+          return this.log(parent, { oneline });
         }
       }
-    })
+    });
   }
 
   stash(subcommand = undefined, opts = {}) {
     const blobHEADHash = this._refBlob('HEAD');
 
     if (subcommand === 'save') {
-      let { saveMessage } = opts
-      if (saveMessage) saveMessage = `On ${this.currentBranch()}: ${saveMessage}`
+      let { saveMessage } = opts;
+      if (saveMessage) saveMessage = `On ${this.currentBranch()}: ${saveMessage}`;
 
       let calculateBlobHash = this.hashObject(this.distFilePath, { type: 'blob' });
 
       if (blobHEADHash === calculateBlobHash) {
-        console.log('No local changes to save')
-        return
+        console.log('No local changes to save');
+        return;
       } else {
-        const commitStash = this._refResolve('refs/stash')
-        const commitHEADHash = this._refResolve('HEAD')
-        calculateBlobHash = this.hashObject(this.distFilePath, { type: 'blob', write: true })
+        const commitStash = this._refResolve('refs/stash');
+        const commitHEADHash = this._refResolve('HEAD');
+        calculateBlobHash = this.hashObject(this.distFilePath, { type: 'blob', write: true });
 
         // STEP 1: Update ORIG_HEAD
         // STEP 2: Update logs/HEAD
         this._writeSyncFile('ORIG_HEAD', commitHEADHash)
-          ._writeLog('logs/HEAD', commitHEADHash, commitHEADHash, 'reset: moving to HEAD', false)
+          ._writeLog('logs/HEAD', commitHEADHash, commitHEADHash, 'reset: moving to HEAD', false);
 
         // STEP 3: Create stash commit
-        if (saveMessage === undefined) saveMessage = `WIP on ${this.currentBranch()}: ${commitHEADHash.slice(0, 7)} ${this._COMMIT_EDITMSG()}`
-        const genCommitHash = this._createCommit(calculateBlobHash, commitHEADHash, saveMessage)
+        if (saveMessage === undefined) saveMessage = `WIP on ${this.currentBranch()}: ${commitHEADHash.slice(0, 7)} ${this._COMMIT_EDITMSG()}`;
+        const genCommitHash = this._createCommit(calculateBlobHash, commitHEADHash, saveMessage);
 
         // STEP 3: Update refs/stash
         // STEP 4: Update logs/refs/stash
@@ -821,28 +821,28 @@ Fast-forward
         this._writeSyncFile('refs/stash', genCommitHash, false)
           ._writeLog('logs/refs/stash', commitStash, genCommitHash, saveMessage, false)
           .catFile(blobHEADHash).then(obj => {
-            writeSyncFile(this.distFilePath, obj.serialize().toString())
-            console.log(`Saved working directory and index state ${saveMessage}`)
-          })
+            writeSyncFile(this.distFilePath, obj.serialize().toString());
+            console.log(`Saved working directory and index state ${saveMessage}`);
+          });
       }
 
     } else if (subcommand === 'apply') {
 
-      let { stashKey, popHandler } = opts
-      if (!stashKey) stashKey = 'stash@{0}'
+      let { stashKey, popHandler } = opts;
+      if (!stashKey) stashKey = 'stash@{0}';
 
-      const stashCommitHash = this._refStash(stashKey, false)
-      const stashBlobHash = this._refBlobFromCommitHash(stashCommitHash)
+      const stashCommitHash = this._refStash(stashKey, false);
+      const stashBlobHash = this._refBlobFromCommitHash(stashCommitHash);
       this.catFile(stashBlobHash).then(obj => {
-        let { err, data } = fileSafeLoad(this.distFilePath)
-        if (err) die(err.message)
+        let { err, data } = fileSafeLoad(this.distFilePath);
+        if (err) die(err.message);
 
-        const distData = data.split('\n')
-        const stashData = obj.serialize().toString().split('\n')
+        const distData = data.split('\n');
+        const stashData = obj.serialize().toString().split('\n');
 
         this._twoWayMerge(distData, stashData, "Updated upstream", "Stashed changes", result => {
           // STEP 1: Create sit object(blob)
-          this.hashObjectFromData(result.data.join('\n'), { type: 'blob', write: true })
+          this.hashObjectFromData(result.data.join('\n'), { type: 'blob', write: true });
           // STEP 2: Update dist file
           writeSyncFile(this.distFilePath, result.data.join('\n'));
 
@@ -851,12 +851,12 @@ Fast-forward
             console.log(`\
 Two-way-merging ${this.distFilePath}
 CONFLICT (content): Merge conflict in ${this.distFilePath}`);
-            return
+            return;
 
           } else {
 
             if (popHandler) {
-              popHandler(stashKey, stashCommitHash)
+              popHandler(stashKey, stashCommitHash);
             } else {
               console.log(`\
 On branch ${this.currentBranch()}
@@ -864,22 +864,22 @@ Changes not staged for commit:
 
 \tmodified:\t${this.distFilePath}
 
-no changes added to commit`)
-              return
+no changes added to commit`);
+              return;
             }
           }
-        })
-      })
+        });
+      });
 
     } else if (subcommand === 'pop') {
-      let { stashKey } = opts
-      if (!stashKey) stashKey = 'stash@{0}'
+      let { stashKey } = opts;
+      if (!stashKey) stashKey = 'stash@{0}';
 
       const popHandler = (stashKey, stashCommitHash) => {
         if (stashKey === 'stash@{0}') {
-          this._writeSyncFile('refs/stash', this._refStash(stashKey, true))
+          this._writeSyncFile('refs/stash', this._refStash(stashKey, true));
         }
-        this._deleteLineLog('logs/refs/stash', stashKey)
+        this._deleteLineLog('logs/refs/stash', stashKey);
 
         console.log(`\
 On branch ${this.currentBranch()}
@@ -887,92 +887,92 @@ Changes not staged for commit:
 
 \tmodified:\t${this.distFilePath}
 
-Dropped ${stashKey} (${stashCommitHash})`)
-        return
-      }
+Dropped ${stashKey} (${stashCommitHash})`);
+        return;
+      };
 
-      this.stash('apply', { stashKey, popHandler })
+      this.stash('apply', { stashKey, popHandler });
 
     } else if (subcommand === 'list') {
-      const currentBranch = this._branchResolve('HEAD')
-      const parser = new SitLogParser(this, currentBranch, 'logs/refs/stash')
+      const currentBranch = this._branchResolve('HEAD');
+      const parser = new SitLogParser(this, currentBranch, 'logs/refs/stash');
       try {
-        const stashList = parser.parseForLog('stash')
-        console.log(stashList)
+        const stashList = parser.parseForLog('stash');
+        console.log(stashList);
       } catch (err) {
-        console.log('stash list is nothing')
+        console.log('stash list is nothing');
       }
     } else if (subcommand === 'show') {
-      let { print, stashKey } = opts
-      if (!stashKey) stashKey = 'stash@{0}'
+      let { print, stashKey } = opts;
+      if (!stashKey) stashKey = 'stash@{0}';
 
-      const stashCommitHash = this._refStash(stashKey, false)
-      const compareBlobHash = this._refBlobFromCommitHash(stashCommitHash)
+      const stashCommitHash = this._refStash(stashKey, false);
+      const compareBlobHash = this._refBlobFromCommitHash(stashCommitHash);
 
       if (print) {
-        this.diff({ compareBlobHash })
+        this.diff({ compareBlobHash });
       }
     } else if (subcommand === 'drop') {
-      let { stashKey } = opts
-      if (!stashKey) stashKey = 'stash@{0}'
+      let { stashKey } = opts;
+      if (!stashKey) stashKey = 'stash@{0}';
 
-      const deleteStashKey = this._refStash(stashKey, false)
+      const deleteStashKey = this._refStash(stashKey, false);
 
       if (stashKey === 'stash@{0}') {
-        this._writeSyncFile('refs/stash', this._refStash(stashKey, true))
+        this._writeSyncFile('refs/stash', this._refStash(stashKey, true));
       }
-      this._deleteLineLog('logs/refs/stash', stashKey)
+      this._deleteLineLog('logs/refs/stash', stashKey);
 
       if (stashKey === 'stash@{0}') {
-        console.log(`Dropped refs/stash@{0} (${deleteStashKey})`)
+        console.log(`Dropped refs/stash@{0} (${deleteStashKey})`);
       } else {
-        console.log(`Dropped ${stashKey} (${deleteStashKey})`)
+        console.log(`Dropped ${stashKey} (${deleteStashKey})`);
       }
     }
   }
 
   reflog(opts = {}) {
     try {
-      const currentBranch = this._branchResolve('HEAD')
-      const parser = new SitLogParser(this, currentBranch, 'logs/HEAD')
-      const reflogList = parser.parseForLog('HEAD')
+      const currentBranch = this._branchResolve('HEAD');
+      const parser = new SitLogParser(this, currentBranch, 'logs/HEAD');
+      const reflogList = parser.parseForLog('HEAD');
 
-      console.log(reflogList)
+      console.log(reflogList);
     } catch (err) {
-      console.log('reflog list is nothing')
+      console.log('reflog list is nothing');
     }
   }
 
   showRef(opts = {}) {
-    const currentBranch = this._branchResolve('HEAD')
+    const currentBranch = this._branchResolve('HEAD');
 
     recursive(`${this.localRepo}/refs`).then(files => {
       const result = files.reduce((acc, file) => {
-        const refPath = pathRelative(this.localRepo, file)
-        const parser = new SitRefParser(this, currentBranch, refPath)
-        acc.push(parser.parseForLog())
-        return acc
-      }, [])
+        const refPath = pathRelative(this.localRepo, file);
+        const parser = new SitRefParser(this, currentBranch, refPath);
+        acc.push(parser.parseForLog());
+        return acc;
+      }, []);
 
-      console.log(result.join('\n').trim())
-    })
+      console.log(result.join('\n').trim());
+    });
   }
 
   revParse(obj, opts = {}) {
     const { short, showToplevel } = opts;
 
     if (obj === undefined && showToplevel) {
-      console.log(pathJoin(currentPath, this.localRepo))
+      console.log(pathJoin(currentPath, this.localRepo));
     } else {
       this._objectFind(obj).then(sha => {
         if (short) {
           console.log(sha.slice(0, 7));
         } else {
-          console.log(sha)
+          console.log(sha);
         }
       }).catch(err => {
         die(err.message);
-      })
+      });
     }
   }
 
@@ -993,7 +993,7 @@ Dropped ${stashKey} (${stashCommitHash})`)
               item['to'].push(index, '±');
               acc.push(item['to']);
             } else {
-              item['to'].push(index, '-')
+              item['to'].push(index, '-');
               item['from'].push(index, '+');
               acc.push(item['to']);
               acc.push(item['from']);
@@ -1006,16 +1006,16 @@ Dropped ${stashKey} (${stashCommitHash})`)
         return acc;
       }, [header]);
 
-      data.push([''])
-      data.push(['reviewers', ''])
-      data.push(['assignees', this.username()])
-      data.push(['message', ''])
-      data.push(['labels', ''])
-      data.push(['projects', ''])
-      data.push(['milestone', ''])
+      data.push(['']);
+      data.push(['reviewers', '']);
+      data.push(['assignees', this.username()]);
+      data.push(['message', '']);
+      data.push(['labels', '']);
+      data.push(['projects', '']);
+      data.push(['milestone', '']);
 
       callback(data);
-    })
+    });
   }
 }
 

@@ -1,6 +1,6 @@
 'use strict';
 
-require('./utils/global')
+require('./utils/global');
 
 const AppSheet = require('./Sheet');
 const AppRepo = require('./SitRepo');
@@ -20,8 +20,8 @@ function sit(opts) {
     type: 'GoogleSpreadSheet'
   };
 
-  process.env.SIT_DIR = (process.env.SIT_DIR === undefined) ? '.' : process.env.SIT_DIR
-  process.env.SIT_SETTING_DIR = (process.env.SIT_SETTING_DIR === undefined) ? '.' : process.env.SIT_SETTING_DIR
+  process.env.SIT_DIR = (process.env.SIT_DIR === undefined) ? '.' : process.env.SIT_DIR;
+  process.env.SIT_SETTING_DIR = (process.env.SIT_SETTING_DIR === undefined) ? '.' : process.env.SIT_SETTING_DIR;
 
   let gopts = Object.assign({}, defaultOpts, opts);
 
@@ -52,20 +52,20 @@ Please make sure you have the correct access rights and the repository exists.`)
               .then(result => {
                 if (!verbose) return;
 
-                const { beforeHash, afterHash, branchCount } = result
+                const { beforeHash, afterHash, branchCount } = result;
                 if (beforeHash === remoteHash) {
                   console.log(`\
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
-  * branch\t\t${branch}\t-> FETCH_HEAD`)
-                  return
+  * branch\t\t${branch}\t-> FETCH_HEAD`);
+                  return;
                 } else {
                   console.log(`\
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD\n\
-  ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`)
-                  return
+  ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`);
+                  return;
                 }
               })
               .catch(err => {
@@ -77,7 +77,7 @@ From ${repo.remoteRepo(repoName)}
           });
 
       } else {
-        if (!repo._isExistFile(`refs/remotes/${repoName}`)) return
+        if (!repo._isExistFile(`refs/remotes/${repoName}`)) return;
 
         sheet.getRows(repoName, "refs/remotes", ['branch', 'sha1']).then(data => {
           sheet.getSheetNames(repoName, remoteBranches => {
@@ -92,25 +92,25 @@ From ${repo.remoteRepo(repoName)}
                   .catch(_err => {
                     die(`fatal: Couldn't find remote ref '${branch}'`);
                   });
-              })
+              });
 
-              Promise.all(promises)
+              Promise.all(promises);
             })
               .then(msg => {
                 if (msg.length >= 1) {
-                  msg.unshift(`From ${repo.remoteRepo(repoName)}`)
+                  msg.unshift(`From ${repo.remoteRepo(repoName)}`);
                   console.log(msg.join('\n'));
-                  return
+                  return;
                 }
-              })
-          })
+              });
+          });
 
         }).catch(_err => {
           die(`fatal: Couldn't find remote ref '${branch}'`);
         });
       }
     }
-  }
+  };
 
   Repo.push = (repoName, branch, opts = {}) => {
     const { type, force } = opts;
@@ -135,7 +135,7 @@ Please make sure you have the correct access rights and the repository exists.`)
             return;
           }
 
-          const isPushableAboutREMOTEREADHash = (REMOTEHEADBlobHash === repo._INITIAL_HASH()) ? true : (REMOTEHEADBlobHash === remoteHash)
+          const isPushableAboutREMOTEREADHash = (REMOTEHEADBlobHash === repo._INITIAL_HASH()) ? true : (REMOTEHEADBlobHash === remoteHash);
           if (!force && (remoteHash !== undefined) && !isPushableAboutREMOTEREADHash) {
             die(`\
 To ${repo.remoteRepo(repoName)}\n\
@@ -175,12 +175,12 @@ To ${repo.remoteRepo(repoName)}`;
 
                 let detailMsg = `${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`;
                 if (force) {
-                  detailMsg = `\t+ ${detailMsg} (forced update)`
+                  detailMsg = `\t+ ${detailMsg} (forced update)`;
                 } else if (isNewBranch) {
-                  detailMsg = `\t* [new branch]\t${detailMsg}`
+                  detailMsg = `\t* [new branch]\t${detailMsg}`;
                 }
-                console.log(`${baseMsg}\n${detailMsg}`)
-                return
+                console.log(`${baseMsg}\n${detailMsg}`);
+                return;
               });
             });
           }).catch(err => {
@@ -188,10 +188,10 @@ To ${repo.remoteRepo(repoName)}`;
           });
         });
       } else {
-        die("branch is required")
+        die("branch is required");
       }
     }
-  }
+  };
 
   Repo.clone = (repoName, url, opts) => {
     sheet = new AppSheet({ ...gopts, url });
@@ -204,7 +204,7 @@ To ${repo.remoteRepo(repoName)}`;
           const remoteHash = json['master'];
 
           if (remoteHash === undefined) {
-            die(`This Spreadsheet may not be repository.\nPlease visit ${url}\nMake sure that this Spreadsheet is rpeository.`)
+            die(`This Spreadsheet may not be repository.\nPlease visit ${url}\nMake sure that this Spreadsheet is rpeository.`);
           }
 
           sheet.getRows(repoName, 'master').then(data => {
@@ -213,7 +213,7 @@ To ${repo.remoteRepo(repoName)}`;
               let result = repo.init();
 
               if (!result) {
-                throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`)
+                throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`);
               }
 
               // Copy clasp scripts
@@ -240,31 +240,31 @@ remote: done.`);
           die(`fatal: repository '${url}' not found`);
         });
       } else {
-        die('url is required')
+        die('url is required');
       }
     } else {
-      die('repository is required')
+      die('repository is required');
     }
-  }
+  };
 
   Repo.init = () => {
-    const data = sheet.header()
+    const data = sheet.header();
     const result = repo.init({ data });
     if (result) {
       console.log(`created local repo: ${repo.localRepo}`);
       console.log(`created dist file: ${repo.distFilePath}`);
-      return
+      return;
     } else {
       console.log(`already exist local repo: ${repo.localRepo}`);
-      return
+      return;
     }
-  }
+  };
 
   Repo.checkLocalRepo = () => {
     if (!repo.isLocalRepo()) {
       die(`fatal: not a sit repository (or any of the parent directories): ${repo.localRepo}`);
     };
-  }
+  };
 
   Repo.catFile = (obj, opts) => {
     const { type, size, prettyPrint } = opts;
@@ -274,54 +274,54 @@ remote: done.`);
 
         if (type) {
           console.log(result.fmt);
-          return
+          return;
         } else if (size) {
           console.log(result.size);
-          return
+          return;
         } else if (prettyPrint) {
           console.log(result.serialize().toString());
-          return
+          return;
         } else {
-          die(`Do not support options ${opts}`)
+          die(`Do not support options ${opts}`);
         }
 
       })
       .catch(err => {
         die(err.message);
       });
-  }
+  };
 
   Repo.hashObject = (path, opts = {}) => {
     return repo.hashObject(path, opts);
-  }
+  };
 
   Repo.branch = (opts = {}) => {
     return repo.branch(opts);
-  }
+  };
 
   Repo.checkout = (repoName, name, opts = {}) => {
     return repo.checkout(repoName, name, opts);
-  }
+  };
 
   Repo.status = (opts = {}) => {
     return repo.status(opts);
-  }
+  };
 
   Repo.diff = (opts = {}) => {
     return repo.diff(opts);
-  }
+  };
 
   Repo.commit = (opts = {}) => {
     return repo.commit(opts);
-  }
+  };
 
   Repo.merge = (repoName, branch, opts = {}) => {
     return repo.merge(repoName, branch, opts);
-  }
+  };
 
   Repo.browseRemote = (repoName) => {
     return repo.browseRemote(repoName);
-  }
+  };
 
   Repo.config = (key, value, opts = {}) => {
     const { global, local } = opts;
@@ -330,31 +330,31 @@ remote: done.`);
     } else if (local) {
       return new SitConfig('local').update(key, value);
     }
-  }
+  };
 
   Repo.remote = (subcommand, repoName, url, opts = {}) => {
     return repo.remote(subcommand, repoName, url, opts);
-  }
+  };
 
   Repo.log = (opts = {}) => {
-    return repo.log(repo._refResolve('HEAD'), opts)
-  }
+    return repo.log(repo._refResolve('HEAD'), opts);
+  };
 
   Repo.stash = (subcommand, opts = {}) => {
-    return repo.stash(subcommand, opts)
-  }
+    return repo.stash(subcommand, opts);
+  };
 
   Repo.reflog = (opts = {}) => {
-    return repo.reflog(opts)
-  }
+    return repo.reflog(opts);
+  };
 
   Repo.showRef = (opts = {}) => {
-    return repo.showRef(opts)
-  }
+    return repo.showRef(opts);
+  };
 
   Repo.revParse = (obj, opts = {}) => {
-    return repo.revParse(obj, opts)
-  }
+    return repo.revParse(obj, opts);
+  };
 
   Repo.pullRequest = (repoName, toFrom, opts = {}) => {
     const { type } = opts;
@@ -371,15 +371,15 @@ remote: done.`);
     }
 
     if (!toBranch || !fromBranch) {
-      die(`fatal: ambiguous argument '${toFrom}': unknown revision or path not in the working tree.`)
+      die(`fatal: ambiguous argument '${toFrom}': unknown revision or path not in the working tree.`);
     }
 
     if (!repo._isExistFile(`refs/remotes/${repoName}/${toBranch}`)) {
-      die(`error: pathspec '${repoName}/${toBranch}' did not match any file(s) known to sit`)
+      die(`error: pathspec '${repoName}/${toBranch}' did not match any file(s) known to sit`);
     }
 
     if (!repo._isExistFile(`refs/remotes/${repoName}/${fromBranch}`)) {
-      die(`error: pathspec '${repoName}/${fromBranch}' did not match any file(s) known to sit`)
+      die(`error: pathspec '${repoName}/${fromBranch}' did not match any file(s) known to sit`);
     }
 
     sheet.getRows(repoName, toBranch).then(toData => {
@@ -397,23 +397,23 @@ remote:\n\
 To ${repo.remoteRepo(repoName)}`;
 
             const detailMsg = `\tPlease look at sheet: '${prBranch}' in ${type}`;
-            console.log(`${baseMsg}\n${detailMsg}`)
-            return
-          })
-        })
-      })
-    })
-  }
+            console.log(`${baseMsg}\n${detailMsg}`);
+            return;
+          });
+        });
+      });
+    });
+  };
 
   Clasp.update = () => {
     return clasp.update();
-  }
+  };
 
   return {
     Sheet,
     Repo,
     Clasp
-  }
+  };
 }
 
 module.exports = sit;

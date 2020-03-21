@@ -1,32 +1,32 @@
 'use strict';
 
-const SitBaseConfig = require('../SitBaseConfig')
+const SitBaseConfig = require('../SitBaseConfig');
 
 describe('SitBaseConfig', () => {
-  const model = new SitBaseConfig('local')
+  const model = new SitBaseConfig('local');
 
   afterEach(() => {
-    jest.restoreAllMocks()
-  })
+    jest.restoreAllMocks();
+  });
 
   describe('#update', () => {
     it('should return correctly', () => {
       // Mock is not done unless mockReturnValue is written
-      const mockModel__updateUserAttribute = jest.spyOn(model, '_updateUserAttribute').mockReturnValue()
-      model.update('user.name', 'testname')
-      expect(mockModel__updateUserAttribute).toHaveBeenCalled()
-    })
-  })
+      const mockModel__updateUserAttribute = jest.spyOn(model, '_updateUserAttribute').mockReturnValue();
+      model.update('user.name', 'testname');
+      expect(mockModel__updateUserAttribute).toHaveBeenCalled();
+    });
+  });
 
   describe('#_updateUserAttribute', () => {
     describe('when key is name', () => {
       it('should return correctly', () => {
-        const mockModel__updateUsername = jest.spyOn(model, '_updateUsername').mockReturnValue()
-        model._updateUserAttribute('name', 'testname')
-        expect(mockModel__updateUsername).toHaveBeenCalled()
-      })
-    })
-  })
+        const mockModel__updateUsername = jest.spyOn(model, '_updateUsername').mockReturnValue();
+        model._updateUserAttribute('name', 'testname');
+        expect(mockModel__updateUsername).toHaveBeenCalled();
+      });
+    });
+  });
 
   describe('_createConfig', () => {
     describe('when type is local', () => {
@@ -44,8 +44,8 @@ describe('SitBaseConfig', () => {
               }
             }
           }
-        )
-      })
-    })
-  })
-})
+        );
+      });
+    });
+  });
+});

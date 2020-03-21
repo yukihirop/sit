@@ -14,7 +14,7 @@ const moment = require('moment');
 
 class SitBaseLogger extends SitBase {
   constructor() {
-    super()
+    super();
     this.localConfig = new SitConfig('local').config;
     this.globalConfig = new SitConfig('global').config;
   }
@@ -35,17 +35,17 @@ class SitBaseLogger extends SitBase {
 
   createLogData({ beforesha, aftersha, username, email, unixtime, timezone, message }, mkdir) {
     const space = ' ';
-    beforesha = beforesha || this._INITIAL_HASH()
-    username = username || this.username()
-    email = email || `<${this.email()}>`
-    unixtime = unixtime || moment().format('x')
-    timezone = timezone || moment().format('ZZ')
+    beforesha = beforesha || this._INITIAL_HASH();
+    username = username || this.username();
+    email = email || `<${this.email()}>`;
+    unixtime = unixtime || moment().format('x');
+    timezone = timezone || moment().format('ZZ');
 
     return `${beforesha}${space}${aftersha}${space}${username}${space}${email}${space}${unixtime}${space}${timezone}\t${message}\n`;
   }
 
   bulkOverWrite(file, data) {
-    writeSyncFile(`${this.localRepo}/${file}`, data, false)
+    writeSyncFile(`${this.localRepo}/${file}`, data, false);
   }
 
   username() {
@@ -65,7 +65,7 @@ class SitBaseLogger extends SitBase {
             result = defaultName;
           }
         } else {
-          result = defaultName
+          result = defaultName;
         }
       }
     } else {

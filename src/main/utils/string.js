@@ -19,8 +19,8 @@ const colorize = (str, colorId) => {
   var color = colors[colorId];
   // avoid highlighting the "\n" (would highlight till the end of the line)
   return str.replace(/[^\n\r]+/g, color.open + '$&' + color.close);
-}
+};
 
 module.exports = {
   colorize
-}
+};

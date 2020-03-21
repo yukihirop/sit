@@ -8,6 +8,6 @@ GoogleSpreadsheetWorksheet.prototype.getCellsInRange = async function (a1Range, 
     params: options,
   });
   return response.data.values || [];
-}
+};
 
 module.exports = GoogleSpreadsheetWorksheet;

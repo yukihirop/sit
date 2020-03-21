@@ -45,11 +45,11 @@ class SitBaseRepo extends SitBase {
   }
 
   remoteRepo(repoName) {
-    const repoData = new SitConfig('local').config.remote[repoName]
+    const repoData = new SitConfig('local').config.remote[repoName];
     if (repoData) {
-      return repoData.url
+      return repoData.url;
     } else {
-      return null
+      return null;
     }
   }
 
@@ -70,7 +70,7 @@ class SitBaseRepo extends SitBase {
             result = defaultName;
           }
         } else {
-          result = defaultName
+          result = defaultName;
         }
       }
     } else {
@@ -132,7 +132,7 @@ class SitBaseRepo extends SitBase {
     let blobHash = null;
 
     if (commitHash === this._INITIAL_HASH()) {
-      return this._INITIAL_HASH()
+      return this._INITIAL_HASH();
     }
 
     const { err, obj } = this._objectRead(commitHash);
@@ -149,7 +149,7 @@ class SitBaseRepo extends SitBase {
     let blobHash = null;
 
     if (commitHash === this._INITIAL_HASH()) {
-      return this._INITIAL_HASH()
+      return this._INITIAL_HASH();
     }
 
     const { err, obj } = this._objectRead(commitHash);
@@ -164,20 +164,20 @@ class SitBaseRepo extends SitBase {
 
   _createDistFile(data, write = false) {
     // STEP 7: Update dist file instead of Update index
-    const distDir = pathDirname(this.distFilePath)
+    const distDir = pathDirname(this.distFilePath);
     if (!isExistFile(distDir)) {
-      mkdirSyncRecursive(distDir)
+      mkdirSyncRecursive(distDir);
     }
     if (!isExistFile(this.distFilePath)) {
       writeSyncFile(this.distFilePath, data);
     }
     if (write) {
-      writeSyncFile(this.distFilePath, data)
+      writeSyncFile(this.distFilePath, data);
     }
   }
 
   _refCSVData(branch, repoName) {
-    let refPath
+    let refPath;
 
     if (repoName) {
       refPath = `refs/remotes/${repoName}/${branch}`;
@@ -186,7 +186,7 @@ class SitBaseRepo extends SitBase {
     }
 
     const parser = new SitRefParser(this, branch, refPath);
-    return parser.parseToCSV()
+    return parser.parseToCSV();
   }
 
   _refLastLogCSVData(branch, repoName) {
@@ -199,27 +199,27 @@ class SitBaseRepo extends SitBase {
     }
 
     const parser = new SitLogParser(this, branch, logPath);
-    const logData = parser.parseToCSV()
-    return [logData[0], logData.slice(-1)[0]]
+    const logData = parser.parseToCSV();
+    return [logData[0], logData.slice(-1)[0]];
   }
 
   _HEAD() {
     let { err, data } = fileSafeLoad(this.__repoFile(false, 'HEAD'));
-    if (err) die(err.message)
+    if (err) die(err.message);
     data = data.trim();
 
     if (data.startsWith("ref: ")) {
-      return data.slice(5)
+      return data.slice(5);
     } else {
-      throw new Error(`Invalid format HEAD`)
+      throw new Error(`Invalid format HEAD`);
     }
   }
 
   _COMMIT_EDITMSG() {
-    let { err, data } = fileSafeLoad(this.__repoFile(false, 'COMMIT_EDITMSG'))
-    if (err) die(err.message)
+    let { err, data } = fileSafeLoad(this.__repoFile(false, 'COMMIT_EDITMSG'));
+    if (err) die(err.message);
     data = data.trim();
-    return data
+    return data;
   }
 
   _isExistFile(path) {
@@ -227,15 +227,15 @@ class SitBaseRepo extends SitBase {
   }
 
   _writeLog(file, beforeSHA, afterSHA, message, mkdir = true) {
-    new SitLogger().write(file, beforeSHA, afterSHA, message, mkdir)
+    new SitLogger().write(file, beforeSHA, afterSHA, message, mkdir);
     return this;
   }
 
   _deleteLineLog(file, key) {
-    const parser = new SitLogParser(this, this.currentBranch(), file)
-    const logger = new SitLogger()
+    const parser = new SitLogParser(this, this.currentBranch(), file);
+    const logger = new SitLogger();
 
-    logger.bulkOverWrite(file, parser.remakeLog(key))
+    logger.bulkOverWrite(file, parser.remakeLog(key));
     return this;
   }
 
@@ -253,9 +253,9 @@ class SitBaseRepo extends SitBase {
   }
 
   _readFileSync(path) {
-    const { err, data } = fileSafeLoad(`${this.localRepo}/${path}`)
-    if (err) die(err.message)
-    return data
+    const { err, data } = fileSafeLoad(`${this.localRepo}/${path}`);
+    if (err) die(err.message);
+    return data;
   }
 
   _fileCopySync(from, to) {
@@ -289,19 +289,19 @@ class SitBaseRepo extends SitBase {
       , committer = author
       , timewithZone = `${moment().format('x')}${space}${moment().format('ZZ')}`;
 
-    result += `blob${space}${blobHash}\n`
-    result += `parent${space}${parentHash}\n`
-    result += `author${space}${author}${space}<${email}>${space}${timewithZone}\n`
-    result += `committer${space}${committer}${space}<${email}>${space}${timewithZone}\n`
-    result += '\n'
-    result += message
+    result += `blob${space}${blobHash}\n`;
+    result += `parent${space}${parentHash}\n`;
+    result += `author${space}${author}${space}<${email}>${space}${timewithZone}\n`;
+    result += `committer${space}${committer}${space}<${email}>${space}${timewithZone}\n`;
+    result += '\n';
+    result += message;
 
-    return result
+    return result;
   }
 
   _createCommit(blobHash, parentHash, message) {
-    const msg = this._createCommitMessage(blobHash, parentHash, message)
-    return this._objectHash(msg, 'commit', true)
+    const msg = this._createCommitMessage(blobHash, parentHash, message);
+    return this._objectHash(msg, 'commit', true);
   }
 
   _createMergeCommitMessage(blobHash, parentHash, branch, type) {
@@ -314,19 +314,19 @@ class SitBaseRepo extends SitBase {
       , timewithZone = `${moment().format('x')}${space}${moment().format('ZZ')}`
       , mergeMessage = `Merge from ${type}/${branch}`;
 
-    result += `blob${space}${blobHash}\n`
-    result += `parent${space}${parentHash}\n`
-    result += `author${space}${author}${space}<${author_email}>${space}${timewithZone}\n`
-    result += `committer${space}${committer}${space}<${committer_email}>${space}${timewithZone}\n`
-    result += `\n`
-    result += mergeMessage
+    result += `blob${space}${blobHash}\n`;
+    result += `parent${space}${parentHash}\n`;
+    result += `author${space}${author}${space}<${author_email}>${space}${timewithZone}\n`;
+    result += `committer${space}${committer}${space}<${committer_email}>${space}${timewithZone}\n`;
+    result += `\n`;
+    result += mergeMessage;
 
-    return result
+    return result;
   }
 
   _createMergeCommit(blobHash, parentHash, branch, type) {
-    const msg = this._createMergeCommitMessage(blobHash, parentHash, branch, type)
-    return this._objectHash(msg, 'commit', true)
+    const msg = this._createMergeCommitMessage(blobHash, parentHash, branch, type);
+    return this._objectHash(msg, 'commit', true);
   }
 
   _twoWayMerge(toData, fromData, toName, fromName, callback) {
@@ -350,16 +350,16 @@ class SitBaseRepo extends SitBase {
           item.to.push(line.to);
           item.from.push(line.from);
           arr[currentItemIndex] = item;
-          currentConflict = true
+          currentConflict = true;
         } else {
           if (currentConflict) {
             currentItemIndex++;
-            item = arr[currentItemIndex] || JSON.parse(JSON.stringify(initialItem))
+            item = arr[currentItemIndex] || JSON.parse(JSON.stringify(initialItem));
             item.startIndex = index;
             item.to.push(line.to);
             item.from.push(line.from);
             arr[currentItemIndex] = item;
-            currentConflict = false
+            currentConflict = false;
           } else {
             item.startIndex = index;
             item.to.push(line.to);
@@ -412,7 +412,7 @@ class SitBaseRepo extends SitBase {
         obj = new SitCommit(this, data);
         break;
       default:
-        throw new Error(`Unknown type ${fmt}!`)
+        throw new Error(`Unknown type ${fmt}!`);
     }
 
     return this._objectWrite(obj, write);
@@ -453,10 +453,10 @@ class SitBaseRepo extends SitBase {
 
     if (!isExistFile(path)) {
       err = new Error(`Do not exists path: ${path}`);
-      return { err, obj }
+      return { err, obj };
     }
 
-    const binary = fileUnzipSync(path, false)
+    const binary = fileUnzipSync(path, false);
 
     // Read object type
     const x = binary.indexOf(' ');
@@ -473,8 +473,8 @@ class SitBaseRepo extends SitBase {
     const data = binary.slice(y + 2);
 
     if (size != (binary.length - y - 2)) {
-      err = new Error(`Malformed object ${sha}: bad length.`)
-      return { err, obj }
+      err = new Error(`Malformed object ${sha}: bad length.`);
+      return { err, obj };
     }
 
     // Pick constructor
@@ -493,9 +493,9 @@ class SitBaseRepo extends SitBase {
         err = new Error(`Unknown type ${fmt}`);
     }
 
-    obj = new klass(this, data, size)
+    obj = new klass(this, data, size);
 
-    return { err, obj }
+    return { err, obj };
   }
 
   _objectFind(name, follow = true) {
@@ -507,8 +507,8 @@ class SitBaseRepo extends SitBase {
 
         if (shaArr.length > 1) {
           reject(new Error(`Ambigous reference ${name}: Cndidates are:\n${shaArr.reduce((acc, item) => {
-            acc = acc + `- ${item}\n`
-            return acc
+            acc = acc + `- ${item}\n`;
+            return acc;
           }, '').trim()}`));
         }
 
@@ -536,29 +536,29 @@ class SitBaseRepo extends SitBase {
     - remote branches
   */
   _objectResolve(name) {
-    const hashRE = new RegExp('^[0-9A-Fa-f]{1,40}$')
+    const hashRE = new RegExp('^[0-9A-Fa-f]{1,40}$');
     const smallHashRE = new RegExp('^[0-9A-Fa-f]{1,7}');
     const fullHeadRefPath = this._getPath(`refs/heads/${name}`);
     const fullRemoteRefPath = this._getPath(`refs/remotes/${name}`);
 
     return new Promise((resolve, reject) => {
       if (!name) {
-        resolve(null)
+        resolve(null);
       }
 
       if (name === "HEAD") {
-        resolve([this._refResolve("HEAD")])
+        resolve([this._refResolve("HEAD")]);
       } else if (name === "ORIG_HEAD") {
-        resolve([this._refResolve("ORIG_HEAD")])
+        resolve([this._refResolve("ORIG_HEAD")]);
       } else if (name === "REMOTE_HEAD") {
-        resolve([this._refResolve("REMOTE_HEAD")])
+        resolve([this._refResolve("REMOTE_HEAD")]);
       } else if (name === "FETCH_HEAD") {
-        resolve([this._refResolve("FETCH_HEAD")])
+        resolve([this._refResolve("FETCH_HEAD")]);
       }
 
       if (name.match(hashRE)) {
         if (name.length == 40) {
-          resolve([name.toLowerCase()])
+          resolve([name.toLowerCase()]);
         } else if (name.match(smallHashRE)) {
           // This is a small hash 4 seems to be the minimal length
           // for sit to consider something a short hash.
@@ -575,17 +575,17 @@ class SitBaseRepo extends SitBase {
                 let fileName = fileBasename(file);
 
                 if (fileName.startsWith(rem)) {
-                  return prefix + fileName
+                  return prefix + fileName;
                 }
               }).filter(v => v);
 
               if (candidates.length > 0) {
                 resolve(candidates);
               } else {
-                reject(new Error(`error: pathspec '${name}' did not match any file(s) known to sit`))
+                reject(new Error(`error: pathspec '${name}' did not match any file(s) known to sit`));
               }
             }).catch(err => {
-              reject(err)
+              reject(err);
             });
           } else {
             reject(new Error(`error: pathspec '${name}' did not match any file(s) known to sit`));
@@ -594,9 +594,9 @@ class SitBaseRepo extends SitBase {
           reject(new Error(`error: pathspec '${name}' did not match any file(s) known to sit`));
         }
       } else if (isExistFile(fullHeadRefPath)) {
-        resolve([this._refResolve(`refs/heads/${name}`)])
+        resolve([this._refResolve(`refs/heads/${name}`)]);
       } else if (isExistFile(fullRemoteRefPath)) {
-        resolve([this._refResolve(`refs/remotes/${name}`)])
+        resolve([this._refResolve(`refs/remotes/${name}`)]);
       } else {
         reject(new Error(`error: pathspec '${name}' did not match any file(s) known to sit`));
       }
@@ -608,7 +608,7 @@ class SitBaseRepo extends SitBase {
 
     if (isExistFile(fullRefPath)) {
       let { err, data } = fileSafeLoad(fullRefPath, false);
-      if (err) die(err.message)
+      if (err) die(err.message);
       data = data.trim();
 
       if (data.startsWith("ref: ")) {
@@ -624,33 +624,33 @@ class SitBaseRepo extends SitBase {
   }
 
   _refStash(stashKey, next = false) {
-    const parser = new SitLogParser(this, this.currentBranch(), 'logs/refs/stash')
-    const index = parser.parseForIndex('stash')
+    const parser = new SitLogParser(this, this.currentBranch(), 'logs/refs/stash');
+    const index = parser.parseForIndex('stash');
     let stashCommitHash;
 
     if (next) {
-      stashCommitHash = index[this._nextKey(stashKey)].aftersha
+      stashCommitHash = index[this._nextKey(stashKey)].aftersha;
     } else {
-      stashCommitHash = index[stashKey].aftersha
+      stashCommitHash = index[stashKey].aftersha;
     }
 
-    return stashCommitHash
+    return stashCommitHash;
   }
 
   _nextKey(key) {
     let type, num;
 
-    const atIndex = key.indexOf('@')
-    type = key.slice(0, atIndex)
-    num = parseInt(key.slice(atIndex + 2, atIndex + 3))
-    return `${type}@{${num + 1}}`
+    const atIndex = key.indexOf('@');
+    type = key.slice(0, atIndex);
+    num = parseInt(key.slice(atIndex + 2, atIndex + 3));
+    return `${type}@{${num + 1}}`;
   }
 
   _branchResolve(name) {
     if (name === 'HEAD') {
       const fullRefPath = this.__repoFile(false, name);
       let { err, data } = fileSafeLoad(fullRefPath, false);
-      if (err) die(err.message)
+      if (err) die(err.message);
       data = data.trim();
 
       if (data.startsWith("ref: ")) {
@@ -667,7 +667,7 @@ class SitBaseRepo extends SitBase {
       } else if (name.match(remoteBranchRefRE)) {
         return name.split('/').slice(2).join('/');
       } else {
-        return null
+        return null;
       }
     }
   }
@@ -690,7 +690,7 @@ class SitBaseRepo extends SitBase {
         callback(result);
       }
 
-      index++
+      index++;
     }
   }
 
@@ -700,7 +700,7 @@ class SitBaseRepo extends SitBase {
   */
   __repoFile(mkdir = false, ...path) {
     if (this.__findOrCreateDir(mkdir, ...path.slice(0, -1))) {
-      return this._getPath(...path)
+      return this._getPath(...path);
     }
   }
 
@@ -719,7 +719,7 @@ class SitBaseRepo extends SitBase {
       mkdirSyncRecursive(path);
       return path;
     } else {
-      return null
+      return null;
     }
   }
 

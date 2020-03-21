@@ -15,7 +15,7 @@ const _createSheetId = (uri, baseURL) => {
   const regExp = new RegExp(`${baseURL}/(.*?)/.*?`);
   const sheetId = uri.match(regExp)[1];
   return sheetId;
-}
+};
 
 function GSSClient(uri, opts) {
   const { baseURL } = opts;

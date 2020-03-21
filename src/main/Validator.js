@@ -13,16 +13,16 @@ function Validator(opts) {
   let _errors = [];
 
   const getErrors = () => {
-    return _errors
-  }
+    return _errors;
+  };
 
   const setErrors = (val) => {
-    _errors.push(val)
-  }
+    _errors.push(val);
+  };
 
   const isValid = () => {
-    return isVersion() && isURL()
-  }
+    return isVersion() && isURL();
+  };
 
   const isVersion = () => {
     if (version === packageJSON().version) {
@@ -32,7 +32,7 @@ function Validator(opts) {
       setErrors(err);
       return false;
     }
-  }
+  };
 
   const isURL = () => {
     let result = false;
@@ -46,17 +46,17 @@ function Validator(opts) {
             let validator = new GSSValidator(url, baseURL);
             result = validator.isSpreadSheetURL();
             if (!result) {
-              setErrors(...validator.getErrors())
+              setErrors(...validator.getErrors());
             }
-          })
+          });
         } else {
-          result = false
+          result = false;
         }
         break;
     }
 
     return result;
-  }
+  };
 
   return {
     getErrors,
@@ -64,7 +64,7 @@ function Validator(opts) {
     isValid,
     isVersion,
     isURL
-  }
+  };
 }
 
 module.exports = Validator;

@@ -3,7 +3,7 @@
 const Diff = require('diff');
 
 const csv2JSON = (csvData) => {
-  let result = {}
+  let result = {};
 
   csvData.forEach(line => {
     let key = line[0];
@@ -17,7 +17,7 @@ const csv2JSON = (csvData) => {
   });
 
   return result;
-}
+};
 
 const overrideCSV = (csvTo, csvFrom, specifyIndex) => {
   let result = [];
@@ -32,7 +32,7 @@ const overrideCSV = (csvTo, csvFrom, specifyIndex) => {
     const toData = csvTo.reduce((acc, line) => {
       acc[line[specifyIndex]] = line;
       return acc;
-    }, {})
+    }, {});
     const toKeys = Object.keys(toData);
 
     const allKeys = uniq([...toKeys, ...fromKeys]);
@@ -56,7 +56,7 @@ const overrideCSV = (csvTo, csvFrom, specifyIndex) => {
   }
 
   return result;
-}
+};
 
 // https://qiita.com/piroor/items/02885998c9f76f45bfa0
 const uniq = (array) => {
@@ -69,7 +69,7 @@ const uniq = (array) => {
     knownElements[elem] = true;
   }
   return uniquedArray;
-}
+};
 
 const diffArray = (to, from) => {
   const diff = Diff.diffArrays(to, from);
@@ -80,10 +80,10 @@ const diffArray = (to, from) => {
     let removed = item.removed;
 
     if (added) {
-      acc['added'] = acc['added'] || []
-      acc['added'].push(...item.value)
+      acc['added'] = acc['added'] || [];
+      acc['added'].push(...item.value);
     } else if (removed) {
-      acc['removed'] = acc['removed'] || []
+      acc['removed'] = acc['removed'] || [];
       acc['removed'].push(...item.value);
     }
 
@@ -99,26 +99,26 @@ const diffArray = (to, from) => {
   return {
     'added': addedOnly,
     'removed': removedOnly
-  }
-}
+  };
+};
 
 const isEqual = (to, from) => {
-  return JSON.stringify(to) == JSON.stringify(from)
-}
+  return JSON.stringify(to) == JSON.stringify(from);
+};
 
 // https://www.nxworld.net/tips/js-array-filter-snippets.html
 const _getDuplicateValues = ([...array]) => {
   return array.filter((value, index, self) => self.indexOf(value) === index && self.lastIndexOf(value) !== index);
-}
+};
 
 // https://www.nxworld.net/tips/js-array-filter-snippets.html
 const _getUniqueValues = ([...array]) => {
   return array.filter((value, index, self) => self.indexOf(value) === self.lastIndexOf(value));
-}
+};
 
 module.exports = {
   csv2JSON,
   overrideCSV,
   diffArray,
   isEqual
-}
+};

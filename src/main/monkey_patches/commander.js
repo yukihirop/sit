@@ -61,4 +61,4 @@ Command.prototype.collectAllOptions = function () {
 
 module.exports = {
   Command
-}
+};

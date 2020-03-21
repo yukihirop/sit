@@ -30,11 +30,11 @@ function Worksheet() {
     });
 
     return data;
-  }
+  };
 
   return {
     csvData
-  }
+  };
 }
 
 module.exports = Worksheet;

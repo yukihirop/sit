@@ -6,7 +6,7 @@ const {
 
 const {
   GoogleSpreadsheetWorksheet
-} = require('./google-spreadsheet/GoogleSpreadsheetWorksheet')
+} = require('./google-spreadsheet/GoogleSpreadsheetWorksheet');
 
 module.exports = {
   GoogleSpreadsheet,

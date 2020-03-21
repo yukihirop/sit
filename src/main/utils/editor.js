@@ -13,8 +13,8 @@ const open = (file, callback) => {
     customFds: [0, 1, 2]
   });
   callback(file);
-}
+};
 
 module.exports = {
   open
-}
+};
