@@ -23,6 +23,10 @@ module.exports = {
     "arrow-body-style": "off",
     "comma-style": "off",
     "no-else-return": "off",
-    "no-shadow": "off"
+    "no-shadow": "off",
+    "no-param-reassign": "off",
+    "jest/no-test-callback": "off",
+    "jest/no-disabled-tests": "off",
+    "jest/no-test-prefixes": "off"
   },
 };
