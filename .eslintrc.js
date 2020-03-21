@@ -29,6 +29,7 @@ module.exports = {
     "jest/no-disabled-tests": "off",
     "jest/no-test-prefixes": "off",
     "object-curly-newline": "off",
-    "one-var": "off"
+    "one-var": "off",
+    "max-len": "off"
   },
 };
