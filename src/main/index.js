@@ -42,66 +42,66 @@ fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`);
     } else if (branch) {
-        sheet.getRows(repoName, branch)
-          .then(data => {
-            const remoteHash = repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
+      sheet.getRows(repoName, branch)
+        .then(data => {
+          const remoteHash = repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
 
-            repo.fetch(repoName, branch, { prune, remoteHash, type })
-              .then(result => {
-                if (!verbose) return;
+          repo.fetch(repoName, branch, { prune, remoteHash, type })
+            .then(result => {
+              if (!verbose) return;
 
-                const { beforeHash, afterHash, branchCount } = result;
-                if (beforeHash === remoteHash) {
-                  console.log(`\
+              const { beforeHash, afterHash, branchCount } = result;
+              if (beforeHash === remoteHash) {
+                console.log(`\
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD`);
-                } else {
-                  console.log(`\
+              } else {
+                console.log(`\
 remote: Total ${branchCount}\n\
 From ${repo.remoteRepo(repoName)}
   * branch\t\t${branch}\t-> FETCH_HEAD\n\
   ${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}\t${branch}\t-> ${repoName}/${branch}`);
-                }
-              })
-              .catch(err => {
-                die(err.message);
-              });
-          })
-          .catch(() => {
-            die(`fatal: Couldn't find remote ref '${branch}'`);
-          });
-      } else {
-        if (!repo._isExistFile(`refs/remotes/${repoName}`)) return;
-
-        sheet.getRows(repoName, 'refs/remotes', ['branch', 'sha1']).then(data => {
-          sheet.getSheetNames(repoName, remoteBranches => {
-            const remoteRefs = csv2JSON(data.slice(1));
-
-            repo.fetch(repoName, null, { prune, remoteBranches, remoteRefs, type }, (repoName, addedBranches) => {
-              const promises = addedBranches.map(branch => {
-                sheet.getRows(repoName, branch)
-                  .then(data => {
-                    repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
-                  })
-                  .catch(() => {
-                    die(`fatal: Couldn't find remote ref '${branch}'`);
-                  });
-              });
-
-              Promise.all(promises);
+              }
             })
-              .then(msg => {
-                if (msg.length >= 1) {
-                  msg.unshift(`From ${repo.remoteRepo(repoName)}`);
-                  console.log(msg.join('\n'));
-                }
-              });
-          });
-        }).catch(() => {
+            .catch(err => {
+              die(err.message);
+            });
+        })
+        .catch(() => {
           die(`fatal: Couldn't find remote ref '${branch}'`);
         });
-      }
+    } else {
+      if (!repo._isExistFile(`refs/remotes/${repoName}`)) return;
+
+      sheet.getRows(repoName, 'refs/remotes', ['branch', 'sha1']).then(data => {
+        sheet.getSheetNames(repoName, remoteBranches => {
+          const remoteRefs = csv2JSON(data.slice(1));
+
+          repo.fetch(repoName, null, { prune, remoteBranches, remoteRefs, type }, (repoName, addedBranches) => {
+            const promises = addedBranches.map(branch => {
+              sheet.getRows(repoName, branch)
+                .then(data => {
+                  repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
+                })
+                .catch(() => {
+                  die(`fatal: Couldn't find remote ref '${branch}'`);
+                });
+            });
+
+            Promise.all(promises);
+          })
+            .then(msg => {
+              if (msg.length >= 1) {
+                msg.unshift(`From ${repo.remoteRepo(repoName)}`);
+                console.log(msg.join('\n'));
+              }
+            });
+        });
+      }).catch(() => {
+        die(`fatal: Couldn't find remote ref '${branch}'`);
+      });
+    }
   };
 
   Repo.push = (repoName, branch, opts = {}) => {
@@ -116,19 +116,19 @@ fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights and the repository exists.`);
     } else if (branch) {
-        // Fetch refs/remotes from sheet
-        sheet.getRows(repoName, 'refs/remotes', ['branch', 'sha1']).then(data => {
-          const json = csv2JSON(data);
-          const remoteHash = json[branch];
+      // Fetch refs/remotes from sheet
+      sheet.getRows(repoName, 'refs/remotes', ['branch', 'sha1']).then(data => {
+        const json = csv2JSON(data);
+        const remoteHash = json[branch];
 
-          if (HEADBlobHash === remoteHash) {
-            console.log('Everything up-to-date');
-            return;
-          }
+        if (HEADBlobHash === remoteHash) {
+          console.log('Everything up-to-date');
+          return;
+        }
 
-          const isPushableAboutREMOTEREADHash = (REMOTEHEADBlobHash === repo._INITIAL_HASH()) ? true : (REMOTEHEADBlobHash === remoteHash);
-          if (!force && (remoteHash !== undefined) && !isPushableAboutREMOTEREADHash) {
-            die(`\
+        const isPushableAboutREMOTEREADHash = (REMOTEHEADBlobHash === repo._INITIAL_HASH()) ? true : (REMOTEHEADBlobHash === remoteHash);
+        if (!force && (remoteHash !== undefined) && !isPushableAboutREMOTEREADHash) {
+          die(`\
 To ${repo.remoteRepo(repoName)}\n\
 ${colorize('! [rejected]', 'error')}\t\t${branch} -> ${branch} (non-fast-forward)\n\
 ${colorize(`error: failed to push some refs to '${repo.remoteRepo(repoName)}'`, 'error')}\n\
@@ -137,25 +137,25 @@ hint: Updates wre rejected because the tip of your current branch is behind\n\
 hint: its remote counterpart. Integrate the remote changes (e.q.\n\
 hint: \'sit pull ...\' before pushing again.\n\
 hint: See the \'Note abount fast-forwards\' in \'sit push --help\' for details.', 'info')}`);
+        }
+
+        // Update local repo
+        const isNewBranch = repo._isExistFile(`refs/remotes/${repoName}/${branch}`) === false;
+        repo.push(repoName, branch, { ...opts, HEADBlobHash }).then(hashData => {
+          const { beforeHash, afterHash } = hashData;
+
+          if (!force && (remoteHash !== undefined) && (beforeHash === afterHash)) {
+            console.log('Everything up-to-date');
+            return;
           }
 
-          // Update local repo
-          const isNewBranch = repo._isExistFile(`refs/remotes/${repoName}/${branch}`) === false;
-          repo.push(repoName, branch, { ...opts, HEADBlobHash }).then(hashData => {
-            const { beforeHash, afterHash } = hashData;
+          repo._HEADCSVData(csvData => {
+            const updateBranchPromise = sheet.pushRows(repoName, branch, csvData, { clear: true });
+            const updateRefRemotePromise = sheet.pushRows(repoName, 'refs/remotes', repo._refCSVData(branch, repoName), { clear: false, specifyIndex: 0 });
+            const updateRefLogRemotePromise = sheet.pushRows(repoName, 'logs/refs/remotes', repo._refLastLogCSVData(branch, repoName), { clear: false });
 
-            if (!force && (remoteHash !== undefined) && (beforeHash === afterHash)) {
-              console.log('Everything up-to-date');
-              return;
-            }
-
-            repo._HEADCSVData(csvData => {
-              const updateBranchPromise = sheet.pushRows(repoName, branch, csvData, { clear: true });
-              const updateRefRemotePromise = sheet.pushRows(repoName, 'refs/remotes', repo._refCSVData(branch, repoName), { clear: false, specifyIndex: 0 });
-              const updateRefLogRemotePromise = sheet.pushRows(repoName, 'logs/refs/remotes', repo._refLastLogCSVData(branch, repoName), { clear: false });
-
-              return Promise.all([updateRefRemotePromise, updateRefLogRemotePromise, updateBranchPromise]).then(() => {
-                const baseMsg = `\
+            return Promise.all([updateRefRemotePromise, updateRefLogRemotePromise, updateBranchPromise]).then(() => {
+              const baseMsg = `\
 Writed objects: 100% (1/1)
 Total 1\n\
 remote:\n\
@@ -164,22 +164,22 @@ remote:     ${repo.remoteRepo(repoName)}\n\
 remote:\n\
 To ${repo.remoteRepo(repoName)}`;
 
-                let detailMsg = `${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`;
-                if (force) {
-                  detailMsg = `\t+ ${detailMsg} (forced update)`;
-                } else if (isNewBranch) {
-                  detailMsg = `\t* [new branch]\t${detailMsg}`;
-                }
-                console.log(`${baseMsg}\n${detailMsg}`);
-              });
+              let detailMsg = `${beforeHash.slice(0, 7)}..${afterHash.slice(0, 7)}  ${branch} -> ${branch}`;
+              if (force) {
+                detailMsg = `\t+ ${detailMsg} (forced update)`;
+              } else if (isNewBranch) {
+                detailMsg = `\t* [new branch]\t${detailMsg}`;
+              }
+              console.log(`${baseMsg}\n${detailMsg}`);
             });
-          }).catch(err => {
-            die(err.message);
           });
+        }).catch(err => {
+          die(err.message);
         });
-      } else {
-        die('branch is required');
-      }
+      });
+    } else {
+      die('branch is required');
+    }
   };
 
   Repo.clone = (repoName, url, opts) => {

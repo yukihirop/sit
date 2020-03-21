@@ -190,8 +190,8 @@ class GSS {
         if (typeof el !== 'undefined') {
           cell.value = el.value;
         } else if (clear) {
-            cell.value = '';
-          }
+          cell.value = '';
+        }
       }
     }
 

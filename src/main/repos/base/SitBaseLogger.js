@@ -57,15 +57,6 @@ class SitBaseLogger extends SitBase {
       if (localConfig.user.name) {
         result = localConfig.user.name;
       } else if (globalConfig.user) {
-          if (globalConfig.user.name) {
-            result = globalConfig.user.name;
-          } else {
-            result = defaultName;
-          }
-        } else {
-          result = defaultName;
-        }
-    } else if (globalConfig.user) {
         if (globalConfig.user.name) {
           result = globalConfig.user.name;
         } else {
@@ -74,6 +65,15 @@ class SitBaseLogger extends SitBase {
       } else {
         result = defaultName;
       }
+    } else if (globalConfig.user) {
+      if (globalConfig.user.name) {
+        result = globalConfig.user.name;
+      } else {
+        result = defaultName;
+      }
+    } else {
+      result = defaultName;
+    }
 
     return result;
   }
@@ -88,15 +88,6 @@ class SitBaseLogger extends SitBase {
       if (localConfig.user.email) {
         result = localConfig.user.email;
       } else if (globalConfig.user) {
-          if (globalConfig.user.email) {
-            result = globalConfig.user.email;
-          } else {
-            result = defaultEmail;
-          }
-        } else {
-          result = defaultEmail;
-        }
-    } else if (globalConfig.user) {
         if (globalConfig.user.email) {
           result = globalConfig.user.email;
         } else {
@@ -105,6 +96,15 @@ class SitBaseLogger extends SitBase {
       } else {
         result = defaultEmail;
       }
+    } else if (globalConfig.user) {
+      if (globalConfig.user.email) {
+        result = globalConfig.user.email;
+      } else {
+        result = defaultEmail;
+      }
+    } else {
+      result = defaultEmail;
+    }
 
     return result;
   }
