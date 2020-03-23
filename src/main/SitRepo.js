@@ -75,7 +75,7 @@ class SitRepo extends SitBaseRepo {
 
     // STEP 1: Update config
     const config = new SitConfig('local');
-    config.updateSection(`remote.${repoName}`, { type: type, url: url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` });
+    config.updateSection(`remote.${repoName}`, { type, url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` });
     config.updateSection('branch.master', { remote: 'origin', merge: 'refs/heads/master' });
 
     // STEP 2: Create Merge Commit Object
@@ -446,7 +446,7 @@ nothing to commit`);
           ._writeSyncFile(refPath, afterHash)
           ._writeSyncFile('REMOTE_HEAD', HEADBlobHash);
 
-        resolve({ beforeHash: beforeHash, afterHash: afterHash });
+        resolve({ beforeHash, afterHash });
       } else {
         reject(new Error(`\
 error: src refspec unknown does not match any\n\
@@ -489,7 +489,7 @@ error: failed to push some refs to '${repoName}'`));
                 switch (status) {
                   case 'added':
                     branches.forEach(b => {
-                      this.fetch(repoName, b, { type: type, prune: false, verbose: false, remoteHash: remoteRefs[b] });
+                      this.fetch(repoName, b, { type, prune: false, verbose: false, remoteHash: remoteRefs[b] });
                       added.push(b);
                       msg.push(`* [new branch]\t\t${b}\t\t-> ${repoName}/${b}`);
                     });
@@ -729,7 +729,7 @@ Fast-forward
 
     switch (subcommand) {
       case 'add':
-        config.updateSection(`remote.${repoName}`, { type: type, url: url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` });
+        config.updateSection(`remote.${repoName}`, { type, url, fetch: `+refs/heads/*:refs/remotes/${repoName}/*` });
         break;
       case 'rm':
         config.updateSection(`remote.${repoName}`, null);

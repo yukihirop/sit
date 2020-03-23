@@ -383,7 +383,7 @@ class SitBaseRepo extends SitBase {
         }
       });
 
-      callback({ conflict: isConflict, data: data });
+      callback({ conflict: isConflict, data });
     });
   }
 
