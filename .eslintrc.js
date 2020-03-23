@@ -33,6 +33,8 @@ module.exports = {
     "max-len": "off",
     "no-tabs": "off",
     "jest/no-standalone-expect": "off",
-    "prefer-template": "off"
+    "prefer-template": "off",
+    "class-methods-use-this": "off",
+    "default-case": "off"
   },
 };
