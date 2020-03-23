@@ -43,7 +43,7 @@ const overrideCSV = (csvTo, csvFrom, specifyIndex) => {
         return fromData[key];
       }
 
-      if (fromKeys.indexOf(key) == -1) {
+      if (fromKeys.indexOf(key) === -1) {
         return line;
       } else {
         return fromData[key];
@@ -100,7 +100,7 @@ const diffArray = (to, from) => {
 };
 
 const isEqual = (to, from) => {
-  return JSON.stringify(to) == JSON.stringify(from);
+  return JSON.stringify(to) === JSON.stringify(from);
 };
 
 // https://www.nxworld.net/tips/js-array-filter-snippets.html

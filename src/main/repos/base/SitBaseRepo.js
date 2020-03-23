@@ -465,7 +465,7 @@ class SitBaseRepo extends SitBase {
     const size = parseInt(binary.slice(x, y));
     const data = binary.slice(y + 2);
 
-    if (size != (binary.length - y - 2)) {
+    if (size !== (binary.length - y - 2)) {
       err = new Error(`Malformed object ${sha}: bad length.`);
       return { err, obj };
     }
@@ -550,7 +550,7 @@ class SitBaseRepo extends SitBase {
       }
 
       if (name.match(hashRE)) {
-        if (name.length == 40) {
+        if (name.length === 40) {
           resolve([name.toLowerCase()]);
         } else if (name.match(smallHashRE)) {
           // This is a small hash 4 seems to be the minimal length

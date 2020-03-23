@@ -72,7 +72,7 @@ class GSS {
   getRows(repoName, sheetName, header = this.header()) {
     return new Promise((resolve, reject) => {
       this.loadInfo(repoName, (_, sheets) => {
-        const sheet = sheets.filter(sheet => sheet._rawProperties.title == sheetName)[0];
+        const sheet = sheets.filter(sheet => sheet._rawProperties.title === sheetName)[0];
         if (sheet) {
           sheet.getRows()
             .then(rows => resolve(this._rows2CSV(rows, header)))
@@ -93,7 +93,7 @@ class GSS {
     const { worksheet } = this;
 
     return this.loadInfo(repoName, (doc, sheets) => {
-      const sheet = sheets.filter(sheet => sheet._rawProperties.title == sheetName)[0];
+      const sheet = sheets.filter(sheet => sheet._rawProperties.title === sheetName)[0];
       new Promise((resolve, reject) => {
         const header = data[0];
 
