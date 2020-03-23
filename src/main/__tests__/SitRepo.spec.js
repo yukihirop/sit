@@ -720,8 +720,8 @@ no changes added to commit`);
         recursive.mockReturnValueOnce(Promise.resolve(
           ['test/localRepo/.sit/refs/remotes/origin/master',
             'test/localRepo/.sit/refs/remotes/origin/test',
-          ]),
-        );
+          ],
+));
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model);
         jest.spyOn(model, '_writeLog').mockReturnValue(model);
         jest.spyOn(model, '_createMergeCommit').mockReturnValue('03/577e30b394d4cafbbec22cc1a78b91b3e7c20b');
@@ -770,8 +770,8 @@ no changes added to commit`);
         recursive.mockReturnValueOnce(Promise.resolve(
           ['test/localRepo/.sit/refs/remotes/origin/master',
             'test/localRepo/.sit/refs/remotes/origin/test',
-          ]),
-        );
+          ],
+));
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model);
         jest.spyOn(model, '_writeLog').mockReturnValue(model);
         jest.spyOn(model, '_deleteSyncFile').mockReturnValue(model);
@@ -1305,8 +1305,8 @@ ${colorize('4e2b7c4', 'info')} HEAD@{3}: clone: from https://docs.google.com/spr
           'test/localRepo/.sit/refs/remotes/origin/master',
           'test/localRepo/.sit/refs/remotes/origin/test',
           'test/localRepo/.sit/refs/stash',
-        ]),
-      );
+        ],
+));
 
       model.showRef();
       expect(console.log).toHaveBeenCalledTimes(1);

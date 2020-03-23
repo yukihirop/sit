@@ -387,8 +387,7 @@ no changes added to commit`);
     } else {
       console.log(`\
 On branch ${currentBranch}\n\
-nothing to commit`,
-      );
+nothing to commit`);
     }
   }
 
