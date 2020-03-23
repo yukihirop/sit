@@ -42,7 +42,7 @@ class SitCommit extends SitObject {
     const isHEAD = this.repo._refResolve('HEAD') === commitHash;
 
     if (oneline) {
-      logBaseTitle = colorize(commitHash.slice(0,7), 'info');
+      logBaseTitle = colorize(commitHash.slice(0, 7), 'info');
     } else {
       logBaseTitle = colorize(`commit ${commitHash}`, 'info');
     }

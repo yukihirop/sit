@@ -1,5 +1,6 @@
 
 const SitBase = require('../base/SitBase');
+
 const PROHIBITED_STR_REGEXP = /[\^,@,\0,!,?,*]/;
 const RESERVED_RESERVED_BRANCH_PREFIX = '[pr]';
 const RESERVED_BRANCH = [

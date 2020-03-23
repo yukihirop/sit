@@ -31,7 +31,7 @@ const SitBlob = require('../objects/SitBlob')
   , SitTree = require('../objects/SitTree')
   , SitCommit = require('../objects/SitCommit')
   , SitLogger = require('../logs/SitLogger')
-  , SitBase = require('../base/SitBase')
+  , SitBase = require("./SitBase")
   , SitLogParser = require('../logs/SitLogParser')
   , SitRefParser = require('../refs/SitRefParser');
 

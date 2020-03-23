@@ -93,7 +93,7 @@ Please make sure you have the correct access rights and the repository exists.`]
           SitRepo.prototype.remoteRepo = mockSitRepo_remoteRepo;
           mockSitRepo_remoteRepo.mockReturnValueOnce('./test/localRepo/.sit');
           mockGSS_getRows.mockReturnValueOnce(Promise.resolve([[], []]));
-          mockGSS_getSheetNames.mockReturnValueOnce(Promise.resolve['master', 'develop']);
+          mockGSS_getSheetNames.mockReturnValueOnce(Promise.resolve(['master', 'develop']));
           sit().Repo.fetch('origin', null);
 
           expect(mockGSS_getRows).toHaveBeenCalledTimes(1);

@@ -62,8 +62,7 @@ const uniq = (array) => {
   const knownElements = {};
   const uniquedArray = [];
   for (const elem of array) {
-    if (elem in knownElements)
-      continue;
+    if (elem in knownElements) { continue; }
     uniquedArray.push(elem);
     knownElements[elem] = true;
   }

@@ -2,6 +2,7 @@
 // Copy from https://github.com/millermedeiros/disparity/blob/master/disparity.js
 
 const ansi = require('ansi-styles');
+
 const colors = {
   charsRemoved: ansi.bgRed,
   charsAdded: ansi.bgGreen,

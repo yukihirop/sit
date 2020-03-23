@@ -1,5 +1,6 @@
 
 const flatten = require('flat');
+
 const { unflatten } = flatten;
 
 const compact = (obj) => {

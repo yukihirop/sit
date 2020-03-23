@@ -37,7 +37,7 @@ describe('SitBaseRepo', () => {
   const model = new SitBaseRepo();
   const oldLocalRepo = model.localRepo;
 
-  //　spyOn mock is not automatically released
+  // spyOn mock is not automatically released
   afterEach(() => {
     jest.restoreAllMocks();
     model.localRepo = oldLocalRepo;

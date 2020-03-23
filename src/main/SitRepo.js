@@ -631,7 +631,8 @@ fatal: Existing because of an unresolved conflict.');
           ._deleteSyncFile('MERGE_MODE')
           ._deleteSyncFile('MERGE_MSG')
           ._deleteSyncFile('MERGE_HEAD')
-          .catFile(origHEADHash).then(obj => {
+          .catFile(origHEADHash)
+          .then(obj => {
             writeSyncFile(this.distFilePath, obj.serialize().toString());
           });
       } else {

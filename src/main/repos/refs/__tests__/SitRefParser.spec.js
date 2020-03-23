@@ -9,7 +9,7 @@ const {
 
 describe('SitRefParser', () => {
   let model;
-  const repo = new SitBaseRepo;
+  const repo = new SitBaseRepo();
 
   afterEach(() => {
     jest.restoreAllMocks();

@@ -721,7 +721,7 @@ no changes added to commit`);
           ['test/localRepo/.sit/refs/remotes/origin/master',
             'test/localRepo/.sit/refs/remotes/origin/test',
           ],
-));
+        ));
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model);
         jest.spyOn(model, '_writeLog').mockReturnValue(model);
         jest.spyOn(model, '_createMergeCommit').mockReturnValue('03/577e30b394d4cafbbec22cc1a78b91b3e7c20b');
@@ -771,7 +771,7 @@ no changes added to commit`);
           ['test/localRepo/.sit/refs/remotes/origin/master',
             'test/localRepo/.sit/refs/remotes/origin/test',
           ],
-));
+        ));
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model);
         jest.spyOn(model, '_writeLog').mockReturnValue(model);
         jest.spyOn(model, '_deleteSyncFile').mockReturnValue(model);
@@ -1152,7 +1152,7 @@ WIP on master: 47af1af Add good_bye`;
 
     describe('stash pop', () => {
       describe('when do not specify key', () => {
-        //　Can't test because mock of function inside promise
+        // Can't test because mock of function inside promise
         xit('should return correctly', () => {
           console.log = jest.fn();
           const stashResult = `
@@ -1306,7 +1306,7 @@ ${colorize('4e2b7c4', 'info')} HEAD@{3}: clone: from https://docs.google.com/spr
           'test/localRepo/.sit/refs/remotes/origin/test',
           'test/localRepo/.sit/refs/stash',
         ],
-));
+      ));
 
       model.showRef();
       expect(console.log).toHaveBeenCalledTimes(1);

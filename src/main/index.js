@@ -249,7 +249,7 @@ remote: done.`);
   Repo.checkLocalRepo = () => {
     if (!repo.isLocalRepo()) {
       die(`fatal: not a sit repository (or any of the parent directories): ${repo.localRepo}`);
-    };
+    }
   };
 
   Repo.catFile = (obj, opts) => {
