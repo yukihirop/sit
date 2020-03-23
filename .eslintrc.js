@@ -36,6 +36,20 @@ module.exports = {
     "prefer-template": "off",
     "class-methods-use-this": "off",
     "default-case": "off",
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "func-names": "off",
+    "array-callback-return": "off",
+    "global-require": "off",
+    "import/no-dynamic-require": "off",
+    "new-cap": "off",
+    "no-case-declarations": "off",
+    "no-constant-condition": "off",
+    "no-continue": "off",
+    "no-loop-func": "off",
+    "no-multi-str": "off",
+    "no-new": "off",
+    "no-plusplus": "off",
+    "no-use-before-define": "off",
+    "no-useless-escape": "off"
   },
 };
