@@ -35,6 +35,7 @@ module.exports = {
     "jest/no-standalone-expect": "off",
     "prefer-template": "off",
     "class-methods-use-this": "off",
-    "default-case": "off"
+    "default-case": "off",
+    "consistent-return": "off"
   },
 };
