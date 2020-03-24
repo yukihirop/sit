@@ -18,7 +18,7 @@ class GSS {
       type: 'GoogleSpreadSheet',
       baseURL: 'https://docs.google.com/spreadsheets/d',
     };
-    const gopts = Object.assign({}, defaultOpts, opts);
+    const gopts = { ...defaultOpts, ...opts };
 
     this.opts = gopts;
     this.url = opts.url;

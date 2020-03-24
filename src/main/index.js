@@ -22,7 +22,7 @@ function sit(opts) {
   process.env.SIT_DIR = (process.env.SIT_DIR === undefined) ? '.' : process.env.SIT_DIR;
   process.env.SIT_SETTING_DIR = (process.env.SIT_SETTING_DIR === undefined) ? '.' : process.env.SIT_SETTING_DIR;
 
-  const gopts = Object.assign({}, defaultOpts, opts);
+  const gopts = { ...defaultOpts, ...opts };
 
   const Sheet = {}
     , Repo = {}

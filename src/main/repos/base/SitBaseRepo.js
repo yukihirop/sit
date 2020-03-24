@@ -31,7 +31,7 @@ const SitBlob = require('../objects/SitBlob')
   , SitTree = require('../objects/SitTree')
   , SitCommit = require('../objects/SitCommit')
   , SitLogger = require('../logs/SitLogger')
-  , SitBase = require("./SitBase")
+  , SitBase = require('./SitBase')
   , SitLogParser = require('../logs/SitLogParser')
   , SitRefParser = require('../refs/SitRefParser');
 
@@ -500,7 +500,7 @@ class SitBaseRepo extends SitBase {
 
         if (shaArr.length > 1) {
           reject(new Error(`Ambigous reference ${name}: Cndidates are:\n${shaArr.reduce((acc, item) => {
-            acc = acc + `- ${item}\n`;
+            acc += `- ${item}\n`;
             return acc;
           }, '').trim()}`));
         }

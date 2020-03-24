@@ -90,7 +90,7 @@ class SitLogParser extends SitBase {
     if (num > 0) json[`${type}@{${num - 1}}`].beforesha = targetBeforeSHA;
 
     return Object.values(json).reduce((acc, item) => {
-      acc = acc + logger.createLogData(item);
+      acc += logger.createLogData(item);
       return acc;
     }, '');
   }
@@ -120,13 +120,13 @@ class SitLogParser extends SitBase {
     switch (type) {
       case 'stash':
         result = json.reduce((acc, item, index) => {
-          acc = acc + `${colorize(item.aftersha.slice(0, 7), 'info')} stash@{${logCount - 1 - index}}: ${item.message}\n`;
+          acc += `${colorize(item.aftersha.slice(0, 7), 'info')} stash@{${logCount - 1 - index}}: ${item.message}\n`;
           return acc;
         }, '');
         break;
       case 'HEAD':
         result = json.reduce((acc, item, index) => {
-          acc = acc + `${colorize(item.aftersha.slice(0, 7), 'info')} HEAD@{${logCount - 1 - index}}: ${item.message}\n`;
+          acc += `${colorize(item.aftersha.slice(0, 7), 'info')} HEAD@{${logCount - 1 - index}}: ${item.message}\n`;
           return acc;
         }, '');
         break;

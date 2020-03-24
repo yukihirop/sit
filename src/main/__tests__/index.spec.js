@@ -211,7 +211,7 @@ Please make sure you have the correct access rights and the repository exists.`]
 
             // https://github.com/facebook/jest/issues/6671#issuecomment-404171584
             // Mock information of processing in promise cannot be taken
-            // 
+            //
             // expect(mockSitRepo_init).toHaveBeenCalledTimes(1)
             // expect(mockSitRepo_clone).toHaveBeenCalledTimes(1)
             // expect(mockSitRepo_hashObjectFromData).toHaveBeenCalledTimes(1)
