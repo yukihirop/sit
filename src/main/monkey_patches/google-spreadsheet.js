@@ -1,12 +1,12 @@
 const {
   GoogleSpreadsheet,
   GoogleSpreadsheetRow,
-  GoogleSpreadsheetFormulaError
+  GoogleSpreadsheetFormulaError,
 } = require('google-spreadsheet');
 
 const {
-  GoogleSpreadsheetWorksheet
-} = require('./google-spreadsheet/GoogleSpreadsheetWorksheet')
+  GoogleSpreadsheetWorksheet,
+} = require('./google-spreadsheet/GoogleSpreadsheetWorksheet');
 
 module.exports = {
   GoogleSpreadsheet,

@@ -1,14 +1,13 @@
-'use strict';
 
 const {
   iniParse,
   iniStringify,
   writeSyncFile,
-  isExistFile
+  isExistFile,
 } = require('../../utils/file');
 
 const {
-  compact
+  compact,
 } = require('../../utils/object');
 
 const SitBase = require('./SitBase');
@@ -17,7 +16,7 @@ class SitBaseConfig extends SitBase {
   constructor(type) {
     super();
 
-    const configPaths = { 'global': `${SitBase.homeDir()}/.sitconfig`, 'local': `${this.localRepo}/config` };
+    const configPaths = { global: `${SitBase.homeDir()}/.sitconfig`, local: `${this.localRepo}/config` };
 
     this.type = type;
     this.configPath = configPaths[type];
@@ -34,7 +33,7 @@ class SitBaseConfig extends SitBase {
   }
 
   updateSection(section, data) {
-    let config = this.config;
+    let { config } = this;
     const [mainSec, subSec] = section.split('.');
     config[mainSec] = config[mainSec] || {};
     config[mainSec][subSec] = data;
@@ -45,7 +44,7 @@ class SitBaseConfig extends SitBase {
   }
 
   _createConfig() {
-    const configPath = this.configPath
+    const { configPath } = this;
     if (isExistFile(configPath)) {
       return iniParse(configPath);
     } else {
@@ -65,17 +64,17 @@ class SitBaseConfig extends SitBase {
   }
 
   _updateUsername(name) {
-    const config = this.config
+    const { config } = this;
     config.user = config.user || {};
-    const email = config.user.email
+    const { email } = config.user;
     config.user = { name, email };
     writeSyncFile(this.configPath, iniStringify(config, null));
   }
 
   _updateEmail(email) {
-    const config = this.config
+    const { config } = this;
     config.user = config.user || {};
-    const name = config.user.name;
+    const { name } = config.user;
     config.user = { name, email };
     writeSyncFile(this.configPath, iniStringify(config, null));
   }

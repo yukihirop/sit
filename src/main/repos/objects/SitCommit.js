@@ -1,11 +1,10 @@
-'use strict';
 
 const {
-  bufferReplace
+  bufferReplace,
 } = require('../../utils/file');
 
 const {
-  colorize
+  colorize,
 } = require('../../utils/string');
 
 
@@ -29,54 +28,57 @@ class SitCommit extends SitObject {
   }
 
   blobHash() {
-    const bufData = JSON.parse(JSON.stringify(this.kvlm["blob"]))["data"]
-    return Buffer.from(bufData, 'utf8').toString()
+    const bufData = JSON.parse(JSON.stringify(this.kvlm.blob)).data;
+    return Buffer.from(bufData, 'utf8').toString();
   }
 
+  /* eslint-disable no-useless-concat */
   createCommitLog(commitHash, commitData, opts = {}) {
-    let result = ''
-    let logBaseTitle
-    const { oneline } = opts
-    const [author, email, unixtime, timezone] = commitData['author'].split(' ')
-    const commitMsg = commitData['']
-    const currentBranch = this.repo._branchResolve('HEAD')
-    const isHEAD = this.repo._refResolve('HEAD') === commitHash
+    let result = '';
+    let logBaseTitle;
+    const { oneline } = opts;
+    const [author, email, unixtime, timezone] = commitData.author.split(' ');
+    const commitMsg = commitData[''];
+    const currentBranch = this.repo._branchResolve('HEAD');
+    const isHEAD = this.repo._refResolve('HEAD') === commitHash;
 
     if (oneline) {
-      logBaseTitle = colorize(commitHash.slice(0,7), 'info')
+      logBaseTitle = colorize(commitHash.slice(0, 7), 'info');
     } else {
-      logBaseTitle = colorize(`commit ${commitHash}`, 'info')
+      logBaseTitle = colorize(`commit ${commitHash}`, 'info');
     }
 
     if (isHEAD) {
-      result += logBaseTitle + ' ' + `(HEAD -> ${currentBranch})`
+      result += logBaseTitle + ' ' + `(HEAD -> ${currentBranch})`;
     } else {
-      result += logBaseTitle
+      result += logBaseTitle;
     }
 
     if (oneline) {
-      result += ' ' + commitMsg
+      result += ' ' + commitMsg;
     } else {
-      result += '\n'
-      result += `Author: ${author} ${email}\n`
-      result += `Date: ${moment(parseInt(unixtime)).format('ddd MMM d HH:mm:ss GGGG ZZ')} ${timezone}\n`
-      result += '\n'
-      result += `\t${commitMsg}\n`
+      result += '\n';
+      result += `Author: ${author} ${email}\n`;
+      result += `Date: ${moment(parseInt(unixtime, 10)).format('ddd MMM d HH:mm:ss GGGG ZZ')} ${timezone}\n`;
+      result += '\n';
+      result += `\t${commitMsg}\n`;
     }
 
-    return result
+    return result;
   }
+  /* eslint-enable no-useless-concat */
 
   humanizeKVLM() {
     return Object.keys(this.kvlm).reduce((acc, key) => {
-      acc[key] = this.kvlm[key].toString()
-      return acc
-    }, {})
+      acc[key] = this.kvlm[key].toString();
+      return acc;
+    }, {});
   }
 
   // private
 
   // kvlm means key value line messaage
+  /* eslint-disable valid-typeof */
   _kvlmSerialize(kvlm) {
     let val;
     let result = '';
@@ -91,17 +93,17 @@ class SitCommit extends SitObject {
       if (typeof (val) !== 'Array') val = [val];
 
       result += val.reduce((acc, v) => {
-        return acc + k + space + (bufferReplace(v, '\n', '\n ')) + '\n'
-      }, '')
-    })
+        return acc + k + space + (bufferReplace(v, '\n', '\n ')) + '\n';
+      }, '');
+    });
 
     // Append message
-    result += '\n' + kvlm['']
-    return result.trim()
+    result += '\n' + kvlm[''];
+    return result.trim();
   }
 
   _kvlmParse(binary, start = 0, dct = null) {
-    if (!dct) dct = {}
+    if (!dct) dct = {};
 
     // We search for the next space and the next newline.
     const spc = binary.indexOf(' ', start);
@@ -117,42 +119,42 @@ class SitCommit extends SitObject {
     if (spc < 0 || nl < spc) {
       if (nl === start) {
         // throw new Error('newline index must be equal start index')
-        dct[''] = binary.slice(start + 1)
-        return dct
+        dct[''] = binary.slice(start + 1);
+        return dct;
       }
     }
 
     // Recursive case
     // ==============
     // we read a key-value pair and recurse for the next.
-    const key = binary.slice(start, spc)
+    const key = binary.slice(start, spc);
 
     // Find the end of the value. Continuation lines begin with a
     // space, so we loop until we find a "\n" not followed by a space.
-    let end = start
+    let end = start;
     while (true) {
-      end = binary.indexOf('\n', end + 1)
+      end = binary.indexOf('\n', end + 1);
       if (binary[end + 1] !== ' '.charCodeAt(0)) break;
     }
 
     // Grab the value
     // Also, drop the leading space on continuation lines
-    const value = bufferReplace(binary.slice(spc + 1, end), '\n ', '\n')
+    const value = bufferReplace(binary.slice(spc + 1, end), '\n ', '\n');
 
     // Don't overwrite existing data contenets
     if (Object.keys(dct).indexOf(key) !== -1) {
       if (typeof (dct[key]) === 'Array') {
-        dct[key].push(value)
+        dct[key].push(value);
       } else {
-        dct[key] = [dct[key], value]
+        dct[key] = [dct[key], value];
       }
     } else {
-      dct[key] = value
+      dct[key] = value;
     }
 
-    return this._kvlmParse(binary, end + 1, dct)
+    return this._kvlmParse(binary, end + 1, dct);
   }
+  /* eslint-enable valid-typeof */
 }
 
 module.exports = SitCommit;
-

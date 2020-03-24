@@ -1,4 +1,3 @@
-'use strict';
 
 class SitObject {
   constructor(repo, data, size = 0) {

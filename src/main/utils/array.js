@@ -1,13 +1,13 @@
-'use strict';
 
 const Diff = require('diff');
 
+/* eslint-disable prefer-destructuring */
 const csv2JSON = (csvData) => {
-  let result = {}
+  const result = {};
 
   csvData.forEach(line => {
-    let key = line[0];
-    let lineSize = line.length;
+    const key = line[0];
+    const lineSize = line.length;
 
     if (lineSize > 3) {
       result[key] = line.slice(1);
@@ -17,7 +17,8 @@ const csv2JSON = (csvData) => {
   });
 
   return result;
-}
+};
+/* eslint-enable prefer-destructuring */
 
 const overrideCSV = (csvTo, csvFrom, specifyIndex) => {
   let result = [];
@@ -32,19 +33,19 @@ const overrideCSV = (csvTo, csvFrom, specifyIndex) => {
     const toData = csvTo.reduce((acc, line) => {
       acc[line[specifyIndex]] = line;
       return acc;
-    }, {})
+    }, {});
     const toKeys = Object.keys(toData);
 
     const allKeys = uniq([...toKeys, ...fromKeys]);
 
     result = allKeys.map((key) => {
-      let line = toData[key];
+      const line = toData[key];
 
       if (line === undefined) {
         return fromData[key];
       }
 
-      if (fromKeys.indexOf(key) == -1) {
+      if (fromKeys.indexOf(key) === -1) {
         return line;
       } else {
         return fromData[key];
@@ -56,69 +57,69 @@ const overrideCSV = (csvTo, csvFrom, specifyIndex) => {
   }
 
   return result;
-}
+};
 
 // https://qiita.com/piroor/items/02885998c9f76f45bfa0
+
+/* eslint-disable no-restricted-syntax */
 const uniq = (array) => {
   const knownElements = {};
   const uniquedArray = [];
   for (const elem of array) {
-    if (elem in knownElements)
-      continue;
+    if (elem in knownElements) { continue; }
     uniquedArray.push(elem);
     knownElements[elem] = true;
   }
   return uniquedArray;
-}
+};
+/* eslint-enable no-restricted-syntax */
 
 const diffArray = (to, from) => {
   const diff = Diff.diffArrays(to, from);
-  let addedData, removedData;
-
   const data = diff.reduce((acc, item) => {
-    let added = item.added;
-    let removed = item.removed;
+    const { added } = item;
+    const { removed } = item;
 
     if (added) {
-      acc['added'] = acc['added'] || []
-      acc['added'].push(...item.value)
+      acc.added = acc.added || [];
+      acc.added.push(...item.value);
     } else if (removed) {
-      acc['removed'] = acc['removed'] || []
-      acc['removed'].push(...item.value);
+      acc.removed = acc.removed || [];
+      acc.removed.push(...item.value);
     }
 
     return acc;
   }, {});
 
-  addedData = data['added'] || [];
-  removedData = data['removed'] || [];
+  const addedData = data.added || [];
+  const removedData = data.removed || [];
   const sharedData = _getDuplicateValues([...addedData, ...removedData]);
   const addedOnly = _getUniqueValues([...addedData, ...sharedData]);
   const removedOnly = _getUniqueValues([...removedData, ...sharedData]);
 
   return {
-    'added': addedOnly,
-    'removed': removedOnly
-  }
-}
+    added: addedOnly,
+    removed: removedOnly,
+  };
+};
 
 const isEqual = (to, from) => {
-  return JSON.stringify(to) == JSON.stringify(from)
-}
+  return JSON.stringify(to) === JSON.stringify(from);
+};
 
 // https://www.nxworld.net/tips/js-array-filter-snippets.html
 const _getDuplicateValues = ([...array]) => {
   return array.filter((value, index, self) => self.indexOf(value) === index && self.lastIndexOf(value) !== index);
-}
+};
 
 // https://www.nxworld.net/tips/js-array-filter-snippets.html
 const _getUniqueValues = ([...array]) => {
   return array.filter((value, index, self) => self.indexOf(value) === self.lastIndexOf(value));
-}
+};
 
 module.exports = {
   csv2JSON,
   overrideCSV,
   diffArray,
-  isEqual
-}
+  isEqual,
+};

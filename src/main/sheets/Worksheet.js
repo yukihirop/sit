@@ -1,4 +1,3 @@
-'use strict';
 
 const merge = require('deepmerge');
 
@@ -16,7 +15,7 @@ function Worksheet() {
 
     csvData.forEach((row, rowIndex) => {
       row.forEach((cellValue, colIndex) => {
-        var itemResult = {}
+        const itemResult = {}
           , key = `${rowIndex}${delimiter}${colIndex}`;
 
         itemResult[key] = {};
@@ -30,11 +29,11 @@ function Worksheet() {
     });
 
     return data;
-  }
+  };
 
   return {
-    csvData
-  }
+    csvData,
+  };
 }
 
 module.exports = Worksheet;

@@ -1,4 +1,3 @@
-'use strict';
 
 const { GoogleSpreadsheet } = require('../monkey_patches/google-spreadsheet');
 
@@ -7,7 +6,7 @@ const SitSetting = require('../SitSetting');
 
 const {
   pathJoin,
-  pathDirname
+  pathDirname,
 } = require('../utils/file');
 
 const _createSheetId = (uri, baseURL) => {
@@ -15,15 +14,15 @@ const _createSheetId = (uri, baseURL) => {
   const regExp = new RegExp(`${baseURL}/(.*?)/.*?`);
   const sheetId = uri.match(regExp)[1];
   return sheetId;
-}
+};
 
 function GSSClient(uri, opts) {
   const { baseURL } = opts;
   const sheetId = _createSheetId(uri, baseURL);
   const doc = new GoogleSpreadsheet(sheetId);
 
-  const credPath = SitSetting.sheet.gss.auth.credPath
-    , settingPath = SitSetting._internal_.settingPath
+  const { credPath } = SitSetting.sheet.gss.auth
+    , { settingPath } = SitSetting._internal_
     , creds = jsonSafeLoad(pathJoin(pathDirname(settingPath), credPath));
 
   return new Promise((resolve, reject) => {

@@ -1,4 +1,3 @@
-'use strict';
 
 const SitBase = require('./SitBase')
   , SitConfig = require('../SitConfig');
@@ -7,20 +6,20 @@ const {
   isExistFile,
   mkdirSyncRecursive,
   appendFile,
-  writeSyncFile
+  writeSyncFile,
 } = require('../../utils/file');
 
 const moment = require('moment');
 
 class SitBaseLogger extends SitBase {
   constructor() {
-    super()
+    super();
     this.localConfig = new SitConfig('local').config;
     this.globalConfig = new SitConfig('global').config;
   }
 
   write(file, beforesha, aftersha, message, mkdir) {
-    const data = this.createLogData({ beforesha, aftersha, message }, mkdir);
+    const data = this.createLogData({ beforesha, aftersha, message });
 
     if (mkdir) {
       const fullDirPath = this.localRepo + '/' + file.split('/').slice(0, -1).join('/');
@@ -33,43 +32,31 @@ class SitBaseLogger extends SitBase {
     appendFile(`${this.localRepo}/${file}`, data);
   }
 
-  createLogData({ beforesha, aftersha, username, email, unixtime, timezone, message }, mkdir) {
+  createLogData({ beforesha, aftersha, username, email, unixtime, timezone, message }) {
     const space = ' ';
-    beforesha = beforesha || this._INITIAL_HASH()
-    username = username || this.username()
-    email = email || `<${this.email()}>`
-    unixtime = unixtime || moment().format('x')
-    timezone = timezone || moment().format('ZZ')
+    beforesha = beforesha || this._INITIAL_HASH();
+    username = username || this.username();
+    email = email || `<${this.email()}>`;
+    unixtime = unixtime || moment().format('x');
+    timezone = timezone || moment().format('ZZ');
 
     return `${beforesha}${space}${aftersha}${space}${username}${space}${email}${space}${unixtime}${space}${timezone}\t${message}\n`;
   }
 
   bulkOverWrite(file, data) {
-    writeSyncFile(`${this.localRepo}/${file}`, data, false)
+    writeSyncFile(`${this.localRepo}/${file}`, data, false);
   }
 
   username() {
-    const localConfig = this.localConfig;
-    const globalConfig = this.globalConfig;
+    const { localConfig } = this;
+    const { globalConfig } = this;
     const defaultName = 'anonymous';
     let result;
 
     if (localConfig.user) {
       if (localConfig.user.name) {
         result = localConfig.user.name;
-      } else {
-        if (globalConfig.user) {
-          if (globalConfig.user.name) {
-            result = globalConfig.user.name;
-          } else {
-            result = defaultName;
-          }
-        } else {
-          result = defaultName
-        }
-      }
-    } else {
-      if (globalConfig.user) {
+      } else if (globalConfig.user) {
         if (globalConfig.user.name) {
           result = globalConfig.user.name;
         } else {
@@ -78,33 +65,29 @@ class SitBaseLogger extends SitBase {
       } else {
         result = defaultName;
       }
+    } else if (globalConfig.user) {
+      if (globalConfig.user.name) {
+        result = globalConfig.user.name;
+      } else {
+        result = defaultName;
+      }
+    } else {
+      result = defaultName;
     }
 
     return result;
   }
 
   email() {
-    const localConfig = this.localConfig;
-    const globalConfig = this.globalConfig;
+    const { localConfig } = this;
+    const { globalConfig } = this;
     const defaultEmail = 'anonymous@example.com';
     let result;
 
     if (localConfig.user) {
       if (localConfig.user.email) {
         result = localConfig.user.email;
-      } else {
-        if (globalConfig.user) {
-          if (globalConfig.user.email) {
-            result = globalConfig.user.email;
-          } else {
-            result = defaultEmail;
-          }
-        } else {
-          result = defaultEmail;
-        }
-      }
-    } else {
-      if (globalConfig.user) {
+      } else if (globalConfig.user) {
         if (globalConfig.user.email) {
           result = globalConfig.user.email;
         } else {
@@ -113,6 +96,14 @@ class SitBaseLogger extends SitBase {
       } else {
         result = defaultEmail;
       }
+    } else if (globalConfig.user) {
+      if (globalConfig.user.email) {
+        result = globalConfig.user.email;
+      } else {
+        result = defaultEmail;
+      }
+    } else {
+      result = defaultEmail;
     }
 
     return result;

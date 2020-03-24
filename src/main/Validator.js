@@ -1,4 +1,3 @@
-'use strict';
 
 const { packageJSON } = require('./utils/file');
 const GSSValidator = require('./validators/GSSValidator');
@@ -9,20 +8,20 @@ const SitConfig = require('./repos/SitConfig');
 function Validator(opts) {
   const { type, baseURL } = opts;
 
-  const version = SitSetting.version;
-  let _errors = [];
+  const { version } = SitSetting;
+  const _errors = [];
 
   const getErrors = () => {
-    return _errors
-  }
+    return _errors;
+  };
 
   const setErrors = (val) => {
-    _errors.push(val)
-  }
+    _errors.push(val);
+  };
 
   const isValid = () => {
-    return isVersion() && isURL()
-  }
+    return isVersion() && isURL();
+  };
 
   const isVersion = () => {
     if (version === packageJSON().version) {
@@ -32,7 +31,7 @@ function Validator(opts) {
       setErrors(err);
       return false;
     }
-  }
+  };
 
   const isURL = () => {
     let result = false;
@@ -42,29 +41,29 @@ function Validator(opts) {
         const remotes = new SitConfig('local').config.remote;
         if (remotes) {
           Object.keys(remotes).forEach((name) => {
-            let url = remotes[name];
-            let validator = new GSSValidator(url, baseURL);
+            const url = remotes[name];
+            const validator = new GSSValidator(url, baseURL);
             result = validator.isSpreadSheetURL();
             if (!result) {
-              setErrors(...validator.getErrors())
+              setErrors(...validator.getErrors());
             }
-          })
+          });
         } else {
-          result = false
+          result = false;
         }
         break;
     }
 
     return result;
-  }
+  };
 
   return {
     getErrors,
     setErrors,
     isValid,
     isVersion,
-    isURL
-  }
+    isURL,
+  };
 }
 
 module.exports = Validator;

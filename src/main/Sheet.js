@@ -1,10 +1,9 @@
-'use strict';
 
 const GSS = require('./sheets/GSS');
 
 function Sheet(opts) {
   const { type } = opts;
-  let sheet = {}
+  let sheet = {};
 
   switch (type) {
     case 'GoogleSpreadSheet':

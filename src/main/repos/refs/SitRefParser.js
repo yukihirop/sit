@@ -1,11 +1,10 @@
-'use strict';
 
 const {
-  fileSafeLoad
+  fileSafeLoad,
 } = require('../../utils/file');
 
 const {
-  colorize
+  colorize,
 } = require('../../utils/string');
 
 const SitBase = require('../base/SitBase');
@@ -15,7 +14,7 @@ const REF_REMOTE_HEADER = ['branch', 'sha1'];
 class SitRefParser extends SitBase {
   constructor(repo, branch, refFile) {
     super();
-    this.repo = repo
+    this.repo = repo;
     this.branch = branch;
     this.relativeRefFile = refFile;
     this.refFile = `${this.localRepo}/${refFile}`;
@@ -23,46 +22,48 @@ class SitRefParser extends SitBase {
 
   parseToCSV(replaceBlob = true, isHeader = true) {
     const { err, data } = fileSafeLoad(this.refFile);
-    if (err) die(err.message)
+    if (err) die(err.message);
     let commitHash = data.trim();
     let hash;
 
-    if (data.startsWith("ref: ")) {
+    if (data.startsWith('ref: ')) {
       commitHash = this.repo._refResolve(data.slice(5));
     }
 
     if (replaceBlob) {
       hash = this.repo._refBlobFromCommitHash(commitHash);
     } else {
-      hash = commitHash
+      hash = commitHash;
     }
 
     if (isHeader) {
       return [
         REF_REMOTE_HEADER,
-        [this.branch, hash]
+        [this.branch, hash],
       ];
     } else {
       return [
-        [this.branch, hash]
+        [this.branch, hash],
       ];
     }
   }
 
+  /* eslint-disable no-unused-vars */
   parseForLog() {
-    const [[ _, commitHash]] = this.parseToCSV(false, false);
-    return `${commitHash} ${this.relativeRefFile}`
+    const [[_, commitHash]] = this.parseToCSV(false, false);
+    return `${commitHash} ${this.relativeRefFile}`;
   }
+  /* eslint-enable no-unused-vars */
 
   isRemote() {
-    return this.refFile.indexOf('refs/remotes') !== -1
+    return this.refFile.indexOf('refs/remotes') !== -1;
   }
 
   displayedBranch() {
     if (this.isRemote()) {
-      return colorize(`remotes/${this.branch}`, 'mark')
+      return colorize(`remotes/${this.branch}`, 'mark');
     } else {
-      return this.branch
+      return this.branch;
     }
   }
 }

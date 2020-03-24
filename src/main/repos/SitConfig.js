@@ -1,7 +1,6 @@
-'use strict';
 
 const SitBaseConfig = require('./base/SitBaseConfig');
 
-class SitConfig extends SitBaseConfig { };
+class SitConfig extends SitBaseConfig { }
 
 module.exports = SitConfig;

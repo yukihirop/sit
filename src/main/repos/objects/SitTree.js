@@ -1,4 +1,3 @@
-'use strict';
 
 const SitObject = require('./SitObject');
 
