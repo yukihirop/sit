@@ -462,7 +462,7 @@ class SitBaseRepo extends SitBase {
     * ***********************************************************************************
     */
     const y = binary.indexOf('\\0', x);
-    const size = parseInt(binary.slice(x, y));
+    const size = parseInt(binary.slice(x, y), 10);
     const data = binary.slice(y + 2);
 
     if (size !== (binary.length - y - 2)) {
@@ -635,7 +635,7 @@ class SitBaseRepo extends SitBase {
   _nextKey(key) {
     const atIndex = key.indexOf('@');
     const type = key.slice(0, atIndex);
-    const num = parseInt(key.slice(atIndex + 2, atIndex + 3));
+    const num = parseInt(key.slice(atIndex + 2, atIndex + 3), 10);
     return `${type}@{${num + 1}}`;
   }
 

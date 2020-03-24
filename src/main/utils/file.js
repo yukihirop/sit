@@ -166,6 +166,7 @@ const fileCopySync = (fromPath, toPath, opts) => {
   fsExtra.copySync(fromPath, toPath, opts);
 };
 
+/* eslint-disable no-useless-catch */
 const deleteSyncFile = (path) => {
   try {
     fs.unlinkSync(path);
@@ -173,6 +174,7 @@ const deleteSyncFile = (path) => {
     throw error;
   }
 };
+/* eslint-enable no-useless-catch */
 
 const mTimeMs = (file, isRelative = true) => {
   let loadPath = file;

@@ -2,6 +2,7 @@
 // Copy from https://github.com/tj/commander.js/pull/1024/files
 const { Command } = require('commander');
 
+/* eslint-disable no-restricted-syntax */
 Command.prototype.useSubcommand = function (subCommand) {
   if (this._args.length > 0) throw Error('useSubcommand cannot be applied to a command with explicit args');
   if (!subCommand._name) throw Error('subCommand name is not specified');
@@ -35,6 +36,7 @@ Command.prototype.useSubcommand = function (subCommand) {
   subCommand.parent = this;
   return this;
 };
+/* eslint-enable no-restricted-syntax */
 
 /**
  * Returns an object with all options values, including parent options values

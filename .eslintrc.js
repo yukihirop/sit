@@ -50,6 +50,8 @@ module.exports = {
     "no-new": "off",
     "no-plusplus": "off",
     "no-use-before-define": "off",
-    "no-useless-escape": "off"
+    "no-useless-escape": "off",
+    "one-var-declaration-per-line": "off",
+    "import/order": "off"
   },
 };

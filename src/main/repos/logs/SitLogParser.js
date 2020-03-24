@@ -141,7 +141,7 @@ class SitLogParser extends SitBase {
 
     if (atIndex !== -1) {
       type = key.slice(0, atIndex);
-      num = parseInt(key.slice(atIndex + 2, atIndex + 3));
+      num = parseInt(key.slice(atIndex + 2, atIndex + 3), 10);
     } else {
       type = 'unknown';
       num = 0;

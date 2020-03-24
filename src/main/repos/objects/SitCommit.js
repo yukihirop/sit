@@ -32,6 +32,7 @@ class SitCommit extends SitObject {
     return Buffer.from(bufData, 'utf8').toString();
   }
 
+  /* eslint-disable no-useless-concat */
   createCommitLog(commitHash, commitData, opts = {}) {
     let result = '';
     let logBaseTitle;
@@ -58,13 +59,14 @@ class SitCommit extends SitObject {
     } else {
       result += '\n';
       result += `Author: ${author} ${email}\n`;
-      result += `Date: ${moment(parseInt(unixtime)).format('ddd MMM d HH:mm:ss GGGG ZZ')} ${timezone}\n`;
+      result += `Date: ${moment(parseInt(unixtime, 10)).format('ddd MMM d HH:mm:ss GGGG ZZ')} ${timezone}\n`;
       result += '\n';
       result += `\t${commitMsg}\n`;
     }
 
     return result;
   }
+  /* eslint-enable no-useless-concat */
 
   humanizeKVLM() {
     return Object.keys(this.kvlm).reduce((acc, key) => {
@@ -76,6 +78,7 @@ class SitCommit extends SitObject {
   // private
 
   // kvlm means key value line messaage
+  /* eslint-disable valid-typeof */
   _kvlmSerialize(kvlm) {
     let val;
     let result = '';
@@ -151,6 +154,7 @@ class SitCommit extends SitObject {
 
     return this._kvlmParse(binary, end + 1, dct);
   }
+  /* eslint-enable valid-typeof */
 }
 
 module.exports = SitCommit;

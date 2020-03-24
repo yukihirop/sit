@@ -1,6 +1,7 @@
 
 const Diff = require('diff');
 
+/* eslint-disable prefer-destructuring */
 const csv2JSON = (csvData) => {
   const result = {};
 
@@ -17,6 +18,7 @@ const csv2JSON = (csvData) => {
 
   return result;
 };
+/* eslint-enable prefer-destructuring */
 
 const overrideCSV = (csvTo, csvFrom, specifyIndex) => {
   let result = [];
@@ -58,6 +60,8 @@ const overrideCSV = (csvTo, csvFrom, specifyIndex) => {
 };
 
 // https://qiita.com/piroor/items/02885998c9f76f45bfa0
+
+/* eslint-disable no-restricted-syntax */
 const uniq = (array) => {
   const knownElements = {};
   const uniquedArray = [];
@@ -68,6 +72,7 @@ const uniq = (array) => {
   }
   return uniquedArray;
 };
+/* eslint-enable no-restricted-syntax */
 
 const diffArray = (to, from) => {
   const diff = Diff.diffArrays(to, from);
