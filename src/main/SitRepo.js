@@ -350,7 +350,8 @@ Please make sure you have the correct access rights and the repository exists.`)
 
       this.catFile(blobHash).then(obj => {
         const headStream = obj.serialize().toString();
-        const { err, data } = fileSafeLoad(this.distFilePath);
+        let { err, data } = fileSafeLoad(this.distFilePath);
+        data = data.trim()
 
         if (err) {
           die(err.message);
@@ -373,7 +374,7 @@ Please make sure you have the correct access rights and the repository exists.`)
     opts = Object.assign(opts, { type: 'blob' });
 
     const currentBranch = this._branchResolve('HEAD');
-    const currentHash = this._refResolve('HEAD');
+    const currentHash = this._refBlob('HEAD');
     const calculateHash = this.hashObject(this.distFilePath, opts);
 
     if (currentHash !== calculateHash) {
