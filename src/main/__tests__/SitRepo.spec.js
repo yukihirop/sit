@@ -1367,7 +1367,11 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
           header,
           ['こんにちは', 'hello', 'common.greeting.hello'],
         ];
+        const mockCreatedAt = '2020-03-25T23:53:57+09:00';
+        mockMoment_format.mockReturnValueOnce(mockCreatedAt);
+
         model.createPullRequestData(toData, fromData, (result) => {
+          const mockCreatedAt = '2020-03-25T23:53:57+09:00';
           expect(result).toEqual(
             [
               ['日本語', '英語', 'キー', 'Index', 'Status'],
@@ -1375,6 +1379,7 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
               ['さようなら', 'goodbye', 'common.greeting.good_bye', 1, '±'],
               ['おはよう', 'good morning', 'common.greeting.good_morning', 2, '±'],
               [''],
+              ['created at', mockCreatedAt],
               ['reviewers', ''],
               ['assignees', 'yukihirop'],
               ['message', ''],
@@ -1403,7 +1408,11 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
           ['バイバイ', 'bye bye', 'common.greeting.bye_bye'],
           ['おやすみなさい', 'good night', 'common.greeting.good_night'],
         ];
+        const mockCreatedAt = '2020-03-25T23:53:57+09:00';
+        mockMoment_format.mockReturnValueOnce(mockCreatedAt);
+
         model.createPullRequestData(toData, fromData, (result) => {
+          const mockCreatedAt = '2020-03-25T23:53:57+09:00';
           expect(result).toEqual(
             [
               ['日本語', '英語', 'キー', 'Index', 'Status'],
@@ -1413,6 +1422,7 @@ cc8aa255b845ffbac3ef18b0fce15f7e8bac7e46 refs/heads/develop
               ['バイバイ', 'bye bye', 'common.greeting.bye_bye', 2, '+'],
               ['おやすみなさい', 'good night', 'common.greeting.good_night', 3, '+'],
               [''],
+              ['created at', mockCreatedAt],
               ['reviewers', ''],
               ['assignees', 'yukihirop'],
               ['message', ''],
