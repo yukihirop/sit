@@ -26,7 +26,8 @@ const {
   colorize,
 } = require('./utils/string');
 
-const editor = require('./utils/editor');
+const editor = require('./utils/editor')
+  , moment = require('moment');
 
 const SitBaseRepo = require('./repos/base/SitBaseRepo');
 const SitConfig = require('./repos/SitConfig');
@@ -968,6 +969,7 @@ Dropped ${stashKey} (${stashCommitHash})`);
       }, [header]);
 
       data.push(['']);
+      data.push(['created at', moment().format()]);
       data.push(['reviewers', '']);
       data.push(['assignees', this.username()]);
       data.push(['message', '']);
