@@ -584,10 +584,7 @@ Please make sure you have the correct access rights and the repository exists.`]
         expect(console.log).toHaveBeenCalledTimes(1);
         expect(console.log.mock.calls[0][0]).toEqual(`\
 On branch master\n\
-
-\t${colorize('modified: test/dist/test_data.csv', 'mark')}\n\
-
-no changes added to commit`);
+nothing to commit`);
       });
     });
 
@@ -605,7 +602,12 @@ no changes added to commit`);
         expect(mockModel_hashObject.mock.calls[0]).toEqual(['test/dist/test_data.csv', { type: 'blob' }]);
 
         expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log.mock.calls[0]).toEqual(['On branch master\nnothing to commit']);
+        expect(console.log.mock.calls[0][0]).toEqual(`\
+On branch master\n\
+
+\t${colorize('modified: test/dist/test_data.csv', 'mark')}
+
+no changes added to commit`);
       });
     });
   });
