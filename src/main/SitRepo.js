@@ -201,13 +201,15 @@ class SitRepo extends SitBaseRepo {
         .then(files => {
           const result = files.reduce((acc, file) => {
             const refPath = pathRelative(this.localRepo, file);
-            const branch = this._branchResolve(refPath);
-            const refParser = new SitRefParser(this, branch, refPath);
+            if (refPath.indexOf('stash') === -1) {
+              const branch = this._branchResolve(refPath);
+              const refParser = new SitRefParser(this, branch, refPath);
 
-            if (branch === currentBranch) {
-              acc.push(`* ${refParser.displayedBranch()}`);
-            } else {
-              acc.push(`  ${refParser.displayedBranch()}`);
+              if (branch === currentBranch) {
+                acc.push(`* ${refParser.displayedBranch()}`);
+              } else {
+                acc.push(`  ${refParser.displayedBranch()}`);
+              }
             }
             return acc;
           }, []);
