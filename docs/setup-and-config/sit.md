@@ -1,47 +1,32 @@
-# sit
+## NAME
 
-Management for Sheet (ex: GoogleSpreadSheet) like git
+`sit` - the very very very stupid csv content tracker
 
-## 📦 Installation
+## SYNOPSIS
 
-```bash
-npm install -g sit
+```
+sit [--version] | [--help]
 ```
 
-## 🚀 Tutorial
+## DESCRIPTION
+
+Sit is a fast, scalable, distributed revision control system with an unusually rich command set that provides both high-level
+
+operations and full access to internals.
+
+## EXAMPLE
+
+#### --version
 
 ```bash
-sit init
-#
-# Configure .sitsetting
-#
-# repo init
-sit repo init
-# clasp init
-sit clasp init
-# clasp
-clasp push
-clasp deploy
-# Fetch sheet
-sit fetch origin develop
-sit merge origin develop
-# status
-sit status
-# diff
-sit diff
-# checkout
-sit checkout -b develop
-sit checkout master
-# commit
-sit commit -m 'initial commit'
-# Update sheet
-sit push origin master
+$ sit --version
+1.0.0
 ```
 
-## 📖 Usage
+#### --help
 
 ```bash
-sit -h
+$ sit -help
 Usage: sit [options] [command]
 
 sit cli
@@ -75,57 +60,3 @@ Commands:
   repo                                              repo cli
   stash                                             stash cli
 ```
-
-## ❤️ Support Sheets
-
-- GoogleSpreadSheet
-
-## ⚙ .sitsetting
-
-The configuration file called `.sitsetting` is a file that contains all settings.
-
-- Schema information file managed by GoogleSpreadSheet.
-- Authentication information for using GoogleSpreadSheetAPI.
-- Information such as output destination of deliverables.
-
-
-The default settings are as follows:
-
-```yaml
----
-version: "1.0.0"
-sheet:
-  gss:
-    auth:
-      credPath: ./creds.json
-    openAPIV3Schema:
-      type: object
-      properties:
-        ja:
-          type: string
-          description: 日本語
-        en:
-          type: string
-          description: 英語
-        key:
-          type: string
-          description: キー
-    defaultWorksheet:
-      rowCount: 10000
-      colCount: 20
-repo:
-  local: .sit
-dist:
-  path: ./dist
-  sheetName: "master_data.csv"
-```
-
-## environments variables
-
-|name|content|default|
-|----|-------|-------|
-|SIT_DIR||`.`|
-|SIT_SETTING_DIR||`.`|
-|SIT_GOOGLE_SERVICE_ACCOUNT_EMAIL|Google Service Account Email||
-|SIT_GOOGLE_PRIVATE_KEY|Google Private Key||
-
