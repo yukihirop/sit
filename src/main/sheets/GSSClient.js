@@ -17,13 +17,41 @@ const _createSheetId = (uri, baseURL) => {
 };
 
 function GSSClient(uri, opts) {
-  const { baseURL } = opts;
+  const { baseURL, type } = opts;
   const sheetId = _createSheetId(uri, baseURL);
   const doc = new GoogleSpreadsheet(sheetId);
 
-  const { credPath } = SitSetting.sheet.gss.auth
-    , { settingPath } = SitSetting._internal_
-    , creds = jsonSafeLoad(pathJoin(pathDirname(settingPath), credPath));
+  const { auth } = SitSetting.sheet.gss;
+  let creds;
+
+  if (auth) {
+    const { settingPath } = SitSetting._internal_;
+    creds = jsonSafeLoad(pathJoin(pathDirname(settingPath), auth.credPath));
+    if (Object.keys(creds).length === 0) {
+      die(`\
+error: Can not push for ${type}
+error: credentials file not found.`);
+    }
+  } else {
+    const clientEmail = process.env.SIT_GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    const privateKey = process.env.SIT_GOOGLE_PRIVATE_KEY;
+
+    if (clientEmail === undefined) {
+      die(`\
+error: Can not push for ${type}
+error: 'SIT_GOOGLE_SERVICE_ACCOUNT_EMAIL' is not set.`);
+    }
+    if (privateKey === undefined) {
+      die(`\
+error: Can not push for ${type}
+error: 'SIT_GOOGLE_PRIVATE_KEY' is not set.`);
+    }
+
+    creds = {
+      client_email: clientEmail,
+      private_key: privateKey.replace(/\\n/g, '\n'),
+    };
+  }
 
   return new Promise((resolve, reject) => {
     doc.useServiceAccountAuth(creds).then(() => {

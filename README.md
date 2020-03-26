@@ -65,9 +65,15 @@ Commands:
   browse-remote [repository]                        browse remote repository
   config [options] <key> <value>                    configure sitconfig
   remote [options] <subcommand> <repository> [url]  set sitconfig
+  log [options]                                     Shows the commit logs
+  reflog                                            Shows the ref logs
+  show-ref                                          Show refs
+  rev-parse [options] [args]                        Many Sit porcelainish commands take mixture of flags
+  pull-request [options] <repository> <args>        Create pull request in Sheet
   init                                              create setting file (.sitsetting)
   clasp                                             clasp cli
   repo                                              repo cli
+  stash                                             stash cli
 ```
 
 ## ❤️ Support Sheets
@@ -120,4 +126,6 @@ dist:
 |----|-------|-------|
 |SIT_DIR||`.`|
 |SIT_SETTING_DIR||`.`|
+|SIT_GOOGLE_SERVICE_ACCOUNT_EMAIL|Google Service Account Email||
+|SIT_GOOGLE_PRIVATE_KEY|Google Private Key||
 
