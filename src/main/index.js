@@ -169,6 +169,8 @@ To ${repo.remoteRepo(repoName)}`;
                 detailMsg = `\t+ ${detailMsg} (forced update)`;
               } else if (isNewBranch) {
                 detailMsg = `\t* [new branch]\t${detailMsg}`;
+              } else {
+                detailMsg = `\t${detailMsg}`;
               }
               console.log(`${baseMsg}\n${detailMsg}`);
             });
