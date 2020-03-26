@@ -321,6 +321,7 @@ Please make sure you have the correct access rights and the repository exists.`)
     }
   }
 
+  /* eslint-disable prefer-const */
   diff(opts = {}) {
     const { compareBlobHash } = opts;
     opts = Object.assign(opts, { type: 'blob' });
@@ -354,7 +355,7 @@ Please make sure you have the correct access rights and the repository exists.`)
       this.catFile(blobHash).then(obj => {
         const headStream = obj.serialize().toString();
         let { err, data } = fileSafeLoad(this.distFilePath);
-        data = data.trim()
+        data = data.trim();
 
         if (err) {
           die(err.message);
@@ -372,6 +373,7 @@ Please make sure you have the correct access rights and the repository exists.`)
       });
     }
   }
+  /* eslint-enable prefer-const */
 
   status(opts = {}) {
     opts = Object.assign(opts, { type: 'blob' });
