@@ -84,7 +84,15 @@ const yamlDumpWriteSyncFile = (file, data) => {
 
 const jsonSafeLoad = (file) => {
   const fullPath = path.resolve(currentPath, file);
-  return require(fullPath);
+  let result;
+
+  try {
+    result = require(fullPath);
+  } catch (err) {
+    result = {};
+  }
+
+  return result;
 };
 
 const packageJSON = () => {
