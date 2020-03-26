@@ -582,9 +582,9 @@ Please make sure you have the correct access rights and the repository exists.`]
         model.status();
 
         expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log.mock.calls[0][0]).toEqual(`\
+        expect(console.log.mock.calls[0][0]).toEqual('\
 On branch master\n\
-nothing to commit`);
+nothing to commit');
       });
     });
 
