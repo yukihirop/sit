@@ -699,7 +699,7 @@ no changes added to commit`);
       it('should return correctly', (done) => {
         model.push('origin', 'new_branch', { HEADBlobHash: '8b58f3891ae3e4d274972a39d27fd460aaeaa6cc' })
           .catch(err => {
-            expect(err.message).toEqual("error: src refspec unknown does not match any\nerror: failed to push some refs to 'origin'");
+            expect(err.message).toEqual("error: src refspec 'new_branch' does not match any\nerror: failed to push some refs to 'origin'");
             done();
           });
       });

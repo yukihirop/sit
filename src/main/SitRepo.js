@@ -493,7 +493,7 @@ nothing to commit`);
         resolve({ beforeHash, afterHash });
       } else {
         reject(new Error(`\
-error: src refspec unknown does not match any\n\
+error: src refspec '${branch}' does not match any\n\
 error: failed to push some refs to '${repoName}'`));
       }
     });
