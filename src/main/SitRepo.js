@@ -391,6 +391,23 @@ Please make sure you have the correct access rights and the repository exists.`)
             console.log(patch);
           }
         });
+      } else {
+        const headStream = '';
+        let { err, data } = fileSafeLoad(this.distFilePath);
+        data = data.trim();
+        if (err) {
+          die(err.message);
+        }
+        if (headStream !== data) {
+          let patch = jsdiff.createPatch(index, headStream, data, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
+          patch = patch
+            .replace(/^[---].*\t/gm, '--- ')
+            .replace(/^[+++].*\t/gm, '+++ ')
+            .replace(/^\-.*/gm, colorize('$&', 'removed'))
+            .replace(/^\+.*/gm, colorize('$&', 'added'))
+            .replace(/^@@.+@@/gm, colorize('$&', 'section'));
+          console.log(patch);
+        }
       }
     }
   }
