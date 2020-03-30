@@ -168,6 +168,11 @@ program
     '--abort',
     'abort merge'
   )
+  .option(
+    '-t, --type <type>',
+    'sheet type',
+    'GoogleSpreadSheet'
+  )
   .action((repository, branch, options) => {
     sit().Repo.merge(repository, branch, options);
   });

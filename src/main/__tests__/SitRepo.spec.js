@@ -895,7 +895,7 @@ fatal: Existing because of an unresolved conflict.`]);
         expect(mockModel__deleteSyncFile.mock.calls[2]).toEqual(['MERGE_HEAD']);
 
         expect(mockModel_catFile).toHaveBeenCalledTimes(1);
-        expect(mockModel_catFile.mock.calls[0]).toEqual(['4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']);
+        expect(mockModel_catFile.mock.calls[0]).toEqual(['2938ad2ab5722adf9b48ff5bac74989eaa2d144c']);
       });
     });
 
@@ -931,19 +931,14 @@ Please, commit your changes before you merge.`]);
 
     describe('when merge origin master (conflict)', () => {
       it('should return correctly', () => {
-        const obj = new SitBlob(model, '1,2,3', 3);
         jest.spyOn(model, '_writeSyncFile').mockReturnValue(model);
         jest.spyOn(model, '_writeLog').mockReturnValue(model);
         jest.spyOn(model, 'hashObjectFromData').mockReturnValue(true);
-        const mockModel__isExistFile = jest.spyOn(model, '_isExistFile').mockReturnValue(false);
-        const mockModel_catFile = jest.spyOn(model, 'catFile').mockReturnValueOnce(Promise.resolve(obj));
+        const mockModel__isExistFile = jest.spyOn(model, '_isExistFile').mockReturnValueOnce(false);
         model.merge('origin', 'master');
 
         expect(mockModel__isExistFile).toHaveBeenCalledTimes(1);
         expect(mockModel__isExistFile.mock.calls[0]).toEqual(['MERGE_HEAD']);
-
-        expect(mockModel_catFile).toHaveBeenCalledTimes(1);
-        expect(mockModel_catFile.mock.calls[0]).toEqual(['4e2b7c47eb492ab07c5d176dccff3009c1ebc79b']);
       });
     });
   });

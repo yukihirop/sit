@@ -568,6 +568,7 @@ error: failed to push some refs to '${repoName}'`));
   merge(repoName, branch, opts = {}) {
     const isContinue = opts.continue;
     const { stat, abort, type } = opts;
+    const refBranch = this._HEAD();
 
     if (!stat && !isContinue && !abort && branch !== this.currentBranch()) {
       console.log(`\
@@ -618,29 +619,29 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
           const afterMTime = mTimeMs(path);
 
           if (beforeMTime !== afterMTime) {
-            const { err, data } = fileSafeLoad(`${this.localRepo}/MERGE_MSG`).split('\n')[0];
-            const commitMsg = data;
+            const { err, data } = fileSafeLoad(`${this.localRepo}/MERGE_MSG`);
+            const commitMsg = data.split('\n')[0];
             if (err) die(err.message);
 
             const HEADHash = this._refResolve('HEAD');
+            const HEADBranch = this._branchResolve('HEAD');
             const calculateHash = this._add(this.distFilePath, {});
-            const mergeCommitHash = this._createMergeCommit(calculateHash, HEADHash, branch, type);
-            const refBranch = this._HEAD();
-            const remoteHead = this._refResolve('MERGE_HEAD');
+            const mergeCommitHash = this._createMergeCommit(calculateHash, HEADHash, HEADBranch, type);
+            const remoteHEADHash = this._refResolve('MERGE_HEAD');
 
             // STEP 3: Update logs/HEAD
             // STEP 4: Update logs/refs/heads/<HEAD-branch>
-            // STEP 5: Update ORIG_HEAD
+            // STEP 5: Update ORIG_HEAD (commit)
             // STEP 6: Update HEAD
-            // STEP 7: Update REMOTE_HEAD
+            // STEP 7: Update REMOTE_HEAD (blob)
             // STEP 9: Delete MERGE_MODE
             // STEP 10: Delete MERGE_MSG
-            // STEP 11: Delete MERGE_HEAD
-            this._writeLog('logs/HEAD', this.beforeHEADHash(), this.afterHEADHash(), `commit (merge): ${commitMsg} into ${this.currentBranch()}`)
-              ._writeLog(`logs/refs/heads/${this.currentBranch()}`, this.beforeHEADHash(), this.afterHEADHash(), `commit (merge): ${commitMsg} into ${this.currentBranch()}`)
+            // STEP 11: Delete MERGE_HEAD (blob)
+            this._writeLog('logs/HEAD', HEADHash, mergeCommitHash, `commit (merge): ${commitMsg} into ${this.currentBranch()}`)
+              ._writeLog(`logs/refs/heads/${this.currentBranch()}`, HEADHash, mergeCommitHash, `commit (merge): ${commitMsg} into ${this.currentBranch()}`)
               ._writeSyncFile('ORIG_HEAD', HEADHash)
               ._writeSyncFile(refBranch, mergeCommitHash)
-              ._writeSyncFile('REMOTE_HEAD', remoteHead)
+              ._writeSyncFile('REMOTE_HEAD', remoteHEADHash)
               ._deleteSyncFile('MERGE_MODE')
               ._deleteSyncFile('MERGE_MSG')
               ._deleteSyncFile('MERGE_HEAD');
@@ -648,7 +649,7 @@ Sorry... Only the same branch ('${repoName}/${this.currentBranch()}') on the rem
             // STEP 12: Create sit object (commit)
 
             process.stdin.resume();
-            console.log(`[${this.currentBranch()} ${this.afterHEADHash().slice(0, 7)}] ${commitMsg} into ${this.currentBranch()}`);
+            console.log(`[${this.currentBranch()} ${mergeCommitHash.slice(0, 7)}] ${commitMsg} into ${this.currentBranch()}`);
 
             watcher.close();
           }
@@ -670,8 +671,10 @@ fatal: Existing because of an unresolved conflict.');
         // STEP 3: Delete MERGE_MSG
         // STEP 4: Delete MERGE_HEAD
         // STEP 5: Update dist file
-        const origHEADHash = this._refResolve('ORIG_HEAD');
-        this._writeLog('logs/HEAD', origHEADHash, origHEADHash, 'reset: moving to HEAD')
+        const origCommitHEADHash = this._refResolve('ORIG_HEAD');
+        const origHEADHash = this._refBlob('ORIG_HEAD');
+        this._writeLog('logs/HEAD', origCommitHEADHash, origCommitHEADHash, 'reset: moving to HEAD')
+          ._writeSyncFile(refBranch, origCommitHEADHash)
           ._deleteSyncFile('MERGE_MODE')
           ._deleteSyncFile('MERGE_MSG')
           ._deleteSyncFile('MERGE_HEAD')
@@ -697,8 +700,13 @@ Please, commit your changes before you merge.`);
     }
 
     if (repoName && branch) {
-      const headHash = this._refResolve('HEAD');
-      const remoteHash = this._refResolve(`refs/remotes/${repoName}/${branch}`);
+      const headHash = this.hashObject(this.distFilePath, { type: 'blob', write: false });
+      const remoteHash = this._refBlob(`refs/remotes/${repoName}/${branch}`);
+
+      if (headHash === remoteHash) {
+        console.log('Already up to date.');
+        return;
+      }
 
       this.catFile(remoteHash).then(remoteObj => {
         this.catFile(headHash).then(headObj => {
@@ -708,43 +716,48 @@ Please, commit your changes before you merge.`);
           const headData = headStream.split('\n');
 
           this._twoWayMerge(headData, remoteData, 'HEAD', `${repoName}/${branch}`, result => {
+            const headCommitHash = this._refResolve('HEAD');
+            const saveData = result.data.join('\n');
+
             // Conflict
             if (result.conflict) {
-              // STEP 1: Update MERGE_HEAD
+              // STEP 1: Update MERGE_HEAD ( ≒ REMOTE_HEAD・blob)
               // STEP 2: Update MERGE_MODE
               // STEP 3: Update MERGE_MSG
-              // STEP 4: Update ORIG_HEAD
+              // STEP 4: Update ORIG_HEAD (commit)
               // STEP 5: Create sit object (blob)
               this._writeSyncFile('MERGE_HEAD', remoteHash)
                 ._writeSyncFile('MERGE_MODE', '')
                 ._writeSyncFile('MERGE_MSG', `Merge remote-tracking branch '${repoName}/${branch}'\n\n# Conflict\n#\t${this.distFilePath}`)
-                ._writeSyncFile('ORIG_HEAD', headHash)
-                .hashObjectFromData(result.data.join('\n'), { type: 'blob', write: true });
+                ._writeSyncFile('ORIG_HEAD', headCommitHash)
+                .hashObjectFromData(saveData, { type: 'blob', write: true });
 
               // STEP 6: File update
-              writeSyncFile(this.distFilePath, result.data.join('\n'));
+              writeSyncFile(this.distFilePath, saveData);
 
               console.log(`\
 Two-way-merging ${this.distFilePath}
 CONFLICT (content): Merge conflict in ${this.distFilePath}
 two-way-merge failed; fix conflicts and then commit the result.`);
             } else {
-              const headBranch = this._branchResolve('HEAD');
-
+              // STEP 5: Create Merge Commit
+              const blobHashAtHEAD = this.hashObjectFromData(saveData, { type: 'blob', write: true });
+              const mergeCommitHash = this._createMergeCommit(blobHashAtHEAD, headCommitHash, branch, type);
 
               // STEP 1: Update ORIG_HEAD
               // STEP 2: Update logs/HEAD
               // STEP 3: Update logs/refs/<HEAD-branch>
               // STEP 4: Update HEAD
-              this._writeSyncFile('ORIG_HEAD', headHash)
-                ._writeLog('logs/HEAD', headHash, remoteHash, `merge ${repoName}/${branch}: Fast-forward`)
-                ._writeLog(`logs/refs/heads/${headBranch}`, headHash, remoteHash, `merge ${repoName}/${branch}: Fast-forward`);
+              this._writeSyncFile('ORIG_HEAD', headCommitHash)
+                ._writeSyncFile(refBranch, mergeCommitHash)
+                ._writeLog('logs/HEAD', headCommitHash, mergeCommitHash, `merge ${repoName}/${branch}: Fast-forward`)
+                ._writeLog(`logs/refs/heads/${branch}`, headCommitHash, mergeCommitHash, `merge ${repoName}/${branch}: Fast-forward`);
 
-              // STEP 5: Update dist file
-              writeSyncFile(this.distFilePath, result.data.join('\n'));
+              // STEP 6: Update dist file
+              writeSyncFile(this.distFilePath, saveData);
 
               console.log(`\
-Updating ${headHash.slice(0, 7)}..${remoteHash.slice(0, 7)}\n
+Updating ${headCommitHash.slice(0, 7)}..${mergeCommitHash.slice(0, 7)}\n
 Fast-forward
   ${this.distFilePath}
   1 file changed`);
