@@ -793,7 +793,12 @@ Fast-forward
         config.updateSection(`remote.${repoName}`, null);
         break;
       case 'get-url':
-        console.log(config.config.remote[repoName].url);
+        const remote = config.config.remote;
+        if (remote === undefined || remote[repoName] === undefined) {
+          die(`fatal: No such remote '${repoName}'`);
+        } else {
+          console.log(config.config.remote[repoName].url);
+        }
         break;
       default:
         console.log(`Do not support subcommand: '${subcommand}'`);
