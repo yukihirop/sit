@@ -270,7 +270,7 @@ Please make sure you have the correct access rights and the repository exists.`]
       sit().Repo.init();
 
       expect(console.log).toHaveBeenCalledTimes(2);
-      expect(console.log.mock.calls[0]).toEqual(['created local repo: test/localRepo/.sit']);
+      expect(console.log.mock.calls[0]).toEqual(['created local repository: test/localRepo/.sit']);
       expect(console.log.mock.calls[1]).toEqual(['created dist file: test/dist/test_data.csv']);
     });
   });

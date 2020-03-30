@@ -29,17 +29,18 @@ class Clasp {
     const destClaspignorePath = absolutePath('./.claspignore');
 
     if (isExistFile(this.localRepo)) {
+      if (isExistFile(`${this.localRepo}/scripts/clasp`)) {
+        console.log(`updated script files: ${this.claspPath}`);
+      } else {
+        console.log(`created script files: ${this.claspPath}`);
+      }
+
       // copy .claspignore.
       fileCopySync(rootClaspignorePath, destClaspignorePath);
       // copy clasp/*.js into local repo.
       fileCopySync(`${rootFilesPath}`, `${destPath}`, { mkdirp: true });
       // append don't ignore GAS codes into .claspignore
       appendFile(`${destClaspignorePath}`, `!${fileBasename(this.localRepo)}/scripts/clasp/**/*.js`);
-      if (isExistFile(`${this.localRepo}/scripts/clasp`)) {
-        console.log(`update files: ${this.claspPath}`);
-      } else {
-        console.log(`create files: ${this.claspPath}`);
-      }
     } else {
       die(`Don't exists local repo: ${this.localRepo}.`);
     }
