@@ -242,7 +242,7 @@ remote: done.`);
     const data = sheet.header();
     const result = repo.init({ data });
     if (result) {
-      console.log(`created local repo: ${repo.localRepo}`);
+      console.log(`created local repository: ${repo.localRepo}`);
       console.log(`created dist file: ${repo.distFilePath}`);
     } else {
       console.log(`already exist local repo: ${repo.localRepo}`);

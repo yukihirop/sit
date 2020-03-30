@@ -47,7 +47,7 @@ describe('Clasp', () => {
         expect(appendFile.mock.calls[0]).toEqual([`${currentPath}/.claspignore`, '!.sit/scripts/clasp/**/*.js']);
 
         expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log.mock.calls[0]).toEqual(['update files: test/localRepo/.sit/scripts/clasp']);
+        expect(console.log.mock.calls[0]).toEqual(['updated script files: test/localRepo/.sit/scripts/clasp']);
       });
 
       describe('when clasp scripts do not exist', () => {
@@ -60,7 +60,7 @@ describe('Clasp', () => {
           model.update();
 
           expect(console.log).toHaveBeenCalledTimes(1);
-          expect(console.log.mock.calls[0]).toEqual(['create files: test/localRepo/.sit/scripts/clasp']);
+          expect(console.log.mock.calls[0]).toEqual(['created script files: test/localRepo/.sit/scripts/clasp']);
         });
       });
     });
