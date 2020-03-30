@@ -46,13 +46,13 @@ class SitBaseRepo extends SitBase {
   remoteRepo(repoName) {
     const remote = new SitConfig('local').config.remote;
     if (remote === undefined || remote[repoName] === undefined) {
-      die(`fatal: No such remote '${repoName}'`);
+      undefined
     } else {
       const repoData = remote[repoName];
       if (repoData) {
         return repoData.url;
       } else {
-        return null;
+        return undefined;
       }
     }
   }
