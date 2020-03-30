@@ -326,12 +326,11 @@ Please make sure you have the correct access rights and the repository exists.`)
     const { compareBlobHash } = opts;
     opts = Object.assign(opts, { type: 'blob' });
 
-    const blobHash = this._refBlob('HEAD');
+    const blobHashAtHEAD = this._refBlob('HEAD');
 
-    if (compareBlobHash) {
-      const index = `${blobHash.slice(0, 7)}..${compareBlobHash.slice(0, 7)}`;
-
-      this.catFile(blobHash).then(obj => {
+    if (compareBlobHash && blobHashAtHEAD !== this._INITIAL_HASH()) {
+      const index = `${blobHashAtHEAD.slice(0, 7)}..${compareBlobHash.slice(0, 7)}`;
+      this.catFile(blobHashAtHEAD).then(obj => {
         this.catFile(compareBlobHash).then(compareObj => {
           const headData = obj.serialize().toString();
           const compareData = compareObj.serialize().toString();
@@ -348,20 +347,14 @@ Please make sure you have the correct access rights and the repository exists.`)
           }
         });
       });
-    } else {
-      const calculateHash = this.hashObject(this.distFilePath, opts);
-      const index = `${blobHash.slice(0, 7)}..${calculateHash.slice(0, 7)}`;
+    } else if (compareBlobHash && blobHashAtHEAD === this._INITIAL_HASH()) {
+      const index = `${blobHashAtHEAD.slice(0, 7)}..${compareBlobHash.slice(0, 7)}`;
+      this.catFile(compareBlobHash).then(compareObj => {
+        const headData = '';
+        const compareData = compareObj.serialize().toString();
 
-      this.catFile(blobHash).then(obj => {
-        const headStream = obj.serialize().toString();
-        let { err, data } = fileSafeLoad(this.distFilePath);
-        data = data.trim();
-
-        if (err) {
-          die(err.message);
-        }
-        if (headStream !== data) {
-          let patch = jsdiff.createPatch(index, headStream, data, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
+        if (headData !== compareData) {
+          let patch = jsdiff.createPatch(index, headData, compareData, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
           patch = patch
             .replace(/^[---].*\t/gm, '--- ')
             .replace(/^[+++].*\t/gm, '+++ ')
@@ -371,6 +364,31 @@ Please make sure you have the correct access rights and the repository exists.`)
           console.log(patch);
         }
       });
+    } else {
+      const calculateHash = this.hashObject(this.distFilePath, opts);
+      const index = `${blobHashAtHEAD.slice(0, 7)}..${calculateHash.slice(0, 7)}`;
+
+      if (blobHashAtHEAD !== this._INITIAL_HASH()) {
+        this.catFile(blobHashAtHEAD).then(obj => {
+          const headStream = obj.serialize().toString();
+          let { err, data } = fileSafeLoad(this.distFilePath);
+          data = data.trim();
+
+          if (err) {
+            die(err.message);
+          }
+          if (headStream !== data) {
+            let patch = jsdiff.createPatch(index, headStream, data, `a/${this.distFilePath}`, `b/${this.distFilePath}`);
+            patch = patch
+              .replace(/^[---].*\t/gm, '--- ')
+              .replace(/^[+++].*\t/gm, '+++ ')
+              .replace(/^\-.*/gm, colorize('$&', 'removed'))
+              .replace(/^\+.*/gm, colorize('$&', 'added'))
+              .replace(/^@@.+@@/gm, colorize('$&', 'section'));
+            console.log(patch);
+          }
+        });
+      }
     }
   }
   /* eslint-enable prefer-const */
