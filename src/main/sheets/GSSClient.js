@@ -29,7 +29,7 @@ function GSSClient(uri, opts) {
     creds = jsonSafeLoad(pathJoin(pathDirname(settingPath), auth.credPath));
     if (Object.keys(creds).length === 0) {
       die(`\
-error: Can not push for ${type}
+error: Can not access for ${type}
 error: credentials file not found.`);
     }
   } else {
@@ -38,12 +38,12 @@ error: credentials file not found.`);
 
     if (clientEmail === undefined) {
       die(`\
-error: Can not push for ${type}
+error: Can not access for ${type}
 error: 'SIT_GOOGLE_SERVICE_ACCOUNT_EMAIL' is not set.`);
     }
     if (privateKey === undefined) {
       die(`\
-error: Can not push for ${type}
+error: Can not access for ${type}
 error: 'SIT_GOOGLE_PRIVATE_KEY' is not set.`);
     }
 
