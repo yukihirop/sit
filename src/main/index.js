@@ -202,6 +202,7 @@ To ${repo.remoteRepo(repoName)}`;
             try {
               // Initialize local repo
               const result = repo.init();
+              data = data.join('\n');
 
               if (!result) {
                 throw new Error(`fatal: destination path '${repo.distFilePath}' already exists and is not an empty directory.`);
@@ -210,7 +211,7 @@ To ${repo.remoteRepo(repoName)}`;
               // Copy clasp scripts
               clasp.update();
 
-              const sha = repo.hashObjectFromData(data.join('\n'), { type: 'blob', write: true });
+              const sha = repo.hashObjectFromData(data, { type: 'blob', write: true });
 
               // Update local repo
               repo.clone(repoName, url, sha, data, opts);
