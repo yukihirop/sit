@@ -213,7 +213,10 @@ class SitRepo extends SitBaseRepo {
             }
             return acc;
           }, []);
-          console.log(result.join('\n'));
+
+          if (result.length !== 0) {
+            console.log(result.join('\n'));
+          }
         })
         .catch(err => {
           die(err.message);
