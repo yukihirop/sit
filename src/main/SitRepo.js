@@ -793,7 +793,7 @@ Fast-forward
         config.updateSection(`remote.${repoName}`, null);
         break;
       case 'get-url':
-        const remote = config.config.remote;
+        const { remote } = config.config;
         if (remote === undefined || remote[repoName] === undefined) {
           die(`fatal: No such remote '${repoName}'`);
         } else {
