@@ -493,7 +493,7 @@ nothing to commit`);
         resolve({ beforeHash, afterHash });
       } else {
         reject(new Error(`\
-error: src refspec unknown does not match any\n\
+error: src refspec '${branch}' does not match any\n\
 error: failed to push some refs to '${repoName}'`));
       }
     });
@@ -793,7 +793,12 @@ Fast-forward
         config.updateSection(`remote.${repoName}`, null);
         break;
       case 'get-url':
-        console.log(config.config.remote[repoName].url);
+        const { remote } = config.config;
+        if (remote === undefined || remote[repoName] === undefined) {
+          die(`fatal: No such remote '${repoName}'`);
+        } else {
+          console.log(config.config.remote[repoName].url);
+        }
         break;
       default:
         console.log(`Do not support subcommand: '${subcommand}'`);

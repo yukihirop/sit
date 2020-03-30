@@ -56,7 +56,7 @@ describe('SitBaseRepo', () => {
 
     describe('when repoName do not exist', () => {
       it('should return correctly', () => {
-        expect(model.remoteRepo('typo_origin')).toEqual(null);
+        expect(model.remoteRepo('typo_origin')).toEqual(undefined);
       });
     });
   });

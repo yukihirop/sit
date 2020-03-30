@@ -40,7 +40,8 @@ function sit(opts) {
 fatal: '${repoName}' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
-Please make sure you have the correct access rights and the repository exists.`);
+Please make sure you have the correct access rights
+and the repository exists.`);
     } else if (branch) {
       sheet.getRows(repoName, branch)
         .then(data => {
@@ -114,7 +115,8 @@ From ${repo.remoteRepo(repoName)}
 fatal: '${repoName}' does not appear to be a sit repository
 fatal: Could not read from remote repository.
 
-Please make sure you have the correct access rights and the repository exists.`);
+Please make sure you have the correct access rights
+and the repository exists.`);
     } else if (branch) {
       // Fetch refs/remotes from sheet
       sheet.getRows(repoName, 'refs/remotes', ['branch', 'sha1']).then(data => {
