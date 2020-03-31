@@ -51,10 +51,6 @@ Commands:
 
 - GoogleSpreadSheet
 
-## 📕 Documents
-
-Full docs are available at https://yukihirop.github.io/sit
-
 ## ⚙ .sitsetting
 
 The configuration file called `.sitsetting` is a file that contains all settings.

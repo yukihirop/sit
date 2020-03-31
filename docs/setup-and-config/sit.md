@@ -1,18 +1,32 @@
-# sit
+## NAME
 
-Management for Sheet (ex: GoogleSpreadSheet) like git
+`sit` - the very very very stupid csv content tracker
 
-## 📦 Installation
+## SYNOPSIS
 
-```bash
-npm install -g sit
+```
+sit [--version] | [--help]
 ```
 
+## DESCRIPTION
 
-## 📖 Usage
+Sit is a fast, scalable, distributed revision control system with an unusually rich command set that provides both high-level
+
+operations and full access to internals.
+
+## EXAMPLE
+
+#### --version
 
 ```bash
-sit -h
+$ sit --version
+1.0.0
+```
+
+#### --help
+
+```bash
+$ sit -help
 Usage: sit [options] [command]
 
 sit cli
@@ -46,64 +60,3 @@ Commands:
   repo                                              repo cli
   stash                                             stash cli
 ```
-
-## ❤️ Support Sheets
-
-- GoogleSpreadSheet
-
-## 📕 Documents
-
-Full docs are available at https://yukihirop.github.io/sit
-
-## ⚙ .sitsetting
-
-The configuration file called `.sitsetting` is a file that contains all settings.
-
-- Schema information file managed by GoogleSpreadSheet.
-- Authentication information for using GoogleSpreadSheetAPI.
-- Information such as output destination of deliverables.
-
-
-The default settings are as follows:
-
-```yaml
----
-version: "1.0.0"
-sheet:
-  gss:
-    auth:
-      credPath: ./creds.json
-    openAPIV3Schema:
-      type: object
-      properties:
-        ja:
-          type: string
-          description: 日本語
-        en:
-          type: string
-          description: 英語
-        key:
-          type: string
-          description: キー
-    defaultWorksheet:
-      rowCount: 10000
-      colCount: 20
-repo:
-  local: .sit
-dist:
-  path: ./dist
-  sheetName: "master_data.csv"
-```
-
-## environments variables
-
-`sit` has environment variables to flexibly set the location of `local repositories` and
-`configuration file`, and environment variables required to access `GoogleSpreadSheet`.
-
-|name|content|default|
-|----|-------|-------|
-|SIT_DIR|Path to local repository|`.`|
-|SIT_SETTING_DIR|Path to `.sitsetting`|`.`|
-|SIT_GOOGLE_SERVICE_ACCOUNT_EMAIL|Google Service Account Email||
-|SIT_GOOGLE_PRIVATE_KEY|Google Private Key||
-
