@@ -1,6 +1,8 @@
 # sit
 
-Management for Sheet (ex: GoogleSpreadSheet) like git
+the very very very stupid csv content tracker 🤧
+
+Management for Sheet (ex: GoogleSpreadSheet) like git 😑
 
 ## 📦 Installation
 
@@ -95,7 +97,7 @@ dist:
   sheetName: "master_data.csv"
 ```
 
-## environments variables
+## 🤖 environments variables
 
 `sit` has environment variables to flexibly set the location of `local repositories` and
 `configuration file`, and environment variables required to access `GoogleSpreadSheet`.
