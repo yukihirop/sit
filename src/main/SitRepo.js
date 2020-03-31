@@ -921,7 +921,11 @@ Dropped ${stashKey} (${stashCommitHash})`);
       const parser = new SitLogParser(this, currentBranch, 'logs/refs/stash');
       try {
         const stashList = parser.parseForLog('stash');
-        console.log(stashList);
+        if (stashList === '') {
+          console.log('stash list is nothing');
+        } else {
+          console.log(stashList);
+        }
       } catch (err) {
         console.log('stash list is nothing');
       }
@@ -940,7 +944,7 @@ Dropped ${stashKey} (${stashCommitHash})`);
       let { stashKey } = opts;
       if (!stashKey) stashKey = 'stash@{0}';
 
-      const deleteStashKey = this._refStash(stashKey, false);
+      const deleteStashCommitHash = this._refStash(stashKey, false);
 
       if (stashKey === 'stash@{0}') {
         this._writeSyncFile('refs/stash', this._refStash(stashKey, true));
@@ -948,9 +952,9 @@ Dropped ${stashKey} (${stashCommitHash})`);
       this._deleteLineLog('logs/refs/stash', stashKey);
 
       if (stashKey === 'stash@{0}') {
-        console.log(`Dropped refs/stash@{0} (${deleteStashKey})`);
+        console.log(`Dropped refs/stash@{0} (${deleteStashCommitHash})`);
       } else {
-        console.log(`Dropped ${stashKey} (${deleteStashKey})`);
+        console.log(`Dropped ${stashKey} (${deleteStashCommitHash})`);
       }
     }
   }

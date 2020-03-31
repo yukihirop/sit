@@ -218,7 +218,8 @@ class SitBaseRepo extends SitBase {
     let { err, data } = fileSafeLoad(this.__repoFile(false, 'COMMIT_EDITMSG'));
     if (err) die(err.message);
     data = data.trim();
-    return data;
+    // Use only the first line message
+    return data.split('\n')[0];
   }
   /* eslint-enable prefer-const */
 
@@ -628,10 +629,15 @@ class SitBaseRepo extends SitBase {
     const index = parser.parseForIndex('stash');
     let stashCommitHash;
 
-    if (next) {
+    if (next && Object.keys(index).length > 1) {
       stashCommitHash = index[this._nextKey(stashKey)].aftersha;
     } else {
-      stashCommitHash = index[stashKey].aftersha;
+      const data = index[stashKey]
+      if (data) {
+        stashCommitHash = index[stashKey].aftersha;
+      } else {
+        die(`${stashKey} is not a valid reference`);
+      }
     }
 
     return stashCommitHash;
