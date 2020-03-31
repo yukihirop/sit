@@ -546,6 +546,8 @@ class SitBaseRepo extends SitBase {
         resolve([this._refResolve('REMOTE_HEAD')]);
       } else if (name === 'FETCH_HEAD') {
         resolve([this._refResolve('FETCH_HEAD')]);
+      } else if (name === 'MERGE_HEAD') {
+        resolve([this._refResolve('MERGE_HEAD')]);
       }
 
       if (name.match(hashRE)) {
