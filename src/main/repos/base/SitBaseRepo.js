@@ -632,7 +632,7 @@ class SitBaseRepo extends SitBase {
     if (next && Object.keys(index).length > 1) {
       stashCommitHash = index[this._nextKey(stashKey)].aftersha;
     } else {
-      const data = index[stashKey]
+      const data = index[stashKey];
       if (data) {
         stashCommitHash = index[stashKey].aftersha;
       } else {
