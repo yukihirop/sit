@@ -28,7 +28,6 @@ const recursive = require('recursive-readdir')
   , moment = require('moment');
 
 const SitBlob = require('../objects/SitBlob')
-  , SitTree = require('../objects/SitTree')
   , SitCommit = require('../objects/SitCommit')
   , SitLogger = require('../logs/SitLogger')
   , SitBase = require('./SitBase')
@@ -401,9 +400,6 @@ class SitBaseRepo extends SitBase {
     let obj;
 
     switch (fmt) {
-      case 'tree':
-        obj = new SitTree(this, data);
-        break;
       case 'blob':
         obj = new SitBlob(this, data);
         break;
@@ -479,9 +475,6 @@ class SitBaseRepo extends SitBase {
     // Pick constructor
     let klass;
     switch (fmt.toString()) {
-      case 'tree':
-        klass = SitTree;
-        break;
       case 'blob':
         klass = SitBlob;
         break;
@@ -632,7 +625,7 @@ class SitBaseRepo extends SitBase {
     if (next && Object.keys(index).length > 1) {
       stashCommitHash = index[this._nextKey(stashKey)].aftersha;
     } else {
-      const data = index[stashKey]
+      const data = index[stashKey];
       if (data) {
         stashCommitHash = index[stashKey].aftersha;
       } else {
