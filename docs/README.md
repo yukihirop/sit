@@ -8,35 +8,6 @@ Management for Sheet (ex: GoogleSpreadSheet) like git
 npm install -g sit
 ```
 
-## 🚀 Tutorial
-
-```bash
-sit init
-#
-# Configure .sitsetting
-#
-# repo init
-sit repo init
-# clasp init
-sit clasp init
-# clasp
-clasp push
-clasp deploy
-# Fetch sheet
-sit fetch origin develop
-sit merge origin develop
-# status
-sit status
-# diff
-sit diff
-# checkout
-sit checkout -b develop
-sit checkout master
-# commit
-sit commit -m 'initial commit'
-# Update sheet
-sit push origin master
-```
 
 ## 📖 Usage
 
@@ -122,10 +93,13 @@ dist:
 
 ## environments variables
 
+`sit` has environment variables to flexibly set the location of `local repositories` and
+`configuration file`, and environment variables required to access `GoogleSpreadSheet`.
+
 |name|content|default|
 |----|-------|-------|
-|SIT_DIR||`.`|
-|SIT_SETTING_DIR||`.`|
+|SIT_DIR|Path to local repository|`.`|
+|SIT_SETTING_DIR|Path to `.sitsetting`|`.`|
 |SIT_GOOGLE_SERVICE_ACCOUNT_EMAIL|Google Service Account Email||
 |SIT_GOOGLE_PRIVATE_KEY|Google Private Key||
 
