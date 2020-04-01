@@ -114,7 +114,7 @@ Use `clasp scripts` to create a remote repository.
 ### Setting user.name and user.email
 
 
-By setting hoge and fuga, you can see who committed, etc., and the log will be meaningful.
+By setting `user.name` and `user.email`, you can see who committed, etc., and the log will be meaningful.
 
 There are `global` settings and `local` settings, but here we set them `local`.
 
@@ -154,7 +154,7 @@ Cloned 1 file.
 └─ appsscript.json
 ```
 
-You can't use it with `GoogleDrive` type url mom so access it and get `GoogleSpreadSheet` type url.
+You can't use it with `GoogleDrive` type url so access it and get `GoogleSpreadSheet` type url.
 
 ![image](https://user-images.githubusercontent.com/11146767/77844917-7570d600-71e5-11ea-84d7-7d3631018f72.png)
 
@@ -229,7 +229,6 @@ no changes added to commit
 
 ```bash
 $ sit branch
-* master
 ```
 
 ```bash
@@ -265,6 +264,15 @@ remote:
 To https://docs.google.com/spreadsheets/d/1QPNoQcKGQrk1U9_5RP42y7YbWZMcPcN-Vn96wO2ZCh8/edit#gid=2143308413
 	* [new branch]	0000000..0aa608d  master -> master
 ```
+
+Let's check if it was pushed correctly.
+
+```bash
+sit browse-remote
+```
+
+![image](https://user-images.githubusercontent.com/11146767/78094760-4be7c280-7410-11ea-912b-66196f532167.png)
+
 
 ### Checkout and Edit data and Push
 
@@ -315,7 +323,7 @@ Let's check the log.
 ```bash
 $ sit log
 commit 60243bc893424001185de58890104bc49e853ae5 (HEAD -> develop)
-Author: yukihirop <te108186@gmail.com>
+Author: yukihirop <yukihirop@example.com>
 Date: Sun Mar 0 18:33:57 2020 +0900 +0900
 
 	Initial Commit
@@ -348,7 +356,7 @@ $ sit browse-remote
 
 Now suppose the contents of the `develop` branch are merged into the `master` branch and the `master sheet` is updated.
 
-![image](https://user-images.githubusercontent.com/11146767/77850376-11fa9e80-720d-11ea-8afc-6c919ba5e1b5.png)
+![image](https://user-images.githubusercontent.com/11146767/78098918-56f42000-741b-11ea-858f-f989aa9ae901.png)
 
 !>Unfortunately, merging on `GoogleSpreadSheet` is manual.
 
@@ -368,7 +376,7 @@ Let's check the contents that have been fetched.
 $ sit cat-file -p 5f027c5
 blob b0122f0795b0be80d51a7ff6946f00bf0300e723
 parent 0aa608d96db68ac609bfb27de5036fe63a75fcd5
-author yukihirop <te108186@gmail.com> 1585488810621 +0900
+author yukihirop <yukihirop@example.com> 1585488810621 +0900
 committer GoogleSpreadSheet <noreply@googlespreadsheet.com> 1585488810621 +0900
 
 Merge from GoogleSpreadSheet/master
@@ -380,7 +388,7 @@ $ sit cat-file -p b0122f0795b0be80d51a7ff6946f00bf0300e723
 こんにちは,hello,greeting.hello
 ```
 
-This is the content of the develop branch.
+This is the content of the `master` branch.
 
 Now that you have confirmed that you have successfully fetched, let's `merge`.
 
@@ -505,13 +513,13 @@ Already up to date.
 ```bash
 $ sit log
 commit aab61a36fff2bf2dacc87d416a83b6c0e15a569c (HEAD -> master)
-Author: yukihirop <te108186@gmail.com>
+Author: yukihirop <yukihirop@example.com>
 Date: Tue Mar 2 00:21:45 2020 +0900 +0900
 
 	Merge from GoogleSpreadSheet/master
 
 commit b98f96a746dba25e2c927beda41cf9fa361a44ab
-Author: yukihirop <te108186@gmail.com>
+Author: yukihirop <yukihirop@example.com>
 Date: Tue Mar 2 00:11:31 2020 +0900 +0900
 
 	Initial Commit
