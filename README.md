@@ -97,7 +97,20 @@ dist:
   sheetName: "master_data.csv"
 ```
 
-## 🤖 environments variables
+## Development Environment
+
+```bash
+$ node -v
+v12.13.0
+
+$ npm -v
+6.12.0
+
+$ yarn -v
+1.19.2
+```
+
+## 🤖 Environments Variables
 
 `sit` has environment variables to flexibly set the location of `local repositories` and
 `configuration file`, and environment variables required to access `GoogleSpreadSheet`.
@@ -109,3 +122,14 @@ dist:
 |SIT_GOOGLE_SERVICE_ACCOUNT_EMAIL|Google Service Account Email||
 |SIT_GOOGLE_PRIVATE_KEY|Google Private Key||
 
+## 📝 License
+
+This package is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+## 🤝 Contributing
+
+1. Fork it ( http://github.com/yukihirop/sit/fork )
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
