@@ -86,6 +86,40 @@ export SIT_GOOGLE_SERVICE_ACCOUNT_EMAIL='sit-tutorial@<project_key_id>.iam.gserv
 export SIT_GOOGLE_PRIVATE_KEY='-----BEGIN PRIVATE.........'
 ```
 
+Then modify the `.sitsetting` as follows.
+
+Delete `sheet.gss.auth.credPath`.
+
+```diff
+version: 1.0.0
+sheet:
+  gss:
+-    auth:
+-      credPath: ./creds.json
+    openAPIV3Schema:
+      type: object
+      properties:
+        ja:
+          type: string
+          description: 日本語
+        en:
+          type: string
+          description: 英語
+        key:
+          type: string
+          description: キー
+    defaultWorksheet:
+      rowCount: 10000
+      colCount: 20
+repo:
+  local: .sit
+dist:
+  path: ./dist
+  sheetName: master_data.csv
+```
+
+!> If `sheet.gss.auth.credPath` is written, it will be given priority.
+
 However, it is not possible to access `GoogleSpreadSheet` by this alone, so you need to access
 
 `GoogleSpreadSheet` and set up sharing.
