@@ -53,8 +53,8 @@ $ sit cat-file -s HEAD
 $ sit cat-file -p HEAD
 blob 8f2caa26dcde5a2df28976a5ab96209bbc1b420e
 parent 015cab1c1a2993687ce114e89e5b352e4b73a6df
-author yukihirop <te108186@gmail.com> 1585271995803 +0900
-committer yukihirop <te108186@gmail.com> 1585271995803 +0900
+author yukihirop <yukihirop@example.com> 1585271995803 +0900
+committer yukihirop <yukihirop@example.com> 1585271995803 +0900
 
 Update master data
 ```
