@@ -1,11 +1,13 @@
 # sit
 
-Management for Sheet (ex: GoogleSpreadSheet) like git
+the very very very stupid csv content tracker 🤧
+
+Management for Sheet (ex: GoogleSpreadSheet) like git 😑
 
 ## 📦 Installation
 
 ```bash
-npm install -g sit
+npm install -g @yukihirop/sit
 ```
 
 

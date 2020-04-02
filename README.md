@@ -1,5 +1,8 @@
 # sit
 
+[![npm version](https://badge.fury.io/js/%40yukihirop%2Fsit.svg)](https://badge.fury.io/js/%40yukihirop%2Fsit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
 the very very very stupid csv content tracker 🤧
 
 Management for Sheet (ex: GoogleSpreadSheet) like git 😑
@@ -7,7 +10,7 @@ Management for Sheet (ex: GoogleSpreadSheet) like git 😑
 ## 📦 Installation
 
 ```bash
-npm install -g sit
+npm install -g @yukihirop/sit
 ```
 
 
