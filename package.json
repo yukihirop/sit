@@ -1,5 +1,6 @@
 {
   "name": "sit",
+  "description": "the very very very stupid csv content tracker",
   "version": "1.0.0",
   "main": "index.js",
   "bin": {
@@ -43,5 +44,15 @@
     "lint:clasp": "eslint --ext .js src/clasp",
     "lint": "eslint",
     "nibble:main": "eslint-nibble --ext .js src/main"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/yukihirop/sit/issues"
+  },
+  "keywords": [
+    "git",
+    "csv",
+    "google-spreadsheet",
+    "nodejs",
+    "cli"
+  ]
 }
