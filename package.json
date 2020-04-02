@@ -1,5 +1,5 @@
 {
-  "name": "sit",
+  "name": "@yukihirop/sit",
   "description": "the very very very stupid csv content tracker",
   "version": "1.0.0",
   "main": "index.js",
