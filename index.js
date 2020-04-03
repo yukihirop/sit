@@ -292,7 +292,9 @@ if (process.argv.length <= 2) {
     process.argv.indexOf('-h') == -1,
     process.argv.indexOf('--help') == -1,
     process.argv.indexOf('clone') == -1,
-    process.argv.indexOf('init') == -1
+    process.argv.indexOf('init') == -1,
+    process.argv.indexOf('--version') == -1,
+    process.argv.indexOf('-V') == -1
   ];
   const isCheck = !checkConditions.some(c => c === false);
 
